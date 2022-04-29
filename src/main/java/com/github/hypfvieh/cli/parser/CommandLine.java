@@ -55,7 +55,7 @@ public class CommandLine {
 
     private final Map<String, CmdArgOption<?>>       options            = new LinkedHashMap<>();
 
-    private final Map<String, String>                knownArgs          = new LinkedHashMap<>();
+    private final Map<CmdArgOption<?>, String>       knownArgs          = new LinkedHashMap<>();
     private final Map<String, String>                unknownArgs        = new LinkedHashMap<>();
     private final List<String>                       unknownTokens      = new ArrayList<>();
     private final Map<String, String>                dupArgs            = new LinkedHashMap<>();
@@ -215,8 +215,12 @@ public class CommandLine {
                     unknownTokens.add(token);
                 } else {
                     // handle option value
-                    if (putArgValue(knownArgs, lastArg, token)) { // known argument without value
+                    CmdArgOption<?> cmdArgOption = options.get(lastArg);
+                    if (knownArgs.containsKey(cmdArgOption) && knownArgs.get(cmdArgOption) == null) {
+                        knownArgs.put(cmdArgOption, token);
                         lastArg = null;
+//                    if (putArgValue(knownArgs, lastArg, token)) { // known argument without value
+//                        lastArg = null;
                     } else if (putArgValue(unknownArgs, lastArg, token)) { // unknown argument without value
                         lastArg = null;
                     } else if (putArgValue(dupArgs, lastArg, token)) { // duplicate argument without value
@@ -240,7 +244,7 @@ public class CommandLine {
                 Optional.ofNullable((CmdArgOption<T>) requireParsed(this).options.get(requireOption(_option).getName()))
                         .orElseThrow(() -> optionNotDefined(_option));
 
-        String strVal = knownArgs.get(option.getName());
+        String strVal = knownArgs.get(option);
         if (strVal == null) {
             return (T) option.getDefaultValue();
         }
@@ -256,7 +260,6 @@ public class CommandLine {
 
     public boolean hasArg(CmdArgOption<?> _option) {
         return Optional.ofNullable(requireParsed(this).options.get(requireOption(_option).getName()))
-                .map(CmdArgOption::getName)
                 .map(knownArgs::containsKey)
                 .orElseThrow(() -> optionNotDefined(_option));
     }
@@ -309,27 +312,27 @@ public class CommandLine {
 
         // check all required options are given
         List<String> missingOptions = streamOptions(CmdArgOption::isRequired)
-                .map(CmdArgOption::getName)
                 .filter(s -> !knownArgs.containsKey(s))
+                .map(CmdArgOption::getName)
                 .collect(Collectors.toList());
         if (!missingOptions.isEmpty()) {
             failures.add("required options missing: " + String.join(", ", missingOptions));
         }
 
         // check values
-        for (Entry<String, String> knownArg : knownArgs.entrySet()) {
-            CmdArgOption<?> option = options.get(knownArg.getKey());
+        for (Entry<CmdArgOption<?>, String> knownArg : knownArgs.entrySet()) {
+            CmdArgOption<?> option = knownArg.getKey();
             if (option.hasValue() && knownArg.getValue() == null && option.getDefaultValue() == null) {
-                failures.add("argument '" + knownArg.getKey() + "' requires a value");
+                failures.add("argument '" + knownArg.getKey().getName() + "' requires a value");
             } else if (!option.hasValue() && knownArg.getValue() != null) {
-                failures.add("argument '" + knownArg.getKey() + "' cannot have a value");
+                failures.add("argument '" + knownArg.getKey().getName() + "' cannot have a value");
             }
             // check value type
             if (option.hasValue() && knownArg.getValue() != null) {
                 try {
                     getArg(option);
                 } catch (Exception _ex) {
-                    failures.add("argument '" + knownArg.getKey() + "' has invalid value ("
+                    failures.add("argument '" + knownArg.getKey().getName() + "' has invalid value ("
                             + knownArgs.get(knownArg.getKey()) + ")");
                 }
             }
@@ -381,14 +384,15 @@ public class CommandLine {
     }
 
     private String handleOption(String _arg) {
-        if (knownArgs.containsKey(_arg)) {
+        CmdArgOption<?> cmdArgOption = options.get(_arg);
+        if (cmdArgOption != null && knownArgs.containsKey(cmdArgOption)) {
             dupArgs.putIfAbsent(_arg, null);
             return _arg;
         } else if (!options.containsKey(_arg)) {
             unknownArgs.putIfAbsent(_arg, null);
             return _arg;
         } else {
-            knownArgs.put(_arg, null);
+            knownArgs.put(cmdArgOption, null);
             return _arg;
         }
     }
@@ -406,7 +410,7 @@ public class CommandLine {
                 .filter(o -> _predicate == null || _predicate.test(o));
     }
 
-    public Map<String, String> getKnownArgs() {
+    public Map<CmdArgOption<?>, String> getKnownArgs() {
         return accessSync(t -> Collections.unmodifiableMap(requireParsed(t).knownArgs));
     }
 
