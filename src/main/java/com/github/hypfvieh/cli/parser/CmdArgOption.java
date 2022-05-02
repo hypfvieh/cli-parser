@@ -85,8 +85,8 @@ public final class CmdArgOption<T> {
     @Override
     public String toString() {
         return getClass().getSimpleName()
-                + String.format("[%s, dataType=%s, required=%s, hasValue=%s, default=%s, descr=%s]",
-                        name, Optional.ofNullable(dataType).map(Class::getName).orElse(null), required, hasValue, defaultValue, description);
+                + String.format("[%s/%s, dataType=%s, required=%s, hasValue=%s, default=%s, descr=%s]",
+                        name, shortName, Optional.ofNullable(dataType).map(Class::getName).orElse(null), required, hasValue, defaultValue, description);
     }
 
     /**
@@ -171,7 +171,8 @@ public final class CmdArgOption<T> {
         }
 
         public CmdArgOption<T> build() {
-            throwIf(name == null || name.isBlank(), "Option requires a name");
+            
+            throwIf((name == null || name.isBlank()) && (shortName == null || shortName.isBlank()), "Option requires a name or shortname");
             return new CmdArgOption<>(this);
         }
 

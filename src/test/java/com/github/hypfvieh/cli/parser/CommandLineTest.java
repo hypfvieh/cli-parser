@@ -16,7 +16,7 @@ class CommandLineTest extends AbstractBaseTest {
     @NullAndEmptySource
     @ValueSource(strings = {"   "})
     public void addOptionWithoutOrInvalidNameFail(String _argName) {
-        assertEquals("Option requires a name",
+        assertEquals("Option requires a name or shortname",
                 assertThrows(CommandLineException.class,
                         () -> new CommandLine().addOption(CmdArgOption.builder(String.class)
                                 .name(_argName)
@@ -127,9 +127,52 @@ class CommandLineTest extends AbstractBaseTest {
         assertTrue(cl.getKnownArgs().isEmpty());
     }
 
-    /**
-     *
-     */
+    @Test
+    public void parseShortOptions() {
+        CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
+                .shortName("o")
+                .optional()
+                .description("optional int")
+                .build();
+        CommandLine cl = new CommandLine()
+                .addOption(optInt)
+                .setFailOnUnknownToken(false)
+                .parse("-o 1 2 3");
+        
+        assertFalse(cl.isFailOnUnknownToken());
+        assertCollection(cl.getUnknownTokens(), "2", "3");
+
+        assertEquals("Parsing of command-line failed: unknown tokens: 2, 3",
+                assertThrows(Exception.class, () -> cl.setFailOnUnknownToken(true)
+                        .parse("-o 1 2 3")).getMessage());
+    }
+    
+    @Test
+    public void parseCombinedShortOptions() {
+        CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
+                .shortName("o")
+                .optional()
+                .description("optional int")
+                .build();
+        CmdArgOption<?> optAll = CmdArgOption.builder()
+                .shortName("a")
+                .optional()
+                .description("all flag")
+                .build();
+        
+        CommandLine cl = new CommandLine()
+                .addOption(optInt)
+                .addOption(optAll)
+                .setFailOnUnknownToken(false)
+                .parse("-ao 1 2 3");
+        
+        assertFalse(cl.isFailOnUnknownToken());
+        assertCollection(cl.getUnknownTokens(), "2", "3");
+        
+        assertTrue(cl.hasArg(optAll));
+        assertTrue(cl.hasArg(optInt));
+    }
+    
     @Test
     public void parseDataTypes() {
         CmdArgOption<Boolean> optBoolSimple = CmdArgOption.builder(boolean.class)
