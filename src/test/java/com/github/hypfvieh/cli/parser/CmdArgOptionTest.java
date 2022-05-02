@@ -11,6 +11,7 @@ class CmdArgOptionTest extends AbstractBaseTest {
     void buildOptionWithValue() {
         CmdArgOption<?> opt = CmdArgOption.builder(String.class)
                 .name("optionWithValue")
+                .shortName("f")
                 .required(true)
                 .defaultValue("def")
                 .description("descr")
@@ -23,7 +24,7 @@ class CmdArgOptionTest extends AbstractBaseTest {
         assertTrue(opt.hasValue());
         assertEquals("def", opt.getDefaultValue());
         assertEquals("descr", opt.getDescription());
-        assertEquals("CmdArgOption[optionWithValue, dataType=java.lang.String, required=true, hasValue=true, default=def, descr=descr]", opt.toString());
+        assertEquals("CmdArgOption[optionWithValue/f, dataType=java.lang.String, required=true, hasValue=true, default=def, descr=descr]", opt.toString());
     }
 
     @Test
@@ -40,14 +41,14 @@ class CmdArgOptionTest extends AbstractBaseTest {
         assertFalse(opt.hasValue());
         assertNull(opt.getDefaultValue());
         assertNull(opt.getDescription());
-        assertEquals("CmdArgOption[optionWithoutValue, dataType=null, required=false, hasValue=false, default=null, descr=null]", opt.toString());
+        assertEquals("CmdArgOption[optionWithoutValue/null, dataType=null, required=false, hasValue=false, default=null, descr=null]", opt.toString());
     }
 
     @ParameterizedTest(name = "[{index}] \"{0}\"")
     @NullAndEmptySource
     @ValueSource(strings = {" ", "\t"})
     void buildMissingNameFails(String _name) {
-        assertEquals("Option requires a name", assertThrows(CommandLineException.class,
+        assertEquals("Option requires a name or shortname", assertThrows(CommandLineException.class,
                 () -> CmdArgOption.builder(String.class).name(_name).build()).getMessage());
     }
 

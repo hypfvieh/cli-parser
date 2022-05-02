@@ -76,7 +76,13 @@ public class CommandLine {
 
     public CommandLine addOption(CmdArgOption<?> _option) {
         requireOption(_option);
-        options.put(_option.getName(), _option);
+        if (_option.getName() != null) {
+            options.put(_option.getName(), _option);    
+        }
+        if (_option.getShortName() != null) {
+            options.put(_option.getShortName(), _option);
+        }
+        
         logger.debug("Added {} command-line option '{}': {}",
                 _option.isRequired() ? "required" : "optional", _option.getName(), _option.getDescription());
         return this;
@@ -209,8 +215,8 @@ public class CommandLine {
                     continue;
                 } else if (token.matches("^--.+")) { // argument starting with --
                     lastArg = handleOption(token.substring(2));
-                    // } else if (token.matches("^-.+")) { // argument starting with -
-                    // lastArg = handleOption(token.substring(1));
+                } else if (token.matches("^-.+")) { // argument starting with -
+                     lastArg = handleShortOption(token.substring(1));
                 } else if (lastArg == null) { // orphan token (without prior argument)
                     unknownTokens.add(token);
                 } else {
@@ -240,16 +246,12 @@ public class CommandLine {
 
     @SuppressWarnings("unchecked")
     public <T> T getArg(CmdArgOption<T> _option) {
-        CmdArgOption<T> option =
-                Optional.ofNullable((CmdArgOption<T>) requireParsed(this).options.get(requireOption(_option).getName()))
-                        .orElseThrow(() -> optionNotDefined(_option));
-
-        String strVal = knownArgs.get(option);
+        String strVal = knownArgs.get(_option);
         if (strVal == null) {
-            return (T) option.getDefaultValue();
+            return (T) _option.getDefaultValue();
         }
-        T convertedVal = (T) converters.get(option.getDataType()).apply(strVal);
-        return option.getDataType().isPrimitive() ? convertedVal : (T) option.getDataType().cast(convertedVal);
+        T convertedVal = (T) converters.get(_option.getDataType()).apply(strVal);
+        return _option.getDataType().isPrimitive() ? convertedVal : (T) _option.getDataType().cast(convertedVal);
     }
 
     Object getArg(CharSequence _optionName) {
@@ -259,7 +261,12 @@ public class CommandLine {
     }
 
     public boolean hasArg(CmdArgOption<?> _option) {
-        return Optional.ofNullable(requireParsed(this).options.get(requireOption(_option).getName()))
+        CommandLine requireParsed = requireParsed(this);
+        if (knownArgs.containsKey(requireParsed.options.get(requireOption(_option).getName()))) {
+            return true;
+        }
+        
+        return Optional.ofNullable(requireParsed.options.get(requireOption(_option).getShortName()))
                 .map(knownArgs::containsKey)
                 .orElseThrow(() -> optionNotDefined(_option));
     }
@@ -287,7 +294,13 @@ public class CommandLine {
 
     private CommandLine logResults() {
         if (logger.isDebugEnabled()) {
-            logger.debug("knownArgs:     {}", knownArgs);
+            Map<String, String> kargs = new LinkedHashMap<>();
+            
+            for (Entry<CmdArgOption<?>, String> e : knownArgs.entrySet()) {
+                kargs.put(printableArgName(e.getKey()), e.getValue());
+            }
+            
+            logger.debug("knownArgs:     {}", kargs);
 
             logger.debug("unknownArgs:   {}", unknownArgs);
             logger.debug("unknownTokens: {}", unknownTokens);
@@ -332,7 +345,7 @@ public class CommandLine {
                 try {
                     getArg(option);
                 } catch (Exception _ex) {
-                    failures.add("argument '" + knownArg.getKey().getName() + "' has invalid value ("
+                    failures.add("argument '" + (knownArg.getKey().getName() == null ? knownArg.getKey().getShortName() : knownArg.getKey().getName())+ "' has invalid value ("
                             + knownArgs.get(knownArg.getKey()) + ")");
                 }
             }
@@ -347,8 +360,8 @@ public class CommandLine {
     private static <T> T requireOption(T _option) {
         T o = Objects.requireNonNull(_option, "Option required");
         if (o instanceof CmdArgOption<?> opt) {
-            if (opt.getName() == null || opt.getName().isBlank()) {
-                throw new IllegalArgumentException("Command-line option requires a name: " + _option);
+            if ((opt.getName() == null || opt.getName().isBlank()) && (opt.getShortName() == null || opt.getShortName().isBlank())) {
+                throw new IllegalArgumentException("Command-line option requires a name or shortname: " + _option);
             }
         }
         return o;
@@ -361,6 +374,18 @@ public class CommandLine {
         return _c;
     }
 
+    static String printableArgName(CmdArgOption<?> _opt) {
+        List<String> k = new ArrayList<>();
+        if (_opt.getName() != null) {
+            k.add("--" + _opt.getName());
+        } 
+        if (_opt.getShortName() != null) {
+            k.add("-" + _opt.getShortName());
+        }
+        
+        return String.join("/", k);
+    }
+    
     private static CommandLineException optionNotDefined(Object _option) {
         return new CommandLineException("Option not defined: " + _option);
     }
@@ -394,6 +419,24 @@ public class CommandLine {
         } else {
             knownArgs.put(cmdArgOption, null);
             return _arg;
+        }
+    }
+    
+    private String handleShortOption(String _arg) {
+        if (_arg.length() > 1) {
+            String sb = null;
+            for (char c : _arg.toCharArray()) {
+                CmdArgOption<?> cmdArgOption = options.get(c + "");
+                if (cmdArgOption != null) {
+                    handleOption(c + "");
+                    if (sb == null && cmdArgOption.hasValue()) {
+                        sb = c + "";
+                    }
+                } 
+            }
+            return sb;
+        } else {
+            return handleOption(_arg);
         }
     }
 
