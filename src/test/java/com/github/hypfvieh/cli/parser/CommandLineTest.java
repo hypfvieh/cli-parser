@@ -174,6 +174,48 @@ class CommandLineTest extends AbstractBaseTest {
     }
     
     @Test
+    public void parseMultiOptions() {
+        CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
+                .shortName("o")
+                .optional()
+                .repeatable(true)
+                .description("optional int")
+                .build();
+        
+        
+        CommandLine cl = new CommandLine()
+                .addOption(optInt)
+                .setFailOnUnknownToken(false)
+                .parse("-o 1 -o 2 -o 3");
+
+        assertTrue(cl.hasArg(optInt));
+
+        assertTrue(cl.getUnknownTokens().isEmpty());
+        
+        assertCollection(cl.getArgs(optInt), 1, 2, 3);
+    }
+    
+    @Test
+    public void parseMultiVoidOptions() {
+        CmdArgOption<?> optInt = CmdArgOption.builder()
+                .shortName("o")
+                .optional()
+                .repeatable(true)
+                .description("optional")
+                .build();
+        
+        
+        CommandLine cl = new CommandLine()
+                .addOption(optInt)
+                .setFailOnUnknownToken(false)
+                .parse("-ooo");
+
+        assertTrue(cl.hasArg(optInt));
+
+        assertTrue(cl.getUnknownTokens().isEmpty());
+    }
+    
+    @Test
     public void parseDataTypes() {
         CmdArgOption<Boolean> optBoolSimple = CmdArgOption.builder(boolean.class)
                 .name("optBoolSimple")

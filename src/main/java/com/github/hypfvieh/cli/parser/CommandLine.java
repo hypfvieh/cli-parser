@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A class to parse the Java command-line and access arguments by name and type using {@link Option}s.
+ * A class to parse the Java command-line and access arguments by name and type using {@link CmdArgOption}s.
  * <p>
  *
  * Example of working with a command-line with two options and a custom exception type:
@@ -56,6 +56,7 @@ public class CommandLine {
     private final Map<String, CmdArgOption<?>>       options            = new LinkedHashMap<>();
 
     private final Map<CmdArgOption<?>, String>       knownArgs          = new LinkedHashMap<>();
+    private final Map<CmdArgOption<?>, List<String>> knownMultiArgs     = new LinkedHashMap<>();
     private final Map<String, String>                unknownArgs        = new LinkedHashMap<>();
     private final List<String>                       unknownTokens      = new ArrayList<>();
     private final Map<String, String>                dupArgs            = new LinkedHashMap<>();
@@ -222,11 +223,15 @@ public class CommandLine {
                 } else {
                     // handle option value
                     CmdArgOption<?> cmdArgOption = options.get(lastArg);
-                    if (knownArgs.containsKey(cmdArgOption) && knownArgs.get(cmdArgOption) == null) {
+                    if (cmdArgOption == null) {
+                        putArgValue(unknownArgs, lastArg, token);
+                        lastArg = null;
+                    } else if (!cmdArgOption.isRepeatable() && knownArgs.containsKey(cmdArgOption) && knownArgs.get(cmdArgOption) == null) {
                         knownArgs.put(cmdArgOption, token);
                         lastArg = null;
-//                    if (putArgValue(knownArgs, lastArg, token)) { // known argument without value
-//                        lastArg = null;
+                    } else if (cmdArgOption.isRepeatable() && knownMultiArgs.containsKey(cmdArgOption)) {
+                        knownMultiArgs.get(cmdArgOption).add(token);
+                        lastArg = null;
                     } else if (putArgValue(unknownArgs, lastArg, token)) { // unknown argument without value
                         lastArg = null;
                     } else if (putArgValue(dupArgs, lastArg, token)) { // duplicate argument without value
@@ -244,16 +249,73 @@ public class CommandLine {
         return this;
     }
 
+    /**
+     * Returns the value associated with argument option.
+     * <p>
+     * If no value is present, the default value of that option is returned (and might by <code>null</code>). <br>
+     * If the option is a repeatable option, the value of the first occurrence is returned.
+     * </p>
+     * 
+     * @param <T> type of option value
+     * @param _option option
+     * 
+     * @return value, maybe <code>null</code>
+     */
     @SuppressWarnings("unchecked")
     public <T> T getArg(CmdArgOption<T> _option) {
-        String strVal = knownArgs.get(_option);
-        if (strVal == null) {
-            return (T) _option.getDefaultValue();
+        List<T> args = getArgs(_option);
+        if (args.isEmpty()) {
+            return null;
         }
-        T convertedVal = (T) converters.get(_option.getDataType()).apply(strVal);
+        T convertedVal = args.get(0);
         return _option.getDataType().isPrimitive() ? convertedVal : (T) _option.getDataType().cast(convertedVal);
     }
 
+    /**
+     * Returns the value associated with argument option.
+     * <p>
+     * If no value is present, the default value of that option is returned (and might by <code>null</code>). <br>
+     * </p>
+     * 
+     * @param <T> type of option value
+     * @param _option option
+     * 
+     * @return List, maybe empty - never <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getArgs(CmdArgOption<T> _option) {
+        Objects.requireNonNull(_option, "Option required");
+        List<String> strVals = new ArrayList<>();
+        List<T> resultList = new ArrayList<>();
+        
+        if (_option.isRepeatable()) {
+            List<String> list = knownMultiArgs.get(_option);
+            if (list != null && !list.isEmpty()) {
+                strVals.addAll(list);
+            }
+        } else {
+            String val = knownArgs.get(_option);
+            if (val != null) {
+                strVals.add(val);
+            }
+        }
+        
+        if (strVals.isEmpty()) {
+            var x = (T) _option.getDefaultValue();
+            if (x != null) {
+                resultList.add(x);
+            }
+            return resultList;
+        }
+        
+        for (String str : strVals) {
+            T convertedVal = (T) converters.get(_option.getDataType()).apply(str);            
+            resultList.add(convertedVal);
+        }
+        
+        return resultList;
+    }
+    
     Object getArg(CharSequence _optionName) {
         return Optional.ofNullable(requireParsed(this).getOption(_optionName))
                 .map(this::getArg)
@@ -264,10 +326,12 @@ public class CommandLine {
         CommandLine requireParsed = requireParsed(this);
         if (knownArgs.containsKey(requireParsed.options.get(requireOption(_option).getName()))) {
             return true;
+        } else if (knownMultiArgs.containsKey(requireParsed.options.get(requireOption(_option).getName()))) {
+            return true;
         }
         
         return Optional.ofNullable(requireParsed.options.get(requireOption(_option).getShortName()))
-                .map(knownArgs::containsKey)
+                .map(k -> knownArgs.containsKey(k) || knownMultiArgs.containsKey(k))
                 .orElseThrow(() -> optionNotDefined(_option));
     }
 
@@ -410,27 +474,34 @@ public class CommandLine {
 
     private String handleOption(String _arg) {
         CmdArgOption<?> cmdArgOption = options.get(_arg);
-        if (cmdArgOption != null && knownArgs.containsKey(cmdArgOption)) {
-            dupArgs.putIfAbsent(_arg, null);
-            return _arg;
-        } else if (!options.containsKey(_arg)) {
+        if (cmdArgOption == null) {
             unknownArgs.putIfAbsent(_arg, null);
-            return _arg;
+        } else if (knownArgs.containsKey(cmdArgOption) && !cmdArgOption.isRepeatable()) {
+            dupArgs.putIfAbsent(_arg, null);
         } else {
-            knownArgs.put(cmdArgOption, null);
-            return _arg;
+            if (cmdArgOption.isRepeatable()) {
+                if (!knownMultiArgs.containsKey(cmdArgOption)) {
+                    knownMultiArgs.put(cmdArgOption, new ArrayList<>());
+                }
+            } else {
+                knownArgs.put(cmdArgOption, null);
+            }
         }
+        
+        return _arg;
+
     }
     
     private String handleShortOption(String _arg) {
         if (_arg.length() > 1) {
             String sb = null;
             for (char c : _arg.toCharArray()) {
-                CmdArgOption<?> cmdArgOption = options.get(c + "");
+                String key = c + "";
+                CmdArgOption<?> cmdArgOption = options.get(key);
                 if (cmdArgOption != null) {
-                    handleOption(c + "");
+                    handleOption(key);
                     if (sb == null && cmdArgOption.hasValue()) {
-                        sb = c + "";
+                        sb = key;
                     }
                 } 
             }
