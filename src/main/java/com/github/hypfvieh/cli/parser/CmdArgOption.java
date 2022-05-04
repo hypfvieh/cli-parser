@@ -27,7 +27,7 @@ public final class CmdArgOption<T> {
     private final boolean  hasValue;
 
     /** Whether this option can be repeated multiple times. */
-    private final boolean  canRepeat;
+    private final boolean  repeatable;
 
     /** Default value. */
     private final T        defaultValue;
@@ -43,7 +43,7 @@ public final class CmdArgOption<T> {
         hasValue = _builder.hasValue;
         defaultValue = _builder.defaultValue;
         description = _builder.description;
-        canRepeat = _builder.canRepeat;
+        repeatable = _builder.canRepeat;
     }
 
     public String getName() {
@@ -62,8 +62,8 @@ public final class CmdArgOption<T> {
         return required;
     }
 
-    public boolean isCanRepeat() {
-        return canRepeat;
+    public boolean isRepeatable() {
+        return repeatable;
     }
 
     public boolean isOptional() {
@@ -149,7 +149,7 @@ public final class CmdArgOption<T> {
             return apply(() -> required = _required);
         }
         
-        public CmdArgOption.Builder<T> canRepeat(boolean _required) {
+        public CmdArgOption.Builder<T> repeatable(boolean _required) {
             return apply(() -> canRepeat = _required);
         }
 
