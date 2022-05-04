@@ -213,6 +213,8 @@ class CommandLineTest extends AbstractBaseTest {
         assertTrue(cl.hasArg(optInt));
 
         assertTrue(cl.getUnknownTokens().isEmpty());
+        assertNull(cl.getArg(optInt));
+        assertEquals(3, cl.getArgCount(optInt));
     }
     
     @Test
