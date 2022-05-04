@@ -253,6 +253,7 @@ public class CommandLine {
      * Returns the value associated with argument option.
      * <p>
      * If no value is present, the default value of that option is returned (and might by <code>null</code>). <br>
+     * If the option does not support values or option was not set, null is returned.<br>
      * If the option is a repeatable option, the value of the first occurrence is returned.
      * </p>
      * 
@@ -264,7 +265,7 @@ public class CommandLine {
     @SuppressWarnings("unchecked")
     public <T> T getArg(CmdArgOption<T> _option) {
         List<T> args = getArgs(_option);
-        if (args.isEmpty()) {
+        if (args == null || args.isEmpty()) {
             return null;
         }
         T convertedVal = args.get(0);
@@ -274,19 +275,19 @@ public class CommandLine {
     /**
      * Returns the value associated with argument option.
      * <p>
-     * If no value is present, the default value of that option is returned (and might by <code>null</code>). <br>
+     * If no value is present, the default value of that option is returned (and might by <code>null</code>). 
+     * If the option does not support values or if the option was not set, <code>null</code> is returned.<br>
      * </p>
      * 
      * @param <T> type of option value
      * @param _option option
      * 
-     * @return List, maybe empty - never <code>null</code>
+     * @return List, maybe empty or <code>null</code>
      */
     @SuppressWarnings("unchecked")
     public <T> List<T> getArgs(CmdArgOption<T> _option) {
         Objects.requireNonNull(_option, "Option required");
         List<String> strVals = new ArrayList<>();
-        List<T> resultList = new ArrayList<>();
         
         if (_option.isRepeatable()) {
             List<String> list = knownMultiArgs.get(_option);
@@ -300,20 +301,24 @@ public class CommandLine {
             }
         }
         
-        if (strVals.isEmpty()) {
-            var x = (T) _option.getDefaultValue();
-            if (x != null) {
-                resultList.add(x);
+        if (_option.hasValue()) {
+            List<T> resultList = new ArrayList<>();
+            if (strVals.isEmpty()) {
+                var x = (T) _option.getDefaultValue();
+                if (x != null) {
+                    resultList.add(x);
+                }
+                return resultList;
+            }
+            
+            for (String str : strVals) {
+                T convertedVal = (T) converters.get(_option.getDataType()).apply(str);            
+                resultList.add(convertedVal);
             }
             return resultList;
         }
-        
-        for (String str : strVals) {
-            T convertedVal = (T) converters.get(_option.getDataType()).apply(str);            
-            resultList.add(convertedVal);
-        }
-        
-        return resultList;
+
+        return null;
     }
     
     Object getArg(CharSequence _optionName) {
@@ -322,7 +327,14 @@ public class CommandLine {
                 .orElseThrow(() -> optionNotDefined(_optionName));
     }
 
+    /**
+     * Checks if the given option was at least used once in the command line.
+     * 
+     * @param _option option to check
+     * @return true if it was used at least once, false otherwise
+     */
     public boolean hasArg(CmdArgOption<?> _option) {
+        Objects.requireNonNull(_option, "Option required");
         CommandLine requireParsed = requireParsed(this);
         if (knownArgs.containsKey(requireParsed.options.get(requireOption(_option).getName()))) {
             return true;
@@ -335,6 +347,30 @@ public class CommandLine {
                 .orElseThrow(() -> optionNotDefined(_option));
     }
 
+    /**
+     * Returns the number of occurrences of the given option. 
+     * <p>
+     * If the option was never set, 0 is returned.
+     * </p>
+     *  
+     * @param _option option
+     * 
+     * @return number of occurrences
+     */
+    public int getArgCount(CmdArgOption<?> _option) {
+        Objects.requireNonNull(_option, "Option required");
+        requireParsed(this);
+        
+        if (knownArgs.containsKey(_option)) {
+            return 1;
+        }
+        if (knownMultiArgs.containsKey(_option)) {
+            return knownMultiArgs.get(_option).size();
+        }
+
+        return 0;
+    }
+    
     @SuppressWarnings("unchecked")
     private static <T> Class<T> uncheckedCast(Class<?> _type) {
         return (Class<T>) _type;
@@ -373,7 +409,14 @@ public class CommandLine {
         return this;
     }
 
-    private CommandLine validate() {
+    /**
+     * Validates the parsed command line.
+     * 
+     * @return this
+     * 
+     * @throws CommandLineException when validation fails
+     */
+    private CommandLine validate() throws CommandLineException {
         List<String> failures = new ArrayList<>();
         if (failOnUnknownArg && !unknownArgs.isEmpty()) {
             failures.add("unknown arguments: " + unknownArgs.entrySet().stream()
@@ -481,7 +524,15 @@ public class CommandLine {
         } else {
             if (cmdArgOption.isRepeatable()) {
                 if (!knownMultiArgs.containsKey(cmdArgOption)) {
-                    knownMultiArgs.put(cmdArgOption, new ArrayList<>());
+                    ArrayList<String> values = new ArrayList<>();
+                    // when no value for arguments are expected, add an empty value
+                    // so we can count the values later
+                    if (!cmdArgOption.hasValue()) {
+                        values.add(null);
+                    }
+                    knownMultiArgs.put(cmdArgOption, values);
+                } else if (knownMultiArgs.containsKey(cmdArgOption) && !cmdArgOption.hasValue()) {
+                    knownMultiArgs.get(cmdArgOption).add(null);
                 }
             } else {
                 knownArgs.put(cmdArgOption, null);
