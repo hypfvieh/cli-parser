@@ -20,6 +20,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,14 +59,20 @@ public class CommandLine {
 
     private final Map<CmdArgOption<?>, String>       knownArgs          = new LinkedHashMap<>();
     private final Map<CmdArgOption<?>, List<String>> knownMultiArgs     = new LinkedHashMap<>();
+    
     private final Map<String, String>                unknownArgs        = new LinkedHashMap<>();
     private final List<String>                       unknownTokens      = new ArrayList<>();
-    private final Map<String, String>                dupArgs            = new LinkedHashMap<>();
+    private final Map<CmdArgOption<?>, String>       dupArgs            = new LinkedHashMap<>();
+    private final List<CmdArgOption<?>>              missingArgs        = new ArrayList<>();
 
     private boolean                                  failOnUnknownArg   = true;
     private boolean                                  failOnUnknownToken = true;
     private boolean                                  failOnDupArg       = true;
 
+    private String                                   longOptPrefix      = null;
+    private String                                   shortOptPrefix     = null;
+    private Pattern                                  longOptPattern     = null;
+    private Pattern                                  shortOptPattern    = null;
     private Class<? extends RuntimeException>        exceptionType      = CommandLineException.class;
 
     private final Map<Class<?>, Function<String, ?>> converters         = new HashMap<>();
@@ -73,6 +81,8 @@ public class CommandLine {
 
     public CommandLine() {
         registerDefaultConverters();
+        withLongOptPrefix("--");
+        withShortOptPrefix("-");
     }
 
     public CommandLine addOption(CmdArgOption<?> _option) {
@@ -110,7 +120,7 @@ public class CommandLine {
         return failOnUnknownArg;
     }
 
-    public CommandLine setFailOnUnknownArg(boolean _failOnUnknownArg) {
+    public CommandLine withFailOnUnknownArg(boolean _failOnUnknownArg) {
         failOnUnknownArg = _failOnUnknownArg;
         return this;
     }
@@ -119,7 +129,7 @@ public class CommandLine {
         return failOnUnknownToken;
     }
 
-    public CommandLine setFailOnUnknownToken(boolean _failOnUnknownToken) {
+    public CommandLine withFailOnUnknownToken(boolean _failOnUnknownToken) {
         failOnUnknownToken = _failOnUnknownToken;
         return this;
     }
@@ -128,8 +138,20 @@ public class CommandLine {
         return failOnDupArg;
     }
 
-    public CommandLine setFailOnDupArg(boolean _failOnDupArg) {
+    public CommandLine withFailOnDupArg(boolean _failOnDupArg) {
         failOnDupArg = _failOnDupArg;
+        return this;
+    }
+
+    public CommandLine withShortOptPrefix(String _prefix) {
+        shortOptPrefix = _prefix;
+        shortOptPattern = Pattern.compile("^(?:" + Pattern.quote(_prefix) + "(.+))");
+        return this;
+    }
+
+    public CommandLine withLongOptPrefix(String _prefix) {
+        longOptPrefix = _prefix;
+        longOptPattern = Pattern.compile("^(?:" + Pattern.quote(_prefix) + "(.+))");
         return this;
     }
 
@@ -204,38 +226,53 @@ public class CommandLine {
 
         reset();
 
-        String lastArg = null;
-
         if (_args != null) {
             final int argsLen = _args.length;
+            
             for (int i = 0; i < argsLen; i++) {
                 logger.trace("Token {}/{}: {}", i, argsLen, _args[i]);
-                String token = Optional.ofNullable(_args[i]).map(String::trim).orElse("");
 
+                String token = Optional.ofNullable(_args[i]).map(String::trim).orElse("");
+                
                 if (token.isEmpty()) {
                     continue;
-                } else if (token.matches("^--.+")) { // argument starting with --
-                    lastArg = handleOption(token.substring(2));
-                } else if (token.matches("^-.+")) { // argument starting with -
-                     lastArg = handleShortOption(token.substring(1));
-                } else if (lastArg == null) { // orphan token (without prior argument)
-                    unknownTokens.add(token);
-                } else {
-                    // handle option value
-                    CmdArgOption<?> cmdArgOption = options.get(lastArg);
-                    if (cmdArgOption == null) {
-                        putArgValue(unknownArgs, lastArg, token);
-                        lastArg = null;
-                    } else if (!cmdArgOption.isRepeatable() && knownArgs.containsKey(cmdArgOption) && knownArgs.get(cmdArgOption) == null) {
-                        knownArgs.put(cmdArgOption, token);
-                        lastArg = null;
-                    } else if (cmdArgOption.isRepeatable() && knownMultiArgs.containsKey(cmdArgOption)) {
-                        knownMultiArgs.get(cmdArgOption).add(token);
-                        lastArg = null;
-                    } else if (putArgValue(unknownArgs, lastArg, token)) { // unknown argument without value
-                        lastArg = null;
-                    } else if (putArgValue(dupArgs, lastArg, token)) { // duplicate argument without value
-                        lastArg = null;
+                }
+                
+                ParsedArg parsedArg = parseArg(token);
+                CmdArgOption<?> cmdOpt = parsedArg.getCmdArgOpt();
+                
+                if (argsLen -1 >= i+1) {
+                    String val = _args[i+1];
+                    ParsedArg nextArg = parseArg(val);
+                    
+                    if (nextArg.getCmdArgOpt() == null) { // looks like proper value
+                        if (cmdOpt != null) {
+                            handleCmdOption(cmdOpt, val);
+                            i++;
+                        } else if (parsedArg.isLookingLikeOption()) {
+                            unknownArgs.put(token, val);
+                            i++;
+                        } else {
+                            unknownTokens.add(token);
+                        }
+                    } else { // next token is an option too
+                        if (cmdOpt != null) {
+                            if (cmdOpt.hasValue()) { // command needs option, but got another option
+                                missingArgs.add(cmdOpt);
+                            } else { // no arguments required for option
+                                handleCmdOption(cmdOpt, null);
+                            }
+                        } else {
+                            unknownTokens.add(token);
+                        }
+                    }
+                } else { // no arguments left
+                    if (cmdOpt != null && cmdOpt.hasValue()) { // command needs option, but got another option
+                        missingArgs.add(cmdOpt);
+                    } else if (!parsedArg.isLookingLikeOption()) {
+                        unknownTokens.add(token);
+                    } else if (!parsedArg.isMultiArg()) {
+                        handleCmdOption(cmdOpt, null);
                     }
                 }
             }
@@ -247,6 +284,23 @@ public class CommandLine {
         validate();
 
         return this;
+    }
+
+    private void handleCmdOption(CmdArgOption<?> _cmdOpt, String _val) {
+        if (_cmdOpt.isRepeatable()) {
+            knownMultiArgs.computeIfAbsent(_cmdOpt, x -> new ArrayList<>()).add(trimToNull(_val));
+        } else if (!_cmdOpt.isRepeatable() && !knownArgs.containsKey(_cmdOpt)) {
+            knownArgs.put(_cmdOpt, trimToNull(_val));
+        } else {
+            dupArgs.put(_cmdOpt, _val);
+        }
+    }
+
+    private String trimToNull(String _val) {
+        if (_val == null || _val.isBlank()) {
+            return null;
+        }
+        return _val;
     }
 
     /**
@@ -376,6 +430,47 @@ public class CommandLine {
         return (Class<T>) _type;
     }
 
+    private ParsedArg parseArg(String token) {
+        if (token == null) {
+            return new ParsedArg(false, false, null);
+        }
+        
+        Matcher matcher = longOptPattern.matcher(token);
+        if (matcher.matches()) {
+            return new ParsedArg(true, false, options.get(matcher.group(1)));
+        } else {
+            matcher = shortOptPattern.matcher(token);
+            
+            if (matcher.matches()) {
+                if (token.length() > 1) {
+                    String sb = null;
+                    CmdArgOption<?> cmdArgOption = null;
+                    for (char c : token.toCharArray()) {
+                        String key = c + "";
+                        cmdArgOption = options.get(key);
+                        if (cmdArgOption != null) {
+                            if (!cmdArgOption.hasValue()) {
+                                handleCmdOption(cmdArgOption, null);
+                            } else if (sb == null && cmdArgOption.hasValue()) {
+                                sb = key;
+                            }
+                        } 
+                    }
+                    return new ParsedArg(true, true, cmdArgOption);
+                } else {
+                    CmdArgOption<?> cmdArgOption = options.get(token);
+                    if (cmdArgOption == null) { // unknown argument used
+                        unknownArgs.put(token, null);
+                        return null;
+                    }
+
+                    return new ParsedArg(true, false, cmdArgOption);
+                }
+            }
+        }
+        return new ParsedArg(false, false, null);
+    }
+    
     private CommandLine reset() {
         return accessSync(t -> {
             unknownTokens.clear();
@@ -384,27 +479,25 @@ public class CommandLine {
         });
     }
 
-    private static boolean putArgValue(Map<String, String> _argStore, String _arg, String _value) {
-        if (_argStore.containsKey(_arg) && _argStore.get(_arg) == null) {
-            _argStore.put(_arg, _value);
-            return true;
-        }
-        return false;
-    }
-
     private CommandLine logResults() {
         if (logger.isDebugEnabled()) {
             Map<String, String> kargs = new LinkedHashMap<>();
+            Map<String, String> margs = new LinkedHashMap<>();
             
             for (Entry<CmdArgOption<?>, String> e : knownArgs.entrySet()) {
                 kargs.put(printableArgName(e.getKey()), e.getValue());
             }
-            
-            logger.debug("knownArgs:     {}", kargs);
 
-            logger.debug("unknownArgs:   {}", unknownArgs);
-            logger.debug("unknownTokens: {}", unknownTokens);
-            logger.debug("dupArgs:       {}", dupArgs);
+            for (Entry<CmdArgOption<?>, List<String>> e : knownMultiArgs.entrySet()) {
+                margs.put(printableArgName(e.getKey()), String.join(", ", e.getValue()));
+            }
+
+            logger.debug("knownArgs:      {}", kargs);
+            logger.debug("knownMultiArgs: {}", margs);
+
+            logger.debug("unknownArgs:    {}", unknownArgs);
+            logger.debug("unknownTokens:  {}", unknownTokens);
+            logger.debug("dupArgs:        {}", dupArgs);
         }
         return this;
     }
@@ -427,7 +520,7 @@ public class CommandLine {
             failures.add("unknown tokens: " + String.join(", ", unknownTokens));
         }
         if (failOnDupArg && !dupArgs.isEmpty()) {
-            failures.add("duplicate arguments: " + String.join(", ", dupArgs.keySet()));
+            failures.add("duplicate arguments: " + dupArgs.keySet().stream().map(this::formatOption).collect(Collectors.joining(", ")));
         }
 
         // check all required options are given
@@ -443,16 +536,16 @@ public class CommandLine {
         for (Entry<CmdArgOption<?>, String> knownArg : knownArgs.entrySet()) {
             CmdArgOption<?> option = knownArg.getKey();
             if (option.hasValue() && knownArg.getValue() == null && option.getDefaultValue() == null) {
-                failures.add("argument '" + knownArg.getKey().getName() + "' requires a value");
+                failures.add("argument '" + formatOption(knownArg.getKey()) + "' requires a value");
             } else if (!option.hasValue() && knownArg.getValue() != null) {
-                failures.add("argument '" + knownArg.getKey().getName() + "' cannot have a value");
+                failures.add("argument '" + formatOption(knownArg.getKey()) + "' cannot have a value");
             }
             // check value type
             if (option.hasValue() && knownArg.getValue() != null) {
                 try {
                     getArg(option);
                 } catch (Exception _ex) {
-                    failures.add("argument '" + (knownArg.getKey().getName() == null ? knownArg.getKey().getShortName() : knownArg.getKey().getName())+ "' has invalid value ("
+                    failures.add("argument '" + formatOption(knownArg.getKey()) + "' has invalid value ("
                             + knownArgs.get(knownArg.getKey()) + ")");
                 }
             }
@@ -464,6 +557,20 @@ public class CommandLine {
         return this;
     }
 
+    private String formatOption(CmdArgOption<?> _arg) {
+        if (_arg == null) {
+            return null;
+        } else if (_arg.getName() != null && !_arg.getName().isBlank() && _arg.getShortName() != null && !_arg.getShortName().isBlank()) {
+            return longOptPrefix + _arg.getName() + "/" + shortOptPrefix + _arg.getShortName();
+        } else if (_arg.getName() != null && !_arg.getName().isBlank()) {
+            return longOptPrefix + _arg.getName();
+        } else if (_arg.getShortName() != null && !_arg.getShortName().isBlank()) {
+            return shortOptPrefix + _arg.getShortName();   
+        } else {
+            return "?";
+        }
+    }
+    
     private static <T> T requireOption(T _option) {
         T o = Objects.requireNonNull(_option, "Option required");
         if (o instanceof CmdArgOption<?> opt) {
@@ -515,53 +622,6 @@ public class CommandLine {
         }
     }
 
-    private String handleOption(String _arg) {
-        CmdArgOption<?> cmdArgOption = options.get(_arg);
-        if (cmdArgOption == null) {
-            unknownArgs.putIfAbsent(_arg, null);
-        } else if (knownArgs.containsKey(cmdArgOption) && !cmdArgOption.isRepeatable()) {
-            dupArgs.putIfAbsent(_arg, null);
-        } else {
-            if (cmdArgOption.isRepeatable()) {
-                if (!knownMultiArgs.containsKey(cmdArgOption)) {
-                    ArrayList<String> values = new ArrayList<>();
-                    // when no value for arguments are expected, add an empty value
-                    // so we can count the values later
-                    if (!cmdArgOption.hasValue()) {
-                        values.add(null);
-                    }
-                    knownMultiArgs.put(cmdArgOption, values);
-                } else if (knownMultiArgs.containsKey(cmdArgOption) && !cmdArgOption.hasValue()) {
-                    knownMultiArgs.get(cmdArgOption).add(null);
-                }
-            } else {
-                knownArgs.put(cmdArgOption, null);
-            }
-        }
-        
-        return _arg;
-
-    }
-    
-    private String handleShortOption(String _arg) {
-        if (_arg.length() > 1) {
-            String sb = null;
-            for (char c : _arg.toCharArray()) {
-                String key = c + "";
-                CmdArgOption<?> cmdArgOption = options.get(key);
-                if (cmdArgOption != null) {
-                    handleOption(key);
-                    if (sb == null && cmdArgOption.hasValue()) {
-                        sb = key;
-                    }
-                } 
-            }
-            return sb;
-        } else {
-            return handleOption(_arg);
-        }
-    }
-
     public Map<String, CmdArgOption<?>> getOptions() {
         return accessSync(t -> Collections.unmodifiableMap(t.options));
     }
@@ -587,7 +647,7 @@ public class CommandLine {
         return accessSync(t -> requireParsed(t).unknownTokens);
     }
 
-    public Map<String, String> getDupArgs() {
+    public Map<CmdArgOption<?>, String> getDupArgs() {
         return accessSync(t -> requireParsed(t).dupArgs);
     }
 

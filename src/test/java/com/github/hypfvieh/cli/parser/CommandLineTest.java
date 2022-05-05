@@ -111,10 +111,24 @@ class CommandLineTest extends AbstractBaseTest {
         assertTrue(cl.hasOption("optNoVal"));
 
         assertDoesNotThrow(() -> cl.parse(new String[] {"--optNoVal"}));
-        assertEquals("Parsing of command-line failed: argument '" + optNoVal.getName() + "' cannot have a value",
-                assertThrows(Exception.class, () -> cl.parse("--optNoVal doesHaveValue")).getMessage());
     }
 
+    @Test
+    public void getOptionNoValueWithValue() {
+        CmdArgOption<Void> optNoVal = CmdArgOption.builder()
+                .name("optNoVal")
+                .required()
+                .description("required no value option")
+                .build();
+
+        CommandLine cl = new CommandLine().addOption(optNoVal);
+        assertTrue(cl.hasOption(optNoVal));
+        assertTrue(cl.hasOption("optNoVal"));
+
+        assertEquals("Parsing of command-line failed: argument '--" + optNoVal.getName() + "' cannot have a value",
+                assertThrows(Exception.class, () -> cl.parse("--optNoVal doesHaveValue")).getMessage());
+    }
+    
     @Test
     public void parseEmpty() {
         CommandLine cl = new CommandLine();
@@ -136,14 +150,14 @@ class CommandLineTest extends AbstractBaseTest {
                 .build();
         CommandLine cl = new CommandLine()
                 .addOption(optInt)
-                .setFailOnUnknownToken(false)
+                .withFailOnUnknownToken(false)
                 .parse("-o 1 2 3");
         
         assertFalse(cl.isFailOnUnknownToken());
         assertCollection(cl.getUnknownTokens(), "2", "3");
 
         assertEquals("Parsing of command-line failed: unknown tokens: 2, 3",
-                assertThrows(Exception.class, () -> cl.setFailOnUnknownToken(true)
+                assertThrows(Exception.class, () -> cl.withFailOnUnknownToken(true)
                         .parse("-o 1 2 3")).getMessage());
     }
     
@@ -163,7 +177,7 @@ class CommandLineTest extends AbstractBaseTest {
         CommandLine cl = new CommandLine()
                 .addOption(optInt)
                 .addOption(optAll)
-                .setFailOnUnknownToken(false)
+                .withFailOnUnknownToken(false)
                 .parse("-ao 1 2 3");
         
         assertFalse(cl.isFailOnUnknownToken());
@@ -185,7 +199,7 @@ class CommandLineTest extends AbstractBaseTest {
         
         CommandLine cl = new CommandLine()
                 .addOption(optInt)
-                .setFailOnUnknownToken(false)
+                .withFailOnUnknownToken(false)
                 .parse("-o 1 -o 2 -o 3");
 
         assertTrue(cl.hasArg(optInt));
@@ -207,7 +221,7 @@ class CommandLineTest extends AbstractBaseTest {
         
         CommandLine cl = new CommandLine()
                 .addOption(optInt)
-                .setFailOnUnknownToken(false)
+                .withFailOnUnknownToken(false)
                 .parse("-ooo");
 
         assertTrue(cl.hasArg(optInt));
@@ -276,14 +290,15 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseUnknownArg() {
         CommandLine cl = new CommandLine()
-                .setFailOnUnknownArg(false)
+                .withFailOnUnknownArg(false)
                 .parse("--dunno this");
+        
         assertFalse(cl.isFailOnUnknownArg());
-        assertMap(cl.getUnknownArgs(), "dunno");
-        assertEquals("this", cl.getUnknownArgs().get("dunno"));
+        assertMap(cl.getUnknownArgs(), "--dunno");
+        assertEquals("this", cl.getUnknownArgs().get("--dunno"));
 
-        assertEquals("Parsing of command-line failed: unknown arguments: dunno=this",
-                assertThrows(Exception.class, () -> cl.setFailOnUnknownArg(true)
+        assertEquals("Parsing of command-line failed: unknown arguments: --dunno=this",
+                assertThrows(Exception.class, () -> cl.withFailOnUnknownArg(true)
                         .parse("--dunno this")).getMessage());
     }
 
@@ -296,13 +311,13 @@ class CommandLineTest extends AbstractBaseTest {
                 .build();
         CommandLine cl = new CommandLine()
                 .addOption(optInt)
-                .setFailOnUnknownToken(false)
+                .withFailOnUnknownToken(false)
                 .parse("--optInt 1 2 3");
         assertFalse(cl.isFailOnUnknownToken());
         assertCollection(cl.getUnknownTokens(), "2", "3");
 
         assertEquals("Parsing of command-line failed: unknown tokens: 2, 3",
-                assertThrows(Exception.class, () -> cl.setFailOnUnknownToken(true)
+                assertThrows(Exception.class, () -> cl.withFailOnUnknownToken(true)
                         .parse("--optInt 1 2 3")).getMessage());
     }
 
@@ -315,13 +330,15 @@ class CommandLineTest extends AbstractBaseTest {
                 .build();
         CommandLine cl = new CommandLine()
                 .addOption(optDup)
-                .setFailOnDupArg(false)
+                .withFailOnDupArg(false)
                 .parse("--optdup --optdup");
+        
         assertFalse(cl.isFailOnDupArg());
-        assertMap(cl.getDupArgs(), "optdup");
+        
+        assertTrue(cl.getDupArgs().containsKey(optDup));
 
-        assertEquals("Parsing of command-line failed: duplicate arguments: optdup",
-                assertThrows(Exception.class, () -> cl.setFailOnDupArg(true)
+        assertEquals("Parsing of command-line failed: duplicate arguments: --optdup",
+                assertThrows(Exception.class, () -> cl.withFailOnDupArg(true)
                         .parse("--optdup --optdup")).getMessage());
     }
 
@@ -366,7 +383,7 @@ class CommandLineTest extends AbstractBaseTest {
                 .required()
                 .build();
         CommandLine cl = new CommandLine().addOption(optDate);
-        assertEquals("Parsing of command-line failed: argument 'optDate' requires a value",
+        assertEquals("Parsing of command-line failed: argument '--optDate' requires a value",
                 assertThrows(CommandLineException.class, () -> cl.parse(new String[] {"--" + optDate.getName(), _dateArg}).getArg(optDate)).getMessage());
     }
 
@@ -380,7 +397,7 @@ class CommandLineTest extends AbstractBaseTest {
                 .build();
         CommandLine cl = new CommandLine().addOption(optDate);
         CommandLineException ex = assertThrows(CommandLineException.class, () -> cl.parse(new String[] {"--optDate", _dateArg}));
-        assertEquals("Parsing of command-line failed: argument 'optDate' has invalid value (" + _dateArg + ")", ex.getMessage());
+        assertEquals("Parsing of command-line failed: argument '--optDate' has invalid value (" + _dateArg + ")", ex.getMessage());
     }
 
     @Test
