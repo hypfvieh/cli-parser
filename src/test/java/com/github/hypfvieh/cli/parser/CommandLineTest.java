@@ -1,6 +1,7 @@
 package com.github.hypfvieh.cli.parser;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -56,7 +57,7 @@ class CommandLineTest extends AbstractBaseTest {
     }
 
     @Test
-    public void addSameOptionMoreThanOnceOk() {
+    public void addSameOptionMoreThanOnce() {
         String optName = "arg1";
         CommandLine cl = new CommandLine()
                 .addOption(CmdArgOption.builder(String.class)
@@ -67,14 +68,15 @@ class CommandLineTest extends AbstractBaseTest {
 
         assertFalse(cl.getOption(optName).isRequired());
 
-        cl.addOption(CmdArgOption.builder(String.class)
-                .name(optName)
-                .required()
-                .defaultValue("default2")
-                .build());
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            cl.addOption(CmdArgOption.builder(String.class)
+                    .name(optName)
+                    .required()
+                    .defaultValue("default2")
+                    .build());
+        });
 
-        assertTrue(cl.getOption(optName).isRequired());
-        assertEquals("default2", cl.getOption(optName).getDefaultValue());
+        assertEquals("Command-line option '--arg1' already defined", ex.getMessage());
     }
 
     @Test
@@ -280,7 +282,7 @@ class CommandLineTest extends AbstractBaseTest {
                , "--optString a_string"
                , "--optLocalDate 2025-04-07"));
 
-        cl.streamOptions(CmdArgOption::isRequired).map(cl::hasArg).forEach(CommandLineTest::assertTrue);
+        cl.getOptions().values().stream().filter(CmdArgOption::isRequired).map(cl::hasArg).forEach(CommandLineTest::assertTrue);
 
         assertEquals(LocalDate.of(2025, 4, 7), cl.getArg(optLocalDate));
         assertEquals(99, cl.getArg(optIntReq));
@@ -421,7 +423,7 @@ class CommandLineTest extends AbstractBaseTest {
 
     @Test
     public void getHelpNoArgs() {
-        assertPatternMatches(new CommandLine().getHelp(null), "^usage: [^ ]+\n");
+        assertPatternMatches(new CommandLine().getUsage(null), "^usage: [^ ]+\n");
     }
 
     @Test
@@ -436,18 +438,17 @@ class CommandLineTest extends AbstractBaseTest {
                         .name("opt1")
                         .optional()
                         .build());
-        assertEquals("usage: myApp --req1 <arg> [--opt1]" + System.lineSeparator(), cl.getHelp("myApp"));
+        assertEquals("usage: myApp --req1 <arg> [--opt1]" + System.lineSeparator(), cl.getUsage("myApp"));
     }
 
     @Test
-    public void printHelp() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream oldOut = System.out;
-        System.setOut(new PrintStream(baos));
-        new CommandLine().printHelp("myApp");
-        System.setOut(oldOut);
-
-        String help = baos.toString();
+    public void printHelp() throws IOException {
+        
+        String help;
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); var ps = new PrintStream(baos)) {
+            new CommandLine().printUsage("myApp", new PrintStream(baos));
+            help = baos.toString();
+        }
         assertTrue(help.startsWith("usage: myApp" + System.lineSeparator()));
     }
 

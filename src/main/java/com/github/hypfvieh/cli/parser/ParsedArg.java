@@ -3,7 +3,7 @@ package com.github.hypfvieh.cli.parser;
 /**
  * Class which represents a parsed command line argument.
  * 
- * @version 1.0.0 - 2022-05-05
+ * @since 1.0.0 - 2022-05-05
  */
 public class ParsedArg {
 
