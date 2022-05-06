@@ -36,7 +36,7 @@ class CommandLineTest extends AbstractBaseTest {
         assertEquals("Command-line not parsed",
                 assertThrows(Exception.class, cl::getKnownArgs).getMessage());
 
-        cl.setExceptionType(IllegalArgumentException.class);
+        cl.withExceptionType(IllegalArgumentException.class);
         assertEquals(IllegalArgumentException.class, cl.getExceptionType());
         assertEquals("Command-line not parsed",
                 assertThrows(IllegalArgumentException.class, cl::getKnownArgs).getMessage());
@@ -48,7 +48,7 @@ class CommandLineTest extends AbstractBaseTest {
 
         assertEquals(CommandLineException.class, cl.getExceptionType());
         assertEquals("Exception type requires a single-argument constructor of type String",
-                assertThrows(Exception.class, () -> cl.setExceptionType(NoArgException.class)).getMessage());
+                assertThrows(Exception.class, () -> cl.withExceptionType(NoArgException.class)).getMessage());
         assertEquals(CommandLineException.class, cl.getExceptionType());
     }
 
