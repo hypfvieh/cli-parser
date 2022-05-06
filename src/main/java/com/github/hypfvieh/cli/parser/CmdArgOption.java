@@ -12,28 +12,28 @@ import java.util.Optional;
 public final class CmdArgOption<T> {
 
     /** Name of the option. */
-    private final String   name;
-    
+    private final String    name;
+
     /** Short name of the option. */
-    private final String   shortName;
+    private final Character shortName;
 
     /** The data type of this option. */
-    private final Class<T> dataType;
+    private final Class<T>  dataType;
 
     /** Whether this option is required. */
-    private final boolean  required;
+    private final boolean   required;
 
     /** Whether this option's value is optional. */
-    private final boolean  hasValue;
+    private final boolean   hasValue;
 
     /** Whether this option can be repeated multiple times. */
-    private final boolean  repeatable;
+    private final boolean   repeatable;
 
     /** Default value. */
-    private final T        defaultValue;
+    private final T         defaultValue;
 
     /** Optional description of this option. */
-    private final String   description;
+    private final String    description;
 
     private CmdArgOption(CmdArgOption.Builder<T> _builder) {
         name = _builder.name;
@@ -51,7 +51,7 @@ public final class CmdArgOption<T> {
     }
 
     public String getShortName() {
-        return shortName;
+        return shortName == null ? null : String.valueOf(shortName);
     }
 
     public String getDescription() {
@@ -85,8 +85,9 @@ public final class CmdArgOption<T> {
     @Override
     public String toString() {
         return getClass().getSimpleName()
-                + String.format("[%s/%s, dataType=%s, required=%s, hasValue=%s, default=%s, descr=%s]",
-                        name, shortName, Optional.ofNullable(dataType).map(Class::getName).orElse(null), required, hasValue, defaultValue, description);
+                + String.format("[%s/%s, dataType=%s, required=%s, repeatable=%s, hasValue=%s, default=%s, descr=%s]",
+                        name, shortName, Optional.ofNullable(dataType).map(Class::getName).orElse(null), 
+                        required, repeatable, hasValue, defaultValue, description);
     }
 
     /**
@@ -124,7 +125,7 @@ public final class CmdArgOption<T> {
     public static final class Builder<T> {
 
         private String         name;
-        private String         shortName;
+        private Character      shortName;
         private final Class<T> dataType;
         private boolean        required;
         private final boolean  hasValue;
@@ -141,7 +142,7 @@ public final class CmdArgOption<T> {
             return apply(() -> name = _name);
         }
 
-        public CmdArgOption.Builder<T> shortName(String _name) {
+        public CmdArgOption.Builder<T> shortName(Character _name) {
             return apply(() -> shortName = _name);
         }
 
@@ -154,7 +155,7 @@ public final class CmdArgOption<T> {
         }
 
         public CmdArgOption.Builder<T> repeatable() {
-            return apply(() -> repeatable = true);
+            return repeatable(true);
         }
 
         public CmdArgOption.Builder<T> required() {
@@ -175,8 +176,11 @@ public final class CmdArgOption<T> {
         }
 
         public CmdArgOption<T> build() {
-            
-            throwIf((name == null || name.isBlank()) && (shortName == null || shortName.isBlank()), "Option requires a name or shortname");
+            throwIf((name == null || name.isBlank()) && (shortName == null || shortName == ' '), "Option requires a name or shortname");
+            return new CmdArgOption<>(this);
+        }
+
+        CmdArgOption<T> buildInvalid() {
             return new CmdArgOption<>(this);
         }
 

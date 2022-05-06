@@ -22,11 +22,13 @@ public interface IUsageFormatter {
      * </p>
      * 
      * @param _options registered options, maybe empty - never null
+     * @param _longOptPrefix prefix for long options
+     * @param _longOptPrefix prefix for short options
      * @param _mainClassName main class name, maybe null
      * 
      * @return formatted String
      */
-    public String format(List<CmdArgOption<?>> _options, String _mainClassName);
+    public String format(List<CmdArgOption<?>> _options, String _longOptPrefix, String _shortOptPrefix, String _mainClassName);
     
     /**
      * Returns the simple class name of the topmost stack element which is not in our own package.
@@ -38,7 +40,7 @@ public interface IUsageFormatter {
 
         String mainClassName = Arrays.stream(stackTrace)
             .map(st -> st.getClassName())
-            .filter(st -> st.startsWith(AbstractBaseCommandLine.class.getPackageName()))
+            .filter(st -> !st.startsWith("java.") && !st.startsWith("javax.") && !st.startsWith(AbstractBaseCommandLine.class.getPackageName()))
             .findFirst()
             .orElse("Unknown");
         
