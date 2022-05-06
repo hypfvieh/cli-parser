@@ -9,9 +9,7 @@ import static com.github.hypfvieh.cli.parser.StaticUtils.trimToNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,14 +41,31 @@ import java.util.stream.Collectors;
  */
 public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     
+    /**
+     * Reference to ourselves for chaining.
+     */
     protected CommandLine self() {
         return this;
     }
     
+    /**
+     * Parses a String as commandline by splitting it using space as delimiter.
+     * Only intended to be used for testing.
+     * 
+     * @param _args String
+     * @return this
+     */
     CommandLine parse(String _args) {
         return parse(_args == null ? null : _args.split(" "));
     }
 
+    /**
+     * Parses the given arguments.
+     * 
+     * @param _args arguments to read
+     * 
+     * @return this
+     */
     public synchronized CommandLine parse(String[] _args) {
         getLogger().debug("Parsing command-line: {}", Arrays.toString(_args));
 
@@ -115,11 +130,17 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         logResults();
         validate();
 
-        return this;
+        return self();
     }
 
-
+    /**
+     * Adds the given command option to the appropriate internal map or list.
+     * 
+     * @param _cmdOpt option
+     * @param _val value
+     */
     private void handleCmdOption(CmdArgOption<?> _cmdOpt, String _val) {
+        Objects.requireNonNull(_cmdOpt, "Option required");
         if (_cmdOpt.isRepeatable()) {
             getArgBundle().knownMultiArgs().computeIfAbsent(_cmdOpt, x -> new ArrayList<>()).add(trimToNull(_val));
         } else if (!_cmdOpt.isRepeatable() && !getArgBundle().knownArgs().containsKey(_cmdOpt)) {
@@ -142,16 +163,34 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * 
      * @return value, maybe <code>null</code>
      */
-    @SuppressWarnings("unchecked")
     public <T> T getArg(CmdArgOption<T> _option) {
-        List<T> args = getArgs(_option);
+        return getArg(_option, null);
+    }
+
+    /**
+     * Returns the value associated with argument option.
+     * <p>
+     * If no value is present, the given default value is used.<br>
+     * If the given default is also <code>null</code>, the default of that option is returned (and might by <code>null</code>). 
+     * If the option does not support values or if the option was not set, <code>null</code> is returned.<br>
+     * </p>
+     * 
+     * @param <T> type of option value
+     * @param _option option
+     * @param _default default to use when no value present (overrides default specified in option) 
+     * 
+     * @return value, maybe <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getArg(CmdArgOption<T> _option, T _default) {
+        List<T> args = getArgs(_option, _default);
         if (args == null || args.isEmpty()) {
             return null;
         }
         T convertedVal = args.get(0);
         return _option.getDataType().isPrimitive() ? convertedVal : (T) _option.getDataType().cast(convertedVal);
     }
-
+    
     /**
      * Returns the value associated with argument option.
      * <p>
@@ -164,8 +203,26 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * 
      * @return List, maybe empty or <code>null</code>
      */
-    @SuppressWarnings("unchecked")
     public <T> List<T> getArgs(CmdArgOption<T> _option) {
+        return getArgs(_option, null);
+    }
+    
+    /**
+     * Returns the value associated with argument option.
+     * <p>
+     * If no value is present, the given default value is used.<br>
+     * If the given default is also <code>null</code>, the default of that option is returned (and might by <code>null</code>). 
+     * If the option does not support values or if the option was not set, <code>null</code> is returned.<br>
+     * </p>
+     * 
+     * @param <T> type of option value
+     * @param _option option
+     * @param _default default to use when no value present (overrides default specified in option)
+     * 
+     * @return List, maybe empty or <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getArgs(CmdArgOption<T> _option, T _default) {
         Objects.requireNonNull(_option, "Option required");
         List<String> strVals = new ArrayList<>();
         
@@ -184,9 +241,13 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         if (_option.hasValue()) {
             List<T> resultList = new ArrayList<>();
             if (strVals.isEmpty()) {
-                var x = (T) _option.getDefaultValue();
-                if (x != null) {
-                    resultList.add(x);
+                if (_default != null) {
+                    var x = (T) _option.getDefaultValue();
+                    if (x != null) {
+                        resultList.add(x);
+                    }
+                } else {
+                    resultList.add(_default);
                 }
                 return resultList;
             }
@@ -201,6 +262,14 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         return null;
     }
     
+    /**
+     * Returns an option value using the options name.
+     * 
+     * @param _optionName option name
+     * @return value or null if option has no value
+     * 
+     * @throws RuntimeException when option is unknown or command line was not parsed before
+     */
     public Object getArgByName(CharSequence _optionName) {
         return Optional.ofNullable(requireParsed(this).getOption(_optionName))
                 .map(this::getArg)
@@ -252,6 +321,14 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     }
 
 
+    /**
+     * Reads a token using the long/short name regular expressions.
+     * 
+     * @param _token token to read
+     * @param _handle true to put detected arguments to internal map, false to do nothing
+     * 
+     * @return ParsedArg - never null
+     */
     private ParsedArg parseArg(String _token, boolean _handle) {
         if (_token == null) {
             return new ParsedArg(false, false, null);
@@ -301,28 +378,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         return new ParsedArg(false, false, null);
     }
    
-    private CommandLine logResults() {
-        if (getLogger().isDebugEnabled()) {
-            Map<String, String> kargs = new LinkedHashMap<>();
-            Map<String, String> margs = new LinkedHashMap<>();
-            
-            for (Entry<CmdArgOption<?>, String> e : getArgBundle().knownArgs().entrySet()) {
-                kargs.put(formatOption(e.getKey(), getLongOptPrefix(), getShortOptPrefix()), e.getValue());
-            }
-
-            for (Entry<CmdArgOption<?>, List<String>> e : getArgBundle().knownMultiArgs().entrySet()) {
-                margs.put(formatOption(e.getKey(), getLongOptPrefix(), getShortOptPrefix()), String.join(", ", e.getValue()));
-            }
-
-            getLogger().debug("knownArgs:      {}", kargs);
-            getLogger().debug("knownMultiArgs: {}", margs);
-
-            getLogger().debug("unknownArgs:    {}", getArgBundle().unknownArgs());
-            getLogger().debug("unknownTokens:  {}", getArgBundle().unknownTokens());
-            getLogger().debug("dupArgs:        {}", getArgBundle().dupArgs());
-        }
-        return this;
-    }
+    
 
     /**
      * Validates the parsed command line.

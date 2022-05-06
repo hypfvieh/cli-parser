@@ -46,38 +46,74 @@ public final class CmdArgOption<T> {
         repeatable = _builder.repeatable;
     }
 
+    /**
+     * Returns the long name of this option
+     * @return String, maybe null or empty
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the short name of this option.
+     * @return String, maybe empty or null
+     */
     public String getShortName() {
         return shortName == null ? null : String.valueOf(shortName);
     }
 
+    /**
+     * Returns the description text for this option.
+     * @return String, maybe empty or null
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Flag to signal if this option is required.
+     * @return true if required
+     */
     public boolean isRequired() {
         return required;
     }
 
+    /**
+     * Flag to allow the option to be repeated multiple times.
+     * @return true if repeatable
+     */
     public boolean isRepeatable() {
         return repeatable;
     }
 
+    /**
+     * Flag to signal that this option is optional.
+     * @return true if optional
+     */
     public boolean isOptional() {
         return !required;
     }
 
+    /**
+     * Flag to signal if the option requires a value.
+     * @return true if value required
+     */
     public boolean hasValue() {
         return hasValue;
     }
 
+    /**
+     * Returns the default value for this option (when option was not set).
+     * @return default value, maybe null
+     */
     public Object getDefaultValue() {
         return defaultValue;
     }
 
+    /**
+     * Returns the type of data to create from argument.
+     * @return class, maybe null
+     */
     public Class<?> getDataType() {
         return dataType;
     }
@@ -111,6 +147,14 @@ public final class CmdArgOption<T> {
         return new CmdArgOption.Builder<>(null);
     }
 
+    /**
+     * Throws a {@link CommandLineException} if condition validates to true.
+     * 
+     * @param _condition condition
+     * @param _error error message text
+     * 
+     * @throws CommandLineException when condition is true
+     */
     static void throwIf(boolean _condition, String _error) {
         if (_condition) {
             throw new CommandLineException(_error);
@@ -138,52 +182,120 @@ public final class CmdArgOption<T> {
             hasValue = _dataType != null;
         }
 
+        /**
+         * Set option long name.
+         * @param _name name
+         * 
+         * @return this
+         */
         public CmdArgOption.Builder<T> name(String _name) {
             return apply(() -> name = _name);
         }
 
+        /**
+         * Set option short name.
+         * @param _name name
+         * 
+         * @return this
+         */
         public CmdArgOption.Builder<T> shortName(Character _name) {
             return apply(() -> shortName = _name);
         }
 
+        /**
+         * Set option to be required.
+         * @param _required true to be required
+         * 
+         * @return this
+         */
         public CmdArgOption.Builder<T> required(boolean _required) {
             return apply(() -> required = _required);
         }
-        
+
+        /**
+         * Set option to be repeatable.
+         * @param _required true to be repeatable
+         * 
+         * @return this
+         */
         public CmdArgOption.Builder<T> repeatable(boolean _repeat) {
             return apply(() -> repeatable = _repeat);
         }
 
+        /**
+         * Set option to be repeatable.
+         * 
+         * @return this
+         */
         public CmdArgOption.Builder<T> repeatable() {
             return repeatable(true);
         }
 
+        /**
+         * Set option to be required.
+         * 
+         * @return this
+         */
         public CmdArgOption.Builder<T> required() {
             return required(true);
         }
 
+        /**
+         * Set option to be optional.
+         * 
+         * @return this
+         */
         public CmdArgOption.Builder<T> optional() {
             return required(false);
         }
 
+        /**
+         * Set options default value.
+         * @param _defaultValue value to use, never null
+         * 
+         * @return this
+         */
         public CmdArgOption.Builder<T> defaultValue(T _defaultValue) {
             throwIf(!hasValue && _defaultValue != null, "Option cannot have a default value");
             return apply(() -> defaultValue = _defaultValue);
         }
 
+        /**
+         * Set options description text.
+         * @param _description text to use
+         * 
+         * @return this
+         */
         public CmdArgOption.Builder<T> description(String _description) {
             return apply(() -> description = _description);
         }
 
+        /**
+         * Create the option object based on configuration.
+         * @return CmdArgOption
+         */
         public CmdArgOption<T> build() {
             throwIf((name == null || name.isBlank()) && (shortName == null || shortName == ' '), "Option requires a name or shortname");
             return new CmdArgOption<>(this);
         }
 
+        /**
+         * Allows creating invalid options.
+         * Intended to be used for testing only.
+         * 
+         * @return CmdArgOption
+         */
         CmdArgOption<T> buildInvalid() {
             return new CmdArgOption<>(this);
         }
 
+        /**
+         * Execute action on this builder.
+         * 
+         * @param _r action to perform
+         * 
+         * @return this
+         */
         private CmdArgOption.Builder<T> apply(Runnable _r) {
             _r.run();
             return this;
