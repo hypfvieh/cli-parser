@@ -107,8 +107,8 @@ public final class StaticUtils {
      * @param _option option which was not defined
      * @return CommandLineException 
      */
-    static CommandLineException optionNotDefined(Object _option) {
-        return new CommandLineException("Option not defined: " + _option);
+    static <T extends RuntimeException> RuntimeException optionNotDefined(Object _option, Class<T> _targetClass) {
+        return createException("Option not defined: " + _option, _targetClass);
     }
     
     /**
