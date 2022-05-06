@@ -139,8 +139,9 @@ class StaticUtilsTest extends AbstractBaseTest {
                 .defaultValue("def")
                 .description("descr")
                 .build();
-       assertEquals("Option not defined: null", StaticUtils.optionNotDefined(null).getMessage());
-       assertEquals("Option not defined: CmdArgOption[optionWithValue/null, dataType=java.lang.String, required=true, repeatable=true, hasValue=true, default=def, descr=descr]", StaticUtils.optionNotDefined(opt2).getMessage());
+       assertEquals("Option not defined: null", StaticUtils.optionNotDefined(null, RuntimeException.class).getMessage());
+       assertEquals("Option not defined: CmdArgOption[optionWithValue/null, dataType=java.lang.String, "
+               + "required=true, repeatable=true, hasValue=true, default=def, descr=descr]", StaticUtils.optionNotDefined(opt2, RuntimeException.class).getMessage());
     }
     
     @Test

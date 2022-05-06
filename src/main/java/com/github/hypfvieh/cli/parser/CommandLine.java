@@ -241,7 +241,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         if (_option.hasValue()) {
             List<T> resultList = new ArrayList<>();
             if (strVals.isEmpty()) {
-                if (_default != null) {
+                if (_default == null) {
                     var x = (T) _option.getDefaultValue();
                     if (x != null) {
                         resultList.add(x);
@@ -273,7 +273,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     public Object getArgByName(CharSequence _optionName) {
         return Optional.ofNullable(requireParsed(this).getOption(_optionName))
                 .map(this::getArg)
-                .orElseThrow(() -> optionNotDefined(_optionName));
+                .orElseThrow(() -> optionNotDefined(_optionName, getExceptionType()));
     }
 
     /**
@@ -293,7 +293,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         
         return Optional.ofNullable(requireParsed.getArgBundle().options().get(requireOption(_option).getShortName()))
                 .map(k -> getArgBundle().knownArgs().containsKey(k) || getArgBundle().knownMultiArgs().containsKey(k))
-                .orElseThrow(() -> optionNotDefined(_option));
+                .orElseThrow(() -> optionNotDefined(_option, getExceptionType()));
     }
 
     /**
