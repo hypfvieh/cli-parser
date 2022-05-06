@@ -5,7 +5,7 @@ package com.github.hypfvieh.cli.parser;
  * 
  * @since 1.0.0 - 2022-05-05
  */
-public class ParsedArg {
+class ParsedArg {
 
     /** True if argument looks like a short or long option. */ 
     private final boolean lookingLikeOption;
@@ -20,14 +20,26 @@ public class ParsedArg {
         cmdArgOpt = _cmdArg;
     }
 
+    /**
+     * Indicates that the parsed token looks like a long or short option.
+     * @return true if option like
+     */
     public boolean isLookingLikeOption() {
         return lookingLikeOption;
     }
 
+    /**
+     * True if the parsed token looks like a repeated argument.
+     * @return true if repeated
+     */
     public boolean isMultiArg() {
         return multiArg;
     }
 
+    /**
+     * Option used in combination with the parsed token.
+     * @return option, maybe null
+     */
     public CmdArgOption<?> getCmdArgOpt() {
         return cmdArgOpt;
     }
