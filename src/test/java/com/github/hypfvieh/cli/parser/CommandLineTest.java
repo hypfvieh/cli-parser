@@ -430,6 +430,27 @@ class CommandLineTest extends AbstractBaseTest {
     }
     
     @Test
+    public void parseUnknownShortOpt() {
+        CommandLine cl = new CommandLine()
+                .withFailOnUnknownArg(false)
+                .withFailOnUnknownToken(false)
+                .parse("-a");
+        
+        assertEquals("-a", cl.getArgBundle().unknownArgs().keySet().iterator().next());
+        
+    }
+    
+    @Test
+    public void parseUnknownToken2() {
+        CommandLine cl = new CommandLine()
+                .withFailOnUnknownArg(false)
+                .withFailOnUnknownToken(false)
+                .parse("a");
+        
+        assertEquals("a", cl.getArgBundle().unknownTokens().get(0));
+    }
+    
+    @Test
     public void parseUnknownArgDelim() {
         CmdArgOption<?> optAll = CmdArgOption.builder()
                 .shortName('f')

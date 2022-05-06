@@ -367,8 +367,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                 } else {
                     CmdArgOption<?> cmdArgOption = getArgBundle().options().get(matcher.group(1));
                     if (cmdArgOption == null) { // unknown argument used
-                        getArgBundle().unknownArgs().put(_token, null);
-                        return new ParsedArg(false, false, null);
+                        return new ParsedArg(true, false, null);
                     }
 
                     return new ParsedArg(true, false, cmdArgOption);
