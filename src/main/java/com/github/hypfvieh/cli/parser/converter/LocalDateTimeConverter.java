@@ -5,8 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 
-import org.slf4j.LoggerFactory;
-
 import com.github.hypfvieh.cli.parser.CommandLineException;
 
 /**
@@ -35,7 +33,7 @@ public class LocalDateTimeConverter extends AbstractPatternBasedConverter<LocalD
             try {
                 return LocalDateTime.parse(_string, dtf);
             } catch (DateTimeParseException _ex) {
-                LoggerFactory.getLogger(getClass()).trace("Unable to parse datetime input '{}' with parser '{}'", _string, dtf);
+                getLogger().trace("Unable to parse datetime input '{}' with parser '{}'", _string, dtf);
             }
         } 
         

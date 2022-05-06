@@ -1,7 +1,5 @@
 package com.github.hypfvieh.cli.parser;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -12,20 +10,20 @@ import java.util.Objects;
  */
 public final class StaticUtils {
 
-    static <T> T requireOption(T _option) {
-        T o = Objects.requireNonNull(_option, "Option required");
-        if (o instanceof CmdArgOption<?> opt) {
-            if ((opt.getName() == null || opt.getName().isBlank()) && (opt.getShortName() == null || opt.getShortName().isBlank())) {
-                throw new IllegalArgumentException("Command-line option requires a name or shortname: " + _option);
-            }
+    private StaticUtils() {}
+    
+    static CmdArgOption<?> requireOption(CmdArgOption<?> _option) {
+        CmdArgOption<?> o = Objects.requireNonNull(_option, "Option required");
+        if ((o.getName() == null || o.getName().isBlank()) && (o.getShortName() == null || o.getShortName().isBlank())) {
+            throw new IllegalArgumentException("Command-line option requires a name or shortname: " + _option);
         }
         return o;
     }
 
     static <B extends AbstractBaseCommandLine<?>> void requireUniqueOption(CmdArgOption<?> _option, B _c) {
-        if (_c == null) {
-            return;
-        }
+        Objects.requireNonNull(_option, "Option required");
+        Objects.requireNonNull(_c, "Commandline required");
+        
         if (_option.getName() != null && _c.getOptions().containsKey(_option.getName())) {
             throw new IllegalArgumentException("Command-line option '" + _c.getLongOptPrefix() + _option.getName() + "' already defined");
         }
@@ -36,7 +34,10 @@ public final class StaticUtils {
     }
 
     static RuntimeException createException(String _message, Class<? extends RuntimeException> _exceptionType) {
-        if (CommandLineException.class.isInstance(_exceptionType)) {
+        if (_exceptionType == null) {
+            return new RuntimeException(_message);
+        } 
+        if (CommandLineException.class == _exceptionType) {
             return new CommandLineException(_message);
         }
         try {
@@ -47,6 +48,7 @@ public final class StaticUtils {
     }
     
     static <B extends AbstractBaseCommandLine<?>> B requireParsed(B _c) {
+        Objects.requireNonNull(_c, "CommandLine required");
         if (!_c.isParsed()) {
             throw createException("Command-line not parsed", _c.getExceptionType());
         }
@@ -56,18 +58,6 @@ public final class StaticUtils {
     @SuppressWarnings("unchecked")
     static <T> Class<T> uncheckedCast(Class<?> _type) {
         return (Class<T>) _type;
-    }
-    
-    static String printableArgName(CmdArgOption<?> _opt) {
-        List<String> k = new ArrayList<>();
-        if (_opt.getName() != null) {
-            k.add("--" + _opt.getName());
-        } 
-        if (_opt.getShortName() != null) {
-            k.add("-" + _opt.getShortName());
-        }
-        
-        return String.join("/", k);
     }
     
     static CommandLineException optionNotDefined(Object _option) {
@@ -81,15 +71,15 @@ public final class StaticUtils {
         return _val;
     }
 
-    static <B extends AbstractBaseCommandLine<?>> String formatOption(CmdArgOption<?> _arg, B _c) {
+    public static String formatOption(CmdArgOption<?> _arg, String _longOptPrefix, String _shortOptPrefix) {
         if (_arg == null) {
             return null;
         } else if (_arg.getName() != null && !_arg.getName().isBlank() && _arg.getShortName() != null && !_arg.getShortName().isBlank()) {
-            return _c.getLongOptPrefix() + _arg.getName() + "/" + _c.getShortOptPrefix() + _arg.getShortName();
+            return _longOptPrefix + _arg.getName() + "/" + _shortOptPrefix + _arg.getShortName();
         } else if (_arg.getName() != null && !_arg.getName().isBlank()) {
-            return _c.getLongOptPrefix() + _arg.getName();
+            return _longOptPrefix + _arg.getName();
         } else if (_arg.getShortName() != null && !_arg.getShortName().isBlank()) {
-            return _c.getShortOptPrefix() + _arg.getShortName();   
+            return _shortOptPrefix + _arg.getShortName();   
         } else {
             return "?";
         }

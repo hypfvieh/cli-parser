@@ -27,11 +27,17 @@ public class DoubleConverter extends AbstractPatternBasedConverter<Double, Numbe
     
     @Override
     public Double convert(String _string) {
+        try {
+            return Double.parseDouble(_string);
+        } catch (NumberFormatException _ex) {
+            LoggerFactory.getLogger(getClass()).trace("Unable to parse number input '{}' with parseDouble function", _string);
+        }
+        
         for (NumberFormat nf : getPatterns()) {
             try {
                 return nf.parse(_string).doubleValue();
             } catch (ParseException _ex) {
-                LoggerFactory.getLogger(getClass()).trace("Unable to parse number input '{}' with parser '{}'", _string, nf);
+                getLogger().trace("Unable to parse number input '{}' with parser '{}'", _string, nf);
             }
         }
     

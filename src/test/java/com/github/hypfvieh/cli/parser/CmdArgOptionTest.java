@@ -8,11 +8,30 @@ import org.junit.jupiter.params.provider.ValueSource;
 class CmdArgOptionTest extends AbstractBaseTest {
 
     @Test
+    void buildInvalid() {
+        // default value but no return type
+        assertThrows(CommandLineException.class, () -> CmdArgOption.builder(null)
+                .name("optionWithoutValue")
+                .shortName('f')
+                .required()
+                .defaultValue("def")
+                );
+
+        // no name/shortname
+        assertThrows(CommandLineException.class, () -> CmdArgOption.builder(String.class).build());
+        // empty name
+        assertThrows(CommandLineException.class, () -> CmdArgOption.builder(String.class).name("").build());
+        // empty shortname
+        assertThrows(CommandLineException.class, () -> CmdArgOption.builder(String.class).shortName(' ').build());
+    }
+    
+    @Test
     void buildOptionWithValue() {
         CmdArgOption<?> opt = CmdArgOption.builder(String.class)
                 .name("optionWithValue")
-                .shortName("f")
+                .shortName('f')
                 .required(true)
+                .repeatable()
                 .defaultValue("def")
                 .description("descr")
                 .build();
@@ -22,16 +41,18 @@ class CmdArgOptionTest extends AbstractBaseTest {
         assertTrue(opt.isRequired());
         assertFalse(opt.isOptional());
         assertTrue(opt.hasValue());
+        assertTrue(opt.isRepeatable());
+        assertEquals("f", opt.getShortName());
         assertEquals("def", opt.getDefaultValue());
         assertEquals("descr", opt.getDescription());
-        assertEquals("CmdArgOption[optionWithValue/f, dataType=java.lang.String, required=true, hasValue=true, default=def, descr=descr]", opt.toString());
+        assertEquals("CmdArgOption[optionWithValue/f, dataType=java.lang.String, required=true, repeatable=true, hasValue=true, default=def, descr=descr]", opt.toString());
     }
 
     @Test
     void buildOptionWithoutValue() {
         CmdArgOption<?> opt = CmdArgOption.builder()
                 .name("optionWithoutValue")
-                .required(false)
+                .optional()
                 .build();
 
         assertEquals("optionWithoutValue", opt.getName());
@@ -41,7 +62,7 @@ class CmdArgOptionTest extends AbstractBaseTest {
         assertFalse(opt.hasValue());
         assertNull(opt.getDefaultValue());
         assertNull(opt.getDescription());
-        assertEquals("CmdArgOption[optionWithoutValue/null, dataType=null, required=false, hasValue=false, default=null, descr=null]", opt.toString());
+        assertEquals("CmdArgOption[optionWithoutValue/null, dataType=null, required=false, repeatable=false, hasValue=false, default=null, descr=null]", opt.toString());
     }
 
     @ParameterizedTest(name = "[{index}] \"{0}\"")

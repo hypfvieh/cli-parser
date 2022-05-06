@@ -85,7 +85,11 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     B reset() {
         return accessSync(t -> {
             getArgBundle().unknownTokens().clear();
-            Stream.of(getArgBundle().knownArgs(), getArgBundle().unknownArgs(), getArgBundle().dupArgs()).forEach(Map::clear);
+            Stream.of(getArgBundle().knownArgs(), 
+                    getArgBundle().unknownArgs(), 
+                    getArgBundle().dupArgs(),
+                    getArgBundle().knownMultiArgs()
+                    ).forEach(Map::clear);
             return t;
         });
     }
@@ -130,7 +134,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         return self();
     }
     
-    boolean hasOption(CharSequence _optionName) {
+    public boolean hasOption(CharSequence _optionName) {
         return getOption(_optionName) != null;
     }
 
@@ -174,7 +178,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     }
 
     public String getUsage(String _mainClassName) {
-        return usageFormatter.format(new ArrayList<>(getOptions().values()), _mainClassName);
+        return usageFormatter.format(new ArrayList<>(getOptions().values()), getLongOptPrefix(), getShortOptPrefix(), _mainClassName);
     }
     
     public B withUsageFormatter(IUsageFormatter _formatter) {
@@ -198,14 +202,22 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     }
 
     public B withShortOptPrefix(String _prefix) {
+        if (_prefix == null || _prefix.isBlank()) {
+            return self();
+        }
         shortOptPrefix = _prefix;
-        shortOptPattern = Pattern.compile("^(?:" + Pattern.quote(_prefix) + "(.+))");
+        String qPrx = Pattern.quote(_prefix);
+        shortOptPattern = Pattern.compile("^" + qPrx + "(?:(?!" + qPrx + "))(.+)");
         return self();
     }
 
     public B withLongOptPrefix(String _prefix) {
+        if (_prefix == null || _prefix.isBlank()) {
+            return self();
+        }
         longOptPrefix = _prefix;
-        longOptPattern = Pattern.compile("^(?:" + Pattern.quote(_prefix) + "(.+))");
+        String qPrx = Pattern.quote(_prefix);
+        longOptPattern = Pattern.compile("^" + qPrx + "(?:(?!" + Pattern.quote(_prefix.charAt(0) + "") + "))(.+)");
         return self();
     }
 

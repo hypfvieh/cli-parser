@@ -5,8 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 
-import org.slf4j.LoggerFactory;
-
 import com.github.hypfvieh.cli.parser.CommandLineException;
 
 /**
@@ -24,6 +22,7 @@ public class LocalTimeConverter extends AbstractPatternBasedConverter<LocalTime,
         addPattern(DateTimeFormatter.ISO_LOCAL_TIME);
         addPattern(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT));
         addPattern(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        addPattern(DateTimeFormatter.ofPattern("HH:mm:ss.SSS"));
         addPattern(DateTimeFormatter.ofPattern("HHmmss"));
         addPattern(DateTimeFormatter.ofPattern("HHmm"));
     }
@@ -34,7 +33,7 @@ public class LocalTimeConverter extends AbstractPatternBasedConverter<LocalTime,
             try {
                 return LocalTime.parse(_string, dtf);
             } catch (DateTimeParseException _ex) {
-                LoggerFactory.getLogger(getClass()).trace("Unable to parse time input '{}' with parser '{}'", _string, dtf);
+                getLogger().trace("Unable to parse time input '{}' with parser '{}'", _string, dtf);
             }
         } 
         
