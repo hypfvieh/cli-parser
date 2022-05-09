@@ -122,7 +122,7 @@ public final class CmdArgOption<T> {
     public String toString() {
         return getClass().getSimpleName()
                 + String.format("[%s/%s, dataType=%s, required=%s, repeatable=%s, hasValue=%s, default=%s, descr=%s]",
-                        name, shortName, Optional.ofNullable(dataType).map(Class::getName).orElse(null), 
+                        name, shortName, Optional.ofNullable(dataType).map(Class::getName).orElse(null),
                         required, repeatable, hasValue, defaultValue, description);
     }
 
@@ -149,10 +149,10 @@ public final class CmdArgOption<T> {
 
     /**
      * Throws a {@link CommandLineException} if condition validates to true.
-     * 
+     *
      * @param _condition condition
      * @param _error error message text
-     * 
+     *
      * @throws CommandLineException when condition is true
      */
     static void throwIf(boolean _condition, String _error) {
@@ -183,9 +183,9 @@ public final class CmdArgOption<T> {
         }
 
         /**
-         * Set option long name.
+         * Sets option long name.
          * @param _name name
-         * 
+         *
          * @return this
          */
         public CmdArgOption.Builder<T> name(String _name) {
@@ -193,9 +193,9 @@ public final class CmdArgOption<T> {
         }
 
         /**
-         * Set option short name.
+         * Sets option short name.
          * @param _name name
-         * 
+         *
          * @return this
          */
         public CmdArgOption.Builder<T> shortName(Character _name) {
@@ -203,9 +203,9 @@ public final class CmdArgOption<T> {
         }
 
         /**
-         * Set option to be required.
+         * Sets option to be required or optional.
          * @param _required true to be required
-         * 
+         *
          * @return this
          */
         public CmdArgOption.Builder<T> required(boolean _required) {
@@ -213,27 +213,8 @@ public final class CmdArgOption<T> {
         }
 
         /**
-         * Set option to be repeatable.
-         * @param _required true to be repeatable
-         * 
-         * @return this
-         */
-        public CmdArgOption.Builder<T> repeatable(boolean _repeat) {
-            return apply(() -> repeatable = _repeat);
-        }
-
-        /**
-         * Set option to be repeatable.
-         * 
-         * @return this
-         */
-        public CmdArgOption.Builder<T> repeatable() {
-            return repeatable(true);
-        }
-
-        /**
-         * Set option to be required.
-         * 
+         * Sets option to be required.
+         *
          * @return this
          */
         public CmdArgOption.Builder<T> required() {
@@ -241,8 +222,8 @@ public final class CmdArgOption<T> {
         }
 
         /**
-         * Set option to be optional.
-         * 
+         * Sets option to be optional.
+         *
          * @return this
          */
         public CmdArgOption.Builder<T> optional() {
@@ -250,9 +231,28 @@ public final class CmdArgOption<T> {
         }
 
         /**
-         * Set options default value.
+         * Sets option to be repeatable ({@code true}) or not ({@code false}).
+         * @param _repeatable true to be repeatable
+         *
+         * @return this
+         */
+        public CmdArgOption.Builder<T> repeatable(boolean _repeatable) {
+            return apply(() -> repeatable = _repeatable);
+        }
+
+        /**
+         * Sets option to be repeatable.
+         *
+         * @return this
+         */
+        public CmdArgOption.Builder<T> repeatable() {
+            return repeatable(true);
+        }
+
+        /**
+         * Sets the option's default value.
          * @param _defaultValue value to use, never null
-         * 
+         *
          * @return this
          */
         public CmdArgOption.Builder<T> defaultValue(T _defaultValue) {
@@ -261,9 +261,9 @@ public final class CmdArgOption<T> {
         }
 
         /**
-         * Set options description text.
+         * Sets the option's description text.
          * @param _description text to use
-         * 
+         *
          * @return this
          */
         public CmdArgOption.Builder<T> description(String _description) {
@@ -282,7 +282,7 @@ public final class CmdArgOption<T> {
         /**
          * Allows creating invalid options.
          * Intended to be used for testing only.
-         * 
+         *
          * @return CmdArgOption
          */
         CmdArgOption<T> buildInvalid() {
@@ -291,9 +291,9 @@ public final class CmdArgOption<T> {
 
         /**
          * Execute action on this builder.
-         * 
+         *
          * @param _r action to perform
-         * 
+         *
          * @return this
          */
         private CmdArgOption.Builder<T> apply(Runnable _r) {

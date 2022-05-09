@@ -11,10 +11,7 @@ import com.github.hypfvieh.cli.parser.CommandLineException;
 
 /**
  * Converts a string to a {@link Double} object.
- * <p>
- * Allows adding additional number patterns by using {@link #addPattern(NumberFormat)}.<br>
- * </p>
- *  
+ *
  * @author hypfvieh
  * @since 1.0.0 - 2022-05-05
  */
@@ -24,7 +21,7 @@ public class DoubleConverter extends AbstractPatternBasedConverter<Double, Numbe
         addPattern(DecimalFormat.getInstance());
         addPattern(DecimalFormat.getInstance(Locale.US));
     }
-    
+
     @Override
     public Double convert(String _string) {
         try {
@@ -32,7 +29,7 @@ public class DoubleConverter extends AbstractPatternBasedConverter<Double, Numbe
         } catch (NumberFormatException _ex) {
             LoggerFactory.getLogger(getClass()).trace("Unable to parse number input '{}' with parseDouble function", _string);
         }
-        
+
         for (NumberFormat nf : getPatterns()) {
             try {
                 return nf.parse(_string).doubleValue();
@@ -40,7 +37,7 @@ public class DoubleConverter extends AbstractPatternBasedConverter<Double, Numbe
                 getLogger().trace("Unable to parse number input '{}' with parser '{}'", _string, nf);
             }
         }
-    
+
         throw new CommandLineException("Unable to parse input '" + _string + "' as double");
     }
 
