@@ -100,11 +100,11 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      */
     B reset() {
         return accessSync(t -> {
-            getArgBundle().unknownTokens().clear();
-            Stream.of(getArgBundle().knownArgs(), 
-                    getArgBundle().unknownArgs(), 
-                    getArgBundle().dupArgs(),
-                    getArgBundle().knownMultiArgs()
+            getArgBundle().getUnknownTokens().clear();
+            Stream.of(getArgBundle().getKnownArgs(), 
+                    getArgBundle().getUnknownArgs(), 
+                    getArgBundle().getDupArgs(),
+                    getArgBundle().getKnownMultiArgs()
                     ).forEach(Map::clear);
             return t;
         });
@@ -122,7 +122,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     public <T> B registerConverter(Class<T> _type, IValueConverter<T> _converter) {
         Objects.requireNonNull(_type, "Type required");
         Objects.requireNonNull(_converter, "Converter required");
-        argBundle.converters().put(_type, _converter);
+        argBundle.getConverters().put(_type, _converter);
         if (_type.isPrimitive()) {
             return registerConverter(uncheckedCast((Class<?>) MethodType.methodType(_type).wrap().returnType()),
                     _converter);
@@ -152,10 +152,10 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         requireUniqueOption(_option, this);
         
         if (_option.getName() != null) {
-            getArgBundle().options().put(_option.getName(), _option);    
+            getArgBundle().getOptions().put(_option.getName(), _option);    
         }
         if (_option.getShortName() != null) {
-            getArgBundle().options().put(_option.getShortName(), _option);
+            getArgBundle().getOptions().put(_option.getShortName(), _option);
         }
         
         getLogger().debug("Added {} command-line option '{}': {}",
@@ -191,20 +191,20 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
             Map<String, String> kargs = new LinkedHashMap<>();
             Map<String, String> margs = new LinkedHashMap<>();
             
-            for (Entry<CmdArgOption<?>, String> e : getArgBundle().knownArgs().entrySet()) {
+            for (Entry<CmdArgOption<?>, String> e : getArgBundle().getKnownArgs().entrySet()) {
                 kargs.put(formatOption(e.getKey(), getLongOptPrefix(), getShortOptPrefix()), e.getValue());
             }
 
-            for (Entry<CmdArgOption<?>, List<String>> e : getArgBundle().knownMultiArgs().entrySet()) {
+            for (Entry<CmdArgOption<?>, List<String>> e : getArgBundle().getKnownMultiArgs().entrySet()) {
                 margs.put(formatOption(e.getKey(), getLongOptPrefix(), getShortOptPrefix()), String.join(", ", e.getValue()));
             }
 
             getLogger().debug("knownArgs:      {}", kargs);
             getLogger().debug("knownMultiArgs: {}", margs);
 
-            getLogger().debug("unknownArgs:    {}", getArgBundle().unknownArgs());
-            getLogger().debug("unknownTokens:  {}", getArgBundle().unknownTokens());
-            getLogger().debug("dupArgs:        {}", getArgBundle().dupArgs());
+            getLogger().debug("unknownArgs:    {}", getArgBundle().getUnknownArgs());
+            getLogger().debug("unknownTokens:  {}", getArgBundle().getUnknownTokens());
+            getLogger().debug("dupArgs:        {}", getArgBundle().getDupArgs());
         }
         return self();
     }
@@ -235,7 +235,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * @return unmodifiable Map, never null
      */
     public Map<String, CmdArgOption<?>> getOptions() {
-        return accessSync(t -> Collections.unmodifiableMap(t.getArgBundle().options()));
+        return accessSync(t -> Collections.unmodifiableMap(t.getArgBundle().getOptions()));
     }
 
     /**
@@ -245,7 +245,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * @return option, maybe null
      */
     public CmdArgOption<?> getOption(CharSequence _optionName) {
-        return accessSync(t -> getArgBundle().options().get(Objects.requireNonNull(_optionName, "Option name required")));
+        return accessSync(t -> getArgBundle().getOptions().get(Objects.requireNonNull(_optionName, "Option name required")));
     }
 
     /**
@@ -254,7 +254,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * @return unmodifiable Map, never null
      */
     public Map<CmdArgOption<?>, String> getKnownArgs() {
-        return accessSync(t -> Collections.unmodifiableMap(requireParsed(t).getArgBundle().knownArgs()));
+        return accessSync(t -> Collections.unmodifiableMap(requireParsed(t).getArgBundle().getKnownArgs()));
     }
 
     /**
@@ -264,7 +264,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * @return unmodifiable Map, never null
      */
     public Map<String, String> getUnknownArgs() {
-        return accessSync(t -> Collections.unmodifiableMap(requireParsed(t).getArgBundle().unknownArgs()));
+        return accessSync(t -> Collections.unmodifiableMap(requireParsed(t).getArgBundle().getUnknownArgs()));
     }
 
     /**
@@ -273,7 +273,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * @return unmodifiable list, never null
      */
     public List<String> getUnknownTokens() {
-        return accessSync(t -> Collections.unmodifiableList(requireParsed(t).getArgBundle().unknownTokens()));
+        return accessSync(t -> Collections.unmodifiableList(requireParsed(t).getArgBundle().getUnknownTokens()));
     }
 
     /**
@@ -284,7 +284,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * @return unmodifiable Map, never null
      */
     public Map<CmdArgOption<?>, String> getDupArgs() {
-        return accessSync(t -> requireParsed(t).getArgBundle().dupArgs());
+        return accessSync(t -> requireParsed(t).getArgBundle().getDupArgs());
     }
     
     /**

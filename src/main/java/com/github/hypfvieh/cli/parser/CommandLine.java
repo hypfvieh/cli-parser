@@ -96,29 +96,29 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                             handleCmdOption(cmdOpt, val);
                             i++;
                         } else if (parsedArg.isLookingLikeOption()) {
-                            getArgBundle().unknownArgs().put(token, val);
+                            getArgBundle().getUnknownArgs().put(token, val);
                             i++;
                         } else {
-                            getArgBundle().unknownTokens().add(token);
+                            getArgBundle().getUnknownTokens().add(token);
                         }
                     } else { // next token is an option too
                         if (cmdOpt != null) {
                             if (cmdOpt.hasValue()) { // command needs option, but got another option
-                                getArgBundle().missingArgs().add(cmdOpt);
+                                getArgBundle().getMissingArgs().add(cmdOpt);
                             } else if (!cmdOpt.isRepeatable()) { // no arguments required for option
                                 handleCmdOption(cmdOpt, null);
                             }
                         } else {
-                            getArgBundle().unknownTokens().add(token);
+                            getArgBundle().getUnknownTokens().add(token);
                         }
                     }
                 } else { // no arguments left
                     if (cmdOpt != null && cmdOpt.hasValue()) { // option needs value but we already on the last token
-                        getArgBundle().missingArgs().add(cmdOpt);
+                        getArgBundle().getMissingArgs().add(cmdOpt);
                     } else if (!parsedArg.isLookingLikeOption()) { // we on last token and this does not look like an option
-                        getArgBundle().unknownTokens().add(token);
+                        getArgBundle().getUnknownTokens().add(token);
                     } else if (cmdOpt == null && parsedArg.isLookingLikeOption()) { // we did not find an option but this argument looks like one
-                        getArgBundle().unknownArgs().put(token, null);
+                        getArgBundle().getUnknownArgs().put(token, null);
                     } else if (cmdOpt != null && !parsedArg.isMultiArg()) { // not a repeated option
                         handleCmdOption(cmdOpt, null);
                     }
@@ -143,11 +143,11 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     private void handleCmdOption(CmdArgOption<?> _cmdOpt, String _val) {
         Objects.requireNonNull(_cmdOpt, "Option required");
         if (_cmdOpt.isRepeatable()) {
-            getArgBundle().knownMultiArgs().computeIfAbsent(_cmdOpt, x -> new ArrayList<>()).add(trimToNull(_val));
-        } else if (!getArgBundle().knownArgs().containsKey(_cmdOpt)) {
-            getArgBundle().knownArgs().put(_cmdOpt, trimToNull(_val));
+            getArgBundle().getKnownMultiArgs().computeIfAbsent(_cmdOpt, x -> new ArrayList<>()).add(trimToNull(_val));
+        } else if (!getArgBundle().getKnownArgs().containsKey(_cmdOpt)) {
+            getArgBundle().getKnownArgs().put(_cmdOpt, trimToNull(_val));
         } else {
-            getArgBundle().dupArgs().put(_cmdOpt, _val);
+            getArgBundle().getDupArgs().put(_cmdOpt, _val);
         }
     }
 
@@ -228,12 +228,12 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         List<String> strVals = new ArrayList<>();
 
         if (_option.isRepeatable()) {
-            List<String> list = getArgBundle().knownMultiArgs().get(_option);
+            List<String> list = getArgBundle().getKnownMultiArgs().get(_option);
             if (list != null && !list.isEmpty()) {
                 strVals.addAll(list);
             }
         } else {
-            String val = getArgBundle().knownArgs().get(_option);
+            String val = getArgBundle().getKnownArgs().get(_option);
             if (val != null) {
                 strVals.add(val);
             }
@@ -254,7 +254,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
             }
 
             for (String str : strVals) {
-                T convertedVal = (T) getArgBundle().converters().get(_option.getDataType()).convert(str);
+                T convertedVal = (T) getArgBundle().getConverters().get(_option.getDataType()).convert(str);
                 resultList.add(convertedVal);
             }
             return resultList;
@@ -286,14 +286,14 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     public boolean hasArg(CmdArgOption<?> _option) {
         Objects.requireNonNull(_option, "Option required");
         CommandLine requireParsed = requireParsed(this);
-        if (getArgBundle().knownArgs().containsKey(requireParsed.getArgBundle().options().get(requireOption(_option).getName()))) {
+        if (getArgBundle().getKnownArgs().containsKey(requireParsed.getArgBundle().getOptions().get(requireOption(_option).getName()))) {
             return true;
-        } else if (getArgBundle().knownMultiArgs().containsKey(requireParsed.getArgBundle().options().get(requireOption(_option).getName()))) {
+        } else if (getArgBundle().getKnownMultiArgs().containsKey(requireParsed.getArgBundle().getOptions().get(requireOption(_option).getName()))) {
             return true;
         }
 
-        return Optional.ofNullable(requireParsed.getArgBundle().options().get(requireOption(_option).getShortName()))
-                .map(k -> getArgBundle().knownArgs().containsKey(k) || getArgBundle().knownMultiArgs().containsKey(k))
+        return Optional.ofNullable(requireParsed.getArgBundle().getOptions().get(requireOption(_option).getShortName()))
+                .map(k -> getArgBundle().getKnownArgs().containsKey(k) || getArgBundle().getKnownMultiArgs().containsKey(k))
                 .orElseThrow(() -> optionNotDefined(_option, getExceptionType()));
     }
 
@@ -311,11 +311,11 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         Objects.requireNonNull(_option, "Option required");
         requireParsed(this);
 
-        if (getArgBundle().knownArgs().containsKey(_option)) {
+        if (getArgBundle().getKnownArgs().containsKey(_option)) {
             return 1;
         }
-        if (getArgBundle().knownMultiArgs().containsKey(_option)) {
-            return getArgBundle().knownMultiArgs().get(_option).size();
+        if (getArgBundle().getKnownMultiArgs().containsKey(_option)) {
+            return getArgBundle().getKnownMultiArgs().get(_option).size();
         }
 
         return 0;
@@ -337,7 +337,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
 
         Matcher matcher = getLongOptPattern().matcher(_token);
         if (matcher.matches()) {
-            return new ParsedArg(true, false, getArgBundle().options().get(matcher.group(1)));
+            return new ParsedArg(true, false, getArgBundle().getOptions().get(matcher.group(1)));
         } else {
             matcher = getShortOptPattern().matcher(_token);
 
@@ -348,7 +348,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                     // iterate all combined short options (e.g. -abcd)
                     for (char c : matcher.group(1).toCharArray()) {
                         String key = c + "";
-                        cmdArgOption = getArgBundle().options().get(key);
+                        cmdArgOption = getArgBundle().getOptions().get(key);
                         if (cmdArgOption != null) {
                             if (!cmdArgOption.hasValue() && _handle) {
                                 handleCmdOption(cmdArgOption, null);
@@ -360,13 +360,13 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
 
                         } else {
                             if (_handle) { // got a unknown short option
-                                getArgBundle().unknownArgs().put(key, null);
+                                getArgBundle().getUnknownArgs().put(key, null);
                             }
                         }
                     }
                     return new ParsedArg(true, true, cmdArgOption);
                 } else {
-                    CmdArgOption<?> cmdArgOption = getArgBundle().options().get(matcher.group(1));
+                    CmdArgOption<?> cmdArgOption = getArgBundle().getOptions().get(matcher.group(1));
                     if (cmdArgOption == null) { // unknown argument used
                         return new ParsedArg(true, false, null);
                     }
@@ -389,21 +389,21 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      */
     private CommandLine validate() throws CommandLineException {
         List<String> failures = new ArrayList<>();
-        if (isFailOnUnknownArg() && !getArgBundle().unknownArgs().isEmpty()) {
-            failures.add("unknown arguments: " + getArgBundle().unknownArgs().entrySet().stream()
+        if (isFailOnUnknownArg() && !getArgBundle().getUnknownArgs().isEmpty()) {
+            failures.add("unknown arguments: " + getArgBundle().getUnknownArgs().entrySet().stream()
                     .map(e -> e.getKey() + "=" + e.getValue())
                     .collect(Collectors.joining(", ")));
         }
-        if (isFailOnUnknownToken() && !getArgBundle().unknownTokens().isEmpty()) {
-            failures.add("unknown tokens: " + String.join(", ", getArgBundle().unknownTokens()));
+        if (isFailOnUnknownToken() && !getArgBundle().getUnknownTokens().isEmpty()) {
+            failures.add("unknown tokens: " + String.join(", ", getArgBundle().getUnknownTokens()));
         }
-        if (isFailOnDupArg() && !getArgBundle().dupArgs().isEmpty()) {
-            failures.add("duplicate arguments: " + getArgBundle().dupArgs().keySet().stream().map(x -> formatOption(x, getLongOptPrefix(), getShortOptPrefix())).collect(Collectors.joining(", ")));
+        if (isFailOnDupArg() && !getArgBundle().getDupArgs().isEmpty()) {
+            failures.add("duplicate arguments: " + getArgBundle().getDupArgs().keySet().stream().map(x -> formatOption(x, getLongOptPrefix(), getShortOptPrefix())).collect(Collectors.joining(", ")));
         }
 
         // check all required options are given
         List<String> missingOptions = getOptions().values().stream().filter(CmdArgOption::isRequired)
-                .filter(s -> !getArgBundle().knownArgs().containsKey(s))
+                .filter(s -> !getArgBundle().getKnownArgs().containsKey(s))
                 .map(CmdArgOption::getName)
                 .collect(Collectors.toList());
         if (!missingOptions.isEmpty()) {
@@ -411,7 +411,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         }
 
         // check values
-        for (Entry<CmdArgOption<?>, String> knownArg : getArgBundle().knownArgs().entrySet()) {
+        for (Entry<CmdArgOption<?>, String> knownArg : getArgBundle().getKnownArgs().entrySet()) {
             CmdArgOption<?> option = knownArg.getKey();
             if (option.hasValue() && knownArg.getValue() == null && option.getDefaultValue() == null) {
                 failures.add("argument '" + formatOption(knownArg.getKey(), getLongOptPrefix(), getShortOptPrefix()) + "' requires a value");
@@ -424,7 +424,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                     getArg(option);
                 } catch (Exception _ex) {
                     failures.add("argument '" + formatOption(knownArg.getKey(), getLongOptPrefix(), getShortOptPrefix()) + "' has invalid value ("
-                            + getArgBundle().knownArgs().get(knownArg.getKey()) + ")");
+                            + getArgBundle().getKnownArgs().get(knownArg.getKey()) + ")");
                 }
             }
         }

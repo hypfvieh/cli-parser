@@ -435,7 +435,7 @@ class CommandLineTest extends AbstractBaseTest {
                 .withFailOnUnknownToken(false)
                 .parse("-a");
         
-        assertEquals("-a", cl.getArgBundle().unknownArgs().keySet().iterator().next());
+        assertEquals("-a", cl.getArgBundle().getUnknownArgs().keySet().iterator().next());
         
     }
     
@@ -446,7 +446,7 @@ class CommandLineTest extends AbstractBaseTest {
                 .withFailOnUnknownToken(false)
                 .parse("a");
         
-        assertEquals("a", cl.getArgBundle().unknownTokens().get(0));
+        assertEquals("a", cl.getArgBundle().getUnknownTokens().get(0));
     }
     
     @Test
