@@ -18,7 +18,7 @@
     </properties>
 
     <description>
-        Utilities and helper classes to develop JavaFX based applications.
+        Library to provide support for command-line parsing
     </description>
 
     <build>
