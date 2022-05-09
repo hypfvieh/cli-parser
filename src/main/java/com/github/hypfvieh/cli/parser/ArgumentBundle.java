@@ -23,35 +23,35 @@ public final class ArgumentBundle {
     private final Map<String, CmdArgOption<?>>       options        = new LinkedHashMap<>();
     private final Map<Class<?>, IValueConverter<?>>  converters     = new LinkedHashMap<>();
 
-    public Map<CmdArgOption<?>, String> knownArgs() {
+    public Map<CmdArgOption<?>, String> getKnownArgs() {
         return knownArgs;
     }
 
-    public Map<CmdArgOption<?>, List<String>> knownMultiArgs() {
+    public Map<CmdArgOption<?>, List<String>> getKnownMultiArgs() {
         return knownMultiArgs;
     }
 
-    public Map<String, String> unknownArgs() {
+    public Map<String, String> getUnknownArgs() {
         return unknownArgs;
     }
 
-    public List<String> unknownTokens() {
+    public List<String> getUnknownTokens() {
         return unknownTokens;
     }
 
-    public Map<CmdArgOption<?>, String> dupArgs() {
+    public Map<CmdArgOption<?>, String> getDupArgs() {
         return dupArgs;
     }
 
-    public List<CmdArgOption<?>> missingArgs() {
+    public List<CmdArgOption<?>> getMissingArgs() {
         return missingArgs;
     }
 
-    public Map<String, CmdArgOption<?>> options() {
+    public Map<String, CmdArgOption<?>> getOptions() {
         return options;
     }
 
-    public Map<Class<?>, IValueConverter<?>> converters() {
+    public Map<Class<?>, IValueConverter<?>> getConverters() {
         return converters;
     }
 
