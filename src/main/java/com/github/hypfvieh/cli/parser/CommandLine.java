@@ -103,24 +103,29 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                         }
                     } else { // next token is an option too
                         if (cmdOpt != null) {
-                            if (cmdOpt.hasValue()) { // command needs option, but got another option
+                            if (cmdOpt.hasValue() && parsedArg.getValue() == null) { // command needs option, but got another option
                                 getArgBundle().getMissingArgs().add(cmdOpt);
                             } else if (!cmdOpt.isRepeatable()) { // no arguments required for option
-                                handleCmdOption(cmdOpt, null);
+                                handleCmdOption(cmdOpt, parsedArg.getValue());
                             }
                         } else {
                             getArgBundle().getUnknownTokens().add(token);
                         }
                     }
                 } else { // no arguments left
-                    if (cmdOpt != null && cmdOpt.hasValue()) { // option needs value but we already on the last token
-                        getArgBundle().getMissingArgs().add(cmdOpt);
+
+                    if (cmdOpt != null) {
+                        if (cmdOpt.hasValue() && parsedArg.getValue() == null) { // option needs value but we already on the last token
+                            getArgBundle().getMissingArgs().add(cmdOpt);
+                        } else if (cmdOpt.hasValue() && parsedArg.getValue() != null) { // options value was given using -o=val
+                            handleCmdOption(cmdOpt, parsedArg.getValue());
+                        } else if (!parsedArg.isMultiArg()) { // not a repeated option)
+                            handleCmdOption(cmdOpt, parsedArg.getValue());
+                        }
                     } else if (!parsedArg.isLookingLikeOption()) { // we on last token and this does not look like an option
                         getArgBundle().getUnknownTokens().add(token);
                     } else if (cmdOpt == null && parsedArg.isLookingLikeOption()) { // we did not find an option but this argument looks like one
                         getArgBundle().getUnknownArgs().put(token, null);
-                    } else if (cmdOpt != null && !parsedArg.isMultiArg()) { // not a repeated option
-                        handleCmdOption(cmdOpt, null);
                     }
                 }
             }
@@ -132,23 +137,6 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         validate();
 
         return self();
-    }
-
-    /**
-     * Adds the given command option to the appropriate internal map or list.
-     *
-     * @param _cmdOpt option
-     * @param _val value
-     */
-    private void handleCmdOption(CmdArgOption<?> _cmdOpt, String _val) {
-        Objects.requireNonNull(_cmdOpt, "Option required");
-        if (_cmdOpt.isRepeatable()) {
-            getArgBundle().getKnownMultiArgs().computeIfAbsent(_cmdOpt, x -> new ArrayList<>()).add(trimToNull(_val));
-        } else if (!getArgBundle().getKnownArgs().containsKey(_cmdOpt)) {
-            getArgBundle().getKnownArgs().put(_cmdOpt, trimToNull(_val));
-        } else {
-            getArgBundle().getDupArgs().put(_cmdOpt, _val);
-        }
     }
 
     /**
@@ -323,6 +311,23 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
 
 
     /**
+     * Adds the given command option to the appropriate internal map or list.
+     *
+     * @param _cmdOpt option
+     * @param _val value
+     */
+    private void handleCmdOption(CmdArgOption<?> _cmdOpt, String _val) {
+        Objects.requireNonNull(_cmdOpt, "Option required");
+        if (_cmdOpt.isRepeatable()) {
+            getArgBundle().getKnownMultiArgs().computeIfAbsent(_cmdOpt, x -> new ArrayList<>()).add(trimToNull(_val));
+        } else if (!getArgBundle().getKnownArgs().containsKey(_cmdOpt)) {
+            getArgBundle().getKnownArgs().put(_cmdOpt, trimToNull(_val));
+        } else {
+            getArgBundle().getDupArgs().put(_cmdOpt, _val);
+        }
+    }
+
+    /**
      * Reads a token using the long/short name regular expressions.
      *
      * @param _token token to read
@@ -335,18 +340,28 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
             return new ParsedArg(false, false, null);
         }
 
+        String optionName = null;
+
         Matcher matcher = getLongOptPattern().matcher(_token);
         if (matcher.matches()) {
-            return new ParsedArg(true, false, getArgBundle().getOptions().get(matcher.group(1)));
+            optionName = matcher.group(1) == null ? matcher.group(3) : matcher.group(1);
+            ParsedArg parsedArg = new ParsedArg(true, false, getArgBundle().getOptions().get(optionName));
+            parsedArg.setValue(matcher.group(2));
+
+            return parsedArg;
         } else {
             matcher = getShortOptPattern().matcher(_token);
 
             if (matcher.matches()) {
-                if (matcher.group(1).length() > 1) {
+
+                String value = matcher.group(2);
+                optionName = matcher.group(1) == null ? matcher.group(3) : matcher.group(1);
+
+                if (optionName.length() > 1) {
                     CmdArgOption<?> cmdArgOption = null;
                     CmdArgOption<?> prevOption = null;
                     // iterate all combined short options (e.g. -abcd)
-                    for (char c : matcher.group(1).toCharArray()) {
+                    for (char c : optionName.toCharArray()) {
                         String key = c + "";
                         cmdArgOption = getArgBundle().getOptions().get(key);
                         if (cmdArgOption != null) {
@@ -364,14 +379,14 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                             }
                         }
                     }
-                    return new ParsedArg(true, true, cmdArgOption);
+                    return new ParsedArg(true, true, cmdArgOption, value);
                 } else {
-                    CmdArgOption<?> cmdArgOption = getArgBundle().getOptions().get(matcher.group(1));
+                    CmdArgOption<?> cmdArgOption = getArgBundle().getOptions().get(optionName);
                     if (cmdArgOption == null) { // unknown argument used
-                        return new ParsedArg(true, false, null);
+                        return new ParsedArg(true, false, null, value);
                     }
 
-                    return new ParsedArg(true, false, cmdArgOption);
+                    return new ParsedArg(true, false, cmdArgOption, value);
                 }
             }
         }
