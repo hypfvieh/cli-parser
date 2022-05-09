@@ -53,6 +53,16 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <javaVersion>11</javaVersion>
+
+        <!-- the -release argument for the Java compiler (since Java 9) -->
+        <maven.compiler.release>${javaVersion}</maven.compiler.release>
+        <!-- the -source argument for the Java compiler -->
+        <maven.compiler.source>${javaVersion}</maven.compiler.source>
+        <!-- the -target argument for the Java compiler -->
+        <maven.compiler.target>${javaVersion}</maven.compiler.target>
+
         <junit.version>5.8.2</junit.version>
         <log4j2.version>2.17.2</log4j2.version>
     </properties>
@@ -149,7 +159,12 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.10.1</version>
                 <configuration>
-                    <release>17</release>
+                    <configuration>
+                        <debug>true</debug>
+                        <debuglevel>lines,vars,source</debuglevel>
+                        <showWarnings>true</showWarnings>
+                        <showDeprecation>true</showDeprecation>
+                    </configuration>
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
