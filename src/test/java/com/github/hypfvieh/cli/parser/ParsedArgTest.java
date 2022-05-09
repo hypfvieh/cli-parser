@@ -9,7 +9,7 @@ class ParsedArgTest {
     @Test
     void testToString() {
         ParsedArg parsedArg = new ParsedArg(false, true, null);
-        assertEquals("ParsedArg [lookingLikeOption=false, multiArg=true, cmdArgOpt=null]", parsedArg.toString());
+        assertEquals("ParsedArg [lookingLikeOption=false, multiArg=true, cmdArgOpt=null, value=null]", parsedArg.toString());
     }
 
 }

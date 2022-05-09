@@ -13,11 +13,18 @@ class ParsedArg {
     private final boolean multiArg;
     /** The command option, if any. */
     private final CmdArgOption<?> cmdArgOpt;
+    
+    private String value;
 
     public ParsedArg(boolean _looksLikeArg, boolean _multi, CmdArgOption<?> _cmdArg) {
+        this(_looksLikeArg, _multi, _cmdArg, null);
+    }
+
+    public ParsedArg(boolean _looksLikeArg, boolean _multi, CmdArgOption<?> _cmdArg, String _value) {
         lookingLikeOption = _looksLikeArg;
         multiArg = _multi;
         cmdArgOpt = _cmdArg;
+        value = _value;
     }
 
     /**
@@ -44,10 +51,28 @@ class ParsedArg {
         return cmdArgOpt;
     }
 
+    /**
+     * The value assigned to the parsed option.
+     * Can be null if option value was not given.
+     * 
+     * @return String or null
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * Set the current value for the parsed option.
+     * @param _value value to set
+     */
+    public void setValue(String _value) {
+        value = _value;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + " [lookingLikeOption=" + lookingLikeOption + ", multiArg=" + multiArg + ", cmdArgOpt="
-                + cmdArgOpt + "]";
+                + cmdArgOpt + ", value=" + value + "]";
     }
 
 }

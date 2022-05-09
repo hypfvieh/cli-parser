@@ -218,6 +218,120 @@ class CommandLineTest extends AbstractBaseTest {
         assertEquals(2, cl.parse("--opt-int 2").getArgByName("opt-int"));
     }
     
+    @Test
+    public void parseSingleLongOptionsEqualSign() {
+        CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
+                .shortName('o')
+                .name("opt-int")
+                .optional()
+                .description("optional int")
+                .build();
+        
+        CommandLine cl = new CommandLine()
+                .addOption(optInt)
+                .withFailOnUnknownToken(false);
+        
+        assertFalse(cl.isFailOnUnknownToken());
+
+        assertEquals(2, cl.parse("--opt-int=2").getArg(optInt));
+    }
+
+    @Test
+    public void parseSingleShortOptionsEqualSign() {
+        CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
+                .shortName('o')
+                .name("opt-int")
+                .optional()
+                .description("optional int")
+                .build();
+        
+        CommandLine cl = new CommandLine()
+                .addOption(optInt)
+                .withFailOnUnknownToken(false);
+        
+        assertFalse(cl.isFailOnUnknownToken());
+
+        assertEquals(2, cl.parse("--o=2").getArg(optInt));
+    }
+    
+    @Test
+    public void parseMultiLongOptionsEqualSign() {
+        CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
+                .shortName('o')
+                .name("opt-int")
+                .optional()
+                .description("optional int")
+                .build();
+
+        CmdArgOption<String> optVal = CmdArgOption.builder(String.class)
+                .shortName('s')
+                .name("opt-string")
+                .optional()
+                .description("optional string")
+                .build();
+
+        CommandLine cl = new CommandLine()
+                .addOptions(optInt, optVal)
+                .withFailOnUnknownToken(false);
+        
+        assertFalse(cl.isFailOnUnknownToken());
+
+        CommandLine parse = cl.parse("--opt-int=2 --opt-string=foo");
+        assertEquals(2, parse.getArg(optInt));
+        assertEquals("foo", parse.getArg(optVal));
+    }
+
+    @Test
+    public void parseMultiShortOptionsEqualSign() {
+        CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
+                .shortName('o')
+                .name("opt-int")
+                .optional()
+                .description("optional int")
+                .build();
+
+        CmdArgOption<String> optVal = CmdArgOption.builder(String.class)
+                .shortName('s')
+                .name("opt-string")
+                .optional()
+                .description("optional string")
+                .build();
+
+        CommandLine cl = new CommandLine()
+                .addOptions(optInt, optVal)
+                .withFailOnUnknownToken(false);
+        
+        assertFalse(cl.isFailOnUnknownToken());
+
+        CommandLine parse = cl.parse("-o=2 -s=foo");
+        assertEquals(2, parse.getArg(optInt));
+        assertEquals("foo", parse.getArg(optVal));
+    }
+    
+    @Test
+    public void parseCombinedShortOptionsWithEqualSign() {
+        CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
+                .shortName('o')
+                .optional()
+                .description("optional int")
+                .build();
+        CmdArgOption<?> optAll = CmdArgOption.builder()
+                .shortName('a')
+                .optional()
+                .description("all flag")
+                .build();
+
+        CommandLine cl = new CommandLine()
+                .addOption(optInt)
+                .addOption(optAll)
+                .withFailOnUnknownToken(false)
+                .parse("-ao=10");
+        
+        assertFalse(cl.isFailOnUnknownToken());
+        
+        assertTrue(cl.hasArg(optAll));
+        assertEquals(10, cl.getArg(optInt));
+    }
     
     @Test
     public void parseShortOptions() {

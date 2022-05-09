@@ -397,7 +397,9 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         }
         shortOptPrefix = _prefix;
         String qPrx = Pattern.quote(_prefix);
-        shortOptPattern = Pattern.compile("^" + qPrx + "(?:(?!" + qPrx + "))(.+)");
+        // "^" + qPrx + "(?:(?!" + qPrx + "))(.+)"
+        
+        shortOptPattern = Pattern.compile("^" + qPrx + "(?:(?!" + qPrx + "))(?:([^=]*)=(.+)|(.+))");
         return self();
     }
 
@@ -417,7 +419,9 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         }
         longOptPrefix = _prefix;
         String qPrx = Pattern.quote(_prefix);
-        longOptPattern = Pattern.compile("^" + qPrx + "(?:(?!" + Pattern.quote(_prefix.charAt(0) + "") + "))(.+)");
+        //^--(?:(?!-))(?:([^=]*)=(.+)|(.+))
+        //"^" + qPrx + "(?:(?!" + Pattern.quote(_prefix.charAt(0) + "") + "))(.+)"
+        longOptPattern = Pattern.compile("^" + qPrx + "(?:(?!" + Pattern.quote(_prefix.charAt(0) + "") + "))(?:([^=]*)=(.+)|(.+))");
         return self();
     }
 
