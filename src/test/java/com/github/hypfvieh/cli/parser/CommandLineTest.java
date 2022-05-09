@@ -71,13 +71,12 @@ class CommandLineTest extends AbstractBaseTest {
 
         assertFalse(cl.getOption(optName).isRequired());
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            cl.addOption(CmdArgOption.builder(String.class)
-                    .name(optName)
-                    .required()
-                    .defaultValue("default2")
-                    .build());
-        });
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            () -> cl.addOption(CmdArgOption.builder(String.class)
+                .name(optName)
+                .required()
+                .defaultValue("default2")
+                .build()));
 
         assertEquals("Command-line option '--arg1' already defined", ex.getMessage());
     }

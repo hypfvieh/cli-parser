@@ -65,7 +65,7 @@ public abstract class AbstractBaseTest extends Assertions {
     }
 
     protected void logTestBeginEnd(String _prefix, TestInfo _testInfo) {
-        if (!_testInfo.getTestMethod().isPresent() || _testInfo.getDisplayName().startsWith(_testInfo.getTestMethod().get().getName())) {
+        if (_testInfo.getTestMethod().isEmpty() || _testInfo.getDisplayName().startsWith(_testInfo.getTestMethod().get().getName())) {
             getLogger().info(">>>>>>>>>> {} Test: {} <<<<<<<<<<", _prefix, _testInfo.getDisplayName());
         } else {
             getLogger().info(">>>>>>>>>> {} Test: {} ({}) <<<<<<<<<<", _prefix, _testInfo.getTestMethod().get().getName(), _testInfo.getDisplayName());
@@ -111,16 +111,12 @@ public abstract class AbstractBaseTest extends Assertions {
         return baos.toString();
     }
 
-    public static void assertNotEquals(Object _obj1, Object _obj2) {
-        assertFalse(Objects.equals(_obj1, _obj2), "Parameters are equal: " + _obj1 + " = " + _obj2);
-    }
-
     public static void assertEmpty(String _string) {
-        assertTrue(_string != null ? _string.isEmpty() : false, "String not empty.");
+        assertTrue(_string != null && _string.isEmpty(), "String not empty.");
     }
 
     public static void assertNotEmpty(String _string) {
-        assertTrue(_string != null ? _string.isEmpty() : true, "String is empty.");
+        assertTrue(_string == null || _string.isEmpty(), "String is empty.");
     }
 
     public static void assertBlank(String _string) {
@@ -133,13 +129,13 @@ public abstract class AbstractBaseTest extends Assertions {
 
     public static void assertContains(String _string, String _contains) {
         if (_contains != null) {
-            assertTrue(_string != null ? _string.contains(_contains) : false, "String does not contain [" + _contains + "]: " + _string);
+            assertTrue(_string != null && _string.contains(_contains), "String does not contain [" + _contains + "]: " + _string);
         }
     }
 
     public static void assertContainsNot(String _string, String _notContains) {
         if (_notContains != null) {
-            assertFalse(_string != null ? _string.contains(_notContains) : true, "String contains [" + _notContains + "]: " + _string);
+            assertFalse(_string == null || _string.contains(_notContains), "String contains [" + _notContains + "]: " + _string);
         }
     }
 
@@ -188,7 +184,7 @@ public abstract class AbstractBaseTest extends Assertions {
         if (_exists) {
             assertTrue(_file.exists(), "File [" + _file.getAbsolutePath() + "] does not exist.");
         } else {
-            assertTrue(!_file.exists(), "File [" + _file.getAbsolutePath() + "] exists.");
+            assertFalse(_file.exists(), "File [" + _file.getAbsolutePath() + "] exists.");
         }
         return _file;
     }

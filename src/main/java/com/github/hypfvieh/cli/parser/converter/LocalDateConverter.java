@@ -9,10 +9,7 @@ import com.github.hypfvieh.cli.parser.CommandLineException;
 
 /**
  * Converts a string to a {@link LocalDate} object.
- * <p>
- * Allows adding additional date patterns by using {@link #addPattern(DateTimeFormatter)}.<br>
- * </p>
- *  
+ *
  * @author hypfvieh
  * @since 1.0.0 - 2022-05-05
  */
@@ -32,8 +29,8 @@ public class LocalDateConverter extends AbstractPatternBasedConverter<LocalDate,
             } catch (DateTimeParseException _ex) {
                 getLogger().trace("Unable to parse date input '{}' with parser '{}'", _string, dtf);
             }
-        } 
-        
+        }
+
         throw new CommandLineException("Unable to parse input '" + _string + "' as date");
     }
 
