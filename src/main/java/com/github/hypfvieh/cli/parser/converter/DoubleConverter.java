@@ -5,8 +5,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
-import org.slf4j.LoggerFactory;
-
 import com.github.hypfvieh.cli.parser.CommandLineException;
 
 /**
@@ -27,7 +25,7 @@ public class DoubleConverter extends AbstractPatternBasedConverter<Double, Numbe
         try {
             return Double.parseDouble(_string);
         } catch (NumberFormatException _ex) {
-            LoggerFactory.getLogger(getClass()).trace("Unable to parse number input '{}' with parseDouble function", _string);
+            getLogger().trace("Unable to parse number input '{}' with parseDouble function", _string);
         }
 
         for (NumberFormat nf : getPatterns()) {
