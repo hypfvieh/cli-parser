@@ -3,7 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.hypfvieh</groupId>
+    <groupId>com.github.hypfvieh.cli</groupId>
     <artifactId>cli-parser</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -159,12 +159,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.10.1</version>
                 <configuration>
-                    <configuration>
-                        <debug>true</debug>
-                        <debuglevel>lines,vars,source</debuglevel>
-                        <showWarnings>true</showWarnings>
-                        <showDeprecation>true</showDeprecation>
-                    </configuration>
+                    <debug>true</debug>
+                    <debuglevel>lines,vars,source</debuglevel>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>

@@ -259,8 +259,22 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      *
      * @throws RuntimeException when option is unknown or command line was not parsed before
      */
-    public Object getArgByName(CharSequence _optionName) {
+    public Object getArg(CharSequence _optionName) {
         return Optional.ofNullable(requireParsed(this).getOption(_optionName))
+                .map(this::getArg)
+                .orElseThrow(() -> optionNotDefined(_optionName, getExceptionType()));
+    }
+
+    /**
+     * Returns an option value using the options short name.
+     *
+     * @param _optionName option short name
+     * @return value or null if option has no value
+     *
+     * @throws RuntimeException when option is unknown or command line was not parsed before
+     */
+    public Object getArg(char _optionName) {
+        return Optional.ofNullable(requireParsed(this).getOption(_optionName + ""))
                 .map(this::getArg)
                 .orElseThrow(() -> optionNotDefined(_optionName, getExceptionType()));
     }
