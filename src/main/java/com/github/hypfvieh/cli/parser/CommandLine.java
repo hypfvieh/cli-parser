@@ -210,7 +210,6 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      *
      * @return List, maybe empty or <code>null</code>
      */
-    @SuppressWarnings("unchecked")
     public <T> List<T> getArgs(CmdArgOption<T> _option, T _default) {
         Objects.requireNonNull(_option, "Option required");
         List<String> strVals = new ArrayList<>();
@@ -228,27 +227,32 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         }
 
         if (_option.hasValue()) {
-            List<T> resultList = new ArrayList<>();
-            if (strVals.isEmpty()) {
-                if (_default == null) {
-                    var x = (T) _option.getDefaultValue();
-                    if (x != null) {
-                        resultList.add(x);
-                    }
-                } else {
-                    resultList.add(_default);
-                }
-                return resultList;
-            }
+            return convertValues(_option, _default, strVals);
+        }
 
-            for (String str : strVals) {
-                T convertedVal = (T) getArgBundle().getConverters().get(_option.getDataType()).convert(str);
-                resultList.add(convertedVal);
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> List<T> convertValues(CmdArgOption<T> _option, T _default, List<String> strVals) {
+        List<T> resultList = new ArrayList<>();
+        if (strVals.isEmpty()) {
+            if (_default == null) {
+                var x = (T) _option.getDefaultValue();
+                if (x != null) {
+                    resultList.add(x);
+                }
+            } else {
+                resultList.add(_default);
             }
             return resultList;
         }
 
-        return null;
+        for (String str : strVals) {
+            T convertedVal = (T) getArgBundle().getConverters().get(_option.getDataType()).convert(str);
+            resultList.add(convertedVal);
+        }
+        return resultList;
     }
 
     /**
@@ -278,6 +282,47 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                 .map(this::getArg)
                 .orElseThrow(() -> optionNotDefined(_optionName, getExceptionType()));
     }
+
+    /**
+     * Returns an option value using the options name and converting the value to the given type.
+     * <br>
+     * Will use the configured converter to convert the value.<br><br>
+     *
+     * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
+     *
+     * @param _optionName option short name
+     * @return value or null if option has no value
+     *
+     * @throws RuntimeException when option is unknown or command line was not parsed
+     *         RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     */
+    public <T> T getArg(CharSequence _optionName, Class<T> _type) {
+        requireParsed(this);
+        CmdArgOption<?> option = getOption(_optionName);
+        if (_type != option.getDataType()) {
+            throw createException("Invalid type conversation, expected: " + option.getDataType().getName() + " - found: " + _type.getName(), getExceptionType());
+        }
+
+        return _type.cast(getArg(option));
+    }
+
+    /**
+     * Returns an option value using the options short name and converting the value to the given type.
+     * <br>
+     * Will use the configured converter to convert the value.<br><br>
+     *
+     * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
+     *
+     * @param _optionName option short name
+     * @return value or null if option has no value
+     *
+     * @throws RuntimeException when option is unknown or command line was not parsed
+     *         RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     */
+    public <T> T getArg(char _optionName, Class<T> _type) {
+        return getArg(_optionName + "", _type);
+    }
+
 
     /**
      * Checks if the given option was at least used once in the command line.

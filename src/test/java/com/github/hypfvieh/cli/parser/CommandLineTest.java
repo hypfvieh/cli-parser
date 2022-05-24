@@ -823,6 +823,27 @@ class CommandLineTest extends AbstractBaseTest {
     }
 
     @Test
+    public void parseArgTyped() {
+        CmdArgOption<Integer> optDup = CmdArgOption.builder(Integer.class)
+                .name("optdup")
+                .optional()
+                .description("optional int")
+                .build();
+        CommandLine cl = new CommandLine()
+                .addOption(optDup)
+                .withFailOnDupArg(false)
+                .parse("--optdup 1");
+
+        assertEquals(1, cl.getArg("optdup", Integer.class));
+
+        CommandLineException ex = assertThrows(CommandLineException.class, () -> {
+            cl.getArg("optdup", Long.class);
+        });
+
+        assertEquals("Invalid type conversation, expected: java.lang.Integer - found: java.lang.Long", ex.getMessage());
+    }
+
+    @Test
     public void parseRequiredOptionMissingFail() {
         CommandLine cl = new CommandLine().addOption(CmdArgOption.builder(String.class)
                 .name("requiredString")
