@@ -233,10 +233,21 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         return null;
     }
 
+    /**
+     * Converts the value of the given option using configured converters or returns default.
+     *
+     * @param <T> type
+     *
+     * @param _option option
+     * @param _default default if option not set
+     * @param _strVals string values
+     *
+     * @return value or null
+     */
     @SuppressWarnings("unchecked")
-    private <T> List<T> convertValues(CmdArgOption<T> _option, T _default, List<String> strVals) {
+    private <T> List<T> convertValues(CmdArgOption<T> _option, T _default, List<String> _strVals) {
         List<T> resultList = new ArrayList<>();
-        if (strVals.isEmpty()) {
+        if (_strVals.isEmpty()) {
             if (_default == null) {
                 var x = (T) _option.getDefaultValue();
                 if (x != null) {
@@ -248,7 +259,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
             return resultList;
         }
 
-        for (String str : strVals) {
+        for (String str : _strVals) {
             T convertedVal = (T) getArgBundle().getConverters().get(_option.getDataType()).convert(str);
             resultList.add(convertedVal);
         }
@@ -293,8 +304,10 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * @param _optionName option short name
      * @return value or null if option has no value
      *
-     * @throws RuntimeException when option is unknown or command line was not parsed
-     *         RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     * @throws RuntimeException when option is unknown or command line was not parsed<br>
+     * @throws RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     *
+     * @since 1.0.1 - 2022-05-24
      */
     public <T> T getArg(CharSequence _optionName, Class<T> _type) {
         requireParsed(this);
@@ -316,8 +329,10 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * @param _optionName option short name
      * @return value or null if option has no value
      *
-     * @throws RuntimeException when option is unknown or command line was not parsed
-     *         RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     * @throws RuntimeException when option is unknown or command line was not parsed<br>
+     * @throws RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     *
+     * @since 1.0.1 - 2022-05-24
      */
     public <T> T getArg(char _optionName, Class<T> _type) {
         return getArg(_optionName + "", _type);
