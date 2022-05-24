@@ -302,6 +302,42 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
      * @param _optionName option short name
+     * @param _type expected value type
+     * @param _default default to use if option not set (and not required)
+     * @return value or null if option has no value
+     *
+     * @throws RuntimeException when option is unknown or command line was not parsed<br>
+     * @throws RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     *
+     * @since 1.0.1 - 2022-05-24
+     */
+    public <T> T getArg(CharSequence _optionName, Class<T> _type, T _default) {
+        requireParsed(this);
+        CmdArgOption<?> option = getOption(_optionName);
+
+        if (_type != option.getDataType()) {
+            throw createException("Invalid type conversation, expected: " + option.getDataType().getName() + " - found: " + _type.getName(), getExceptionType());
+        }
+
+        Object arg = getArg(option);
+        if (arg == null || arg.equals(option.getDefaultValue())) { // no value or default of CmdArgOption -> override with our default
+            return _default;
+        }
+
+        return _type.cast(arg);
+    }
+
+    /**
+     * Returns an option value using the options name and converting the value to the given type.
+     * <br>
+     * Will use the configured converter to convert the value.<br><br>
+     *
+     * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
+     *
+     * @param _optionName option short name
+     * @param _default default to use if option not set (and not required)
+     * @param _type expected value type
+     *
      * @return value or null if option has no value
      *
      * @throws RuntimeException when option is unknown or command line was not parsed<br>
@@ -327,6 +363,8 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
      * @param _optionName option short name
+     * @param _type expected value type
+     *
      * @return value or null if option has no value
      *
      * @throws RuntimeException when option is unknown or command line was not parsed<br>
@@ -338,6 +376,76 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         return getArg(_optionName + "", _type);
     }
 
+    /**
+     * Returns an option value using the options short name and converting the value to the given type.
+     * <br>
+     * Will use the configured converter to convert the value.<br><br>
+     *
+     * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
+     *
+     * @param _optionName option short name
+     * @param _type expected value type
+     * @param _default default to use if option not set (and not required)
+     *
+     * @return value or null if option has no value
+     *
+     * @throws RuntimeException when option is unknown or command line was not parsed<br>
+     * @throws RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     *
+     * @since 1.0.1 - 2022-05-24
+     */
+    public <T> T getArg(char _optionName, Class<T> _type, T _default) {
+        return getArg(_optionName + "", _type, _default);
+    }
+
+    /**
+     * Returns all option values using the options name and converting the values to the given type.
+     * <br>
+     * Will use the configured converter to convert the value.<br><br>
+     *
+     * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
+     *
+     * @param _optionName option short name
+     * @param _type expected value type
+     *
+     * @return value or null if option has no value
+     *
+     * @throws RuntimeException when option is unknown or command line was not parsed<br>
+     * @throws RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     *
+     * @since 1.0.1 - 2022-05-24
+     */
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getArgs(CharSequence _optionName, Class<T> _type) {
+        requireParsed(this);
+        CmdArgOption<?> option = getOption(_optionName);
+        if (_type != option.getDataType()) {
+            throw createException("Invalid type conversation, expected: " + option.getDataType().getName() + " - found: " + _type.getName(), getExceptionType());
+        }
+
+        return (List<T>) getArgs(option);
+    }
+
+    /**
+     * Returns all option values using the options short name and converting the values to the given type.
+     * <br>
+     * Will use the configured converter to convert the value.<br><br>
+     *
+     * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
+     *
+     * @param _optionName option short name
+     * @param _type expected value type
+     *
+     * @return value or null if option has no value
+     *
+     * @throws RuntimeException when option is unknown or command line was not parsed<br>
+     * @throws RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     *
+     * @since 1.0.1 - 2022-05-24
+     */
+    public <T> List<T> getArgs(char _optionName, Class<T> _type) {
+        return getArgs(_optionName + "", _type);
+    }
 
     /**
      * Checks if the given option was at least used once in the command line.

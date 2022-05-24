@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -841,6 +842,49 @@ class CommandLineTest extends AbstractBaseTest {
         });
 
         assertEquals("Invalid type conversation, expected: java.lang.Integer - found: java.lang.Long", ex.getMessage());
+    }
+
+    @Test
+    public void parseArgListTyped() {
+        CmdArgOption<Integer> optDup = CmdArgOption.builder(Integer.class)
+                .name("optdup")
+                .optional()
+                .repeatable()
+                .description("optional int")
+                .build();
+
+        CommandLine cl = new CommandLine()
+                .addOption(optDup)
+                .withFailOnDupArg(false)
+                .parse("--optdup 1 --optdup 2 --optdup 3");
+
+        List<Integer> args = cl.getArgs("optdup", Integer.class);
+        assertEquals(1, args.get(0));
+        assertEquals(2, args.get(1));
+        assertEquals(3, args.get(2));
+
+        CommandLineException ex = assertThrows(CommandLineException.class, () -> {
+            cl.getArgs("optdup", Long.class);
+        });
+
+        assertEquals("Invalid type conversation, expected: java.lang.Integer - found: java.lang.Long", ex.getMessage());
+    }
+
+    @Test
+    public void parseArgTypedDefault() {
+        CmdArgOption<Integer> optDup = CmdArgOption.builder(Integer.class)
+                .name("optdup")
+                .optional()
+                .defaultValue(10)
+                .description("optional int")
+                .build();
+        CommandLine cl = new CommandLine()
+                .addOption(optDup)
+                .withFailOnDupArg(false)
+                .withFailOnUnknownArg(false)
+                .parse("--bla");
+
+        assertEquals(5, cl.getArg("optdup", Integer.class, 5));
     }
 
     @Test
