@@ -67,6 +67,30 @@ public class MyMainApp {
   }
 }
 ```
+
+Using options by name with a custom value type looks like this (since 1.0.1):
+
+```java
+
+public class MyMainApp {
+  public void main(String[] _args) {
+     CommandLine cl = new CommandLine()
+                .addOption(CmdArgOption.builder(String.class)
+                        .name("optionWithValue")
+                        .shortName('f')
+                        .required(true)
+                        .description("descr")
+                        .build())
+                .parse(_args);
+
+        String byShortName = cl.getArg('f', String.class);
+        String byLongName = cl.getArg("optionWithValue", String.class);
+
+        System.out.println("Given value was: " + val);
+  }
+}
+
+```
 ## Options
 Options define a supported parameter with an optional value and return type.
 The CmdArgOption uses the builder pattern to create options. 
