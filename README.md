@@ -1,3 +1,4 @@
+[![Build/Test JDK 11](https://github.com/hypfvieh/cli-parser/actions/workflows/maven_jdk11.yml/badge.svg)](https://github.com/hypfvieh/cli-parser/actions/workflows/maven_jdk11.yml) [![Build/Test JDK 17](https://github.com/hypfvieh/cli-parser/actions/workflows/maven_jdk17.yml/badge.svg)](https://github.com/hypfvieh/cli-parser/actions/workflows/maven_jdk17.yml)
 # cli-parser
 Utility library to provide support for commandline parsing.
 It supports long (e.g. --my-option) and short options (e.g. -o) as well as Equal-Style options (.e.g. --my-option=value or -o=value).
