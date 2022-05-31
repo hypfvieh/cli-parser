@@ -89,7 +89,7 @@ Create a class implementing `IUsageFormatter` and set a new instance of this for
 
 ## Creating Converters
 To create a converter you have to create a class which implements `IValueConverter`.
-When conversation fails, the converter should throw a `CommandLineException` (or a subclass of it).
+When conversion fails, the converter should throw a `CommandLineException` (or a subclass of it).
 The new convert has to be registered using `registerConverter(Class<T>, IValueConverter<T>)` on the `CommandLine` object.
 
 ### Sample converter:
