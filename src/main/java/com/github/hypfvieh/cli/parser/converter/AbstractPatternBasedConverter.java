@@ -13,17 +13,18 @@ import org.slf4j.LoggerFactory;
  * Allows adding additional number patterns by using {@link #addPattern(P)}.<br>
  * Will use the first pattern which successfully parsed the input string.
  * </p>
- * 
+ *
  * @author hypfvieh
  * @since 1.0.0 - 2022-05-05
  */
 public abstract class AbstractPatternBasedConverter<T, P> implements IValueConverter<T> {
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    
+
     private final List<P> patterns = new ArrayList<>();
-    
+
     public void addPattern(P _pattern) {
-        patterns.add(Objects.requireNonNull(_pattern, "Pattern required"));
+        // always put custom patterns in front to try it first
+        patterns.add(0, Objects.requireNonNull(_pattern, "Pattern required"));
     }
 
     protected Logger getLogger() {
