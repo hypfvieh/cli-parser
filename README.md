@@ -1,4 +1,8 @@
 [![Build/Test JDK 11](https://github.com/hypfvieh/cli-parser/actions/workflows/maven_jdk11.yml/badge.svg)](https://github.com/hypfvieh/cli-parser/actions/workflows/maven_jdk11.yml) [![Build/Test JDK 17](https://github.com/hypfvieh/cli-parser/actions/workflows/maven_jdk17.yml/badge.svg)](https://github.com/hypfvieh/cli-parser/actions/workflows/maven_jdk17.yml)
+
+ [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.hypfvieh.cli/cli-parser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.hypfvieh.cli/cli-parser)
+ [![Javadoc](https://javadoc.io/badge2/com.github.hypfvieh.cli/cli-parser/javadoc.svg)](https://javadoc.io/doc/com.github.hypfvieh.cli/cli-parser)
+ 
 # cli-parser
 Utility library to provide support for commandline parsing.
 It supports long (e.g. --my-option) and short options (e.g. -o) as well as Equal-Style options (.e.g. --my-option=value or -o=value).
