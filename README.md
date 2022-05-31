@@ -9,6 +9,10 @@ You may register type converters (`registerConverter(Class<T>, IValueConverter<T
 parameter value to a certain java type.
 The cli-parser provides some default converters for LocalDate/LocalDateTime/LocalTime, Double, Integer and Long.
 
+# Requirements
+
+Requires Java 11 or higher - no additional dependencies (yeah!)
+
 # Usage
 
 ## Include dependency in your project
