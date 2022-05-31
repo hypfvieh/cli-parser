@@ -6,7 +6,7 @@ It supports long (e.g. --my-option) and short options (e.g. -o) as well as Equal
 It is possible to change the long and short option prefix (`withLongOptPrefix(String)` / `withShortOptPrefix(String)`).
 You can set various options to handle unknown, incomplete or wrong parameters.
 
-You may register type converters (`registerConverter(Class<T>, IValueConverter<T>)`) to support convertion from input
+You may register type converters (`registerConverter(Class<T>, IValueConverter<T>)`) to support conversion from input
 parameter value to a certain java type.
 The cli-parser provides some default converters for LocalDate/LocalDateTime/LocalTime, Double, Integer and Long.
 
