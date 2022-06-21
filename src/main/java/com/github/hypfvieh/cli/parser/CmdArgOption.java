@@ -1,5 +1,6 @@
 package com.github.hypfvieh.cli.parser;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -116,6 +117,28 @@ public final class CmdArgOption<T> {
      */
     public Class<?> getDataType() {
         return dataType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, shortName, dataType, required, hasValue, repeatable, defaultValue);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        CmdArgOption<?> other = (CmdArgOption<?>) obj;
+        return Objects.equals(name, other.name)
+                && Objects.equals(shortName, other.shortName)
+                && dataType == other.dataType
+                && required == other.required
+                && hasValue == other.hasValue
+                && repeatable == other.repeatable
+                && Objects.equals(defaultValue, other.defaultValue);
     }
 
     @Override
