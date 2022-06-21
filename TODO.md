@@ -5,3 +5,4 @@
 	- [OK] Increase test coverage
 	- [OK] Add missing javadoc
 	- [OK] Check uniqueness of all long and short options (prevent conflicting duplicates)
+	- [  ] Apply Anyedit or similar to prevent trailing whitespaces at end of line and on empty lines
