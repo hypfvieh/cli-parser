@@ -5,7 +5,7 @@
 
     <groupId>com.github.hypfvieh.cli</groupId>
     <artifactId>cli-parser</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -38,7 +38,7 @@
         <connection>scm:git:ssh//git@github.com/hypfvieh/${project.artifactId}.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/hypfvieh/${project.artifactId}.git</developerConnection>
         <url>ssh://git@github.com/hypfvieh/${project.artifactId}.git</url>
-      <tag>HEAD</tag>
+      <tag>cli-parser-1.0.1</tag>
   </scm>
 
     <distributionManagement>
