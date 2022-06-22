@@ -83,7 +83,7 @@ class CommandLineTest extends AbstractBaseTest {
     }
 
     @Test
-    public void getUndefinedOptionFromCommandlineFail() {
+    public void testGetUndefinedOptionFromCommandlineFail() {
         CommandLine cl = new CommandLine().parse((String) null);
         assertEquals("Option not defined: arg1",
                 assertThrows(Exception.class, () -> cl.getArg("arg1")).getMessage());
@@ -122,7 +122,7 @@ class CommandLineTest extends AbstractBaseTest {
     }
 
     @Test
-    public void getOptionFromUnparsedCommandlineFail() {
+    public void testGetOptionFromUnparsedCommandlineFail() {
         CmdArgOption<Long> optAlong = CmdArgOption.builder(Long.class)
                 .name("along")
                 .required()
@@ -135,7 +135,7 @@ class CommandLineTest extends AbstractBaseTest {
     }
 
     @Test
-    public void getOptionNoValue() {
+    public void testGetOptionNoValue() {
         CmdArgOption<Void> optNoVal = CmdArgOption.builder()
                 .name("optNoVal")
                 .required()
@@ -150,7 +150,7 @@ class CommandLineTest extends AbstractBaseTest {
     }
 
     @Test
-    public void getOptionNoValueWithValue() {
+    public void testGetOptionNoValueWithValue() {
         CmdArgOption<Void> optNoVal = CmdArgOption.builder()
                 .name("optNoVal")
                 .required()
@@ -965,12 +965,12 @@ class CommandLineTest extends AbstractBaseTest {
     }
 
     @Test
-    public void getUsageNoArgs() {
+    public void testGetUsageNoArgs() {
         assertPatternMatches(new CommandLine().getUsage(null), "^usage: [^ ]+\n");
     }
 
     @Test
-    public void getUsageWithArgs() {
+    public void testGetUsageWithArgs() {
         CommandLine cl = new CommandLine()
                 .addOption(CmdArgOption.builder(String.class)
                         .name("req1")
@@ -1014,7 +1014,7 @@ class CommandLineTest extends AbstractBaseTest {
 
     @Test
     public void printUsageCustomFormatter() throws IOException {
-        String help = new CommandLine().withUsageFormatter((_options, l, s, _mainClassName) -> "Test the Usage-Formatter: -->" + _mainClassName + "<--: ").getUsage("App");
+        String help = new CommandLine().withUsageFormatter((options, l, s, mainClassName) -> "Test the Usage-Formatter: -->" + mainClassName + "<--: ").getUsage("App");
         assertTrue(help.startsWith("Test the Usage-Formatter: -->App<--: "));
     }
 }
