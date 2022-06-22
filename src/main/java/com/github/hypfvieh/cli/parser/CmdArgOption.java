@@ -125,13 +125,13 @@ public final class CmdArgOption<T> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object _obj) {
+        if (this == _obj) {
             return true;
-        } else if (obj == null || getClass() != obj.getClass()) {
+        } else if (_obj == null || getClass() != _obj.getClass()) {
             return false;
         }
-        CmdArgOption<?> other = (CmdArgOption<?>) obj;
+        CmdArgOption<?> other = (CmdArgOption<?>) _obj;
         return Objects.equals(name, other.name)
                 && Objects.equals(shortName, other.shortName)
                 && dataType == other.dataType

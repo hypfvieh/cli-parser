@@ -242,7 +242,7 @@ public abstract class AbstractBaseTest extends Assertions {
                 }
             }
         }
-        assertTrue(notFound.size() == 0, "Values " + notFound + " not found in collection: " + _coll);
+        assertTrue(notFound.isEmpty(), "Values " + notFound + " not found in collection: " + _coll);
         return _coll;
     }
 
