@@ -1,11 +1,10 @@
 package com.github.hypfvieh.cli.parser.formatter;
 
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
 import com.github.hypfvieh.cli.parser.AbstractBaseTest;
 import com.github.hypfvieh.cli.parser.CmdArgOption;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 class DefaultUsageFormatterTest extends AbstractBaseTest {
 

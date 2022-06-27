@@ -1,11 +1,11 @@
 package com.github.hypfvieh.cli.parser.formatter;
 
+import com.github.hypfvieh.cli.parser.CmdArgOption;
+import com.github.hypfvieh.cli.parser.StaticUtils;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import com.github.hypfvieh.cli.parser.CmdArgOption;
-import com.github.hypfvieh.cli.parser.StaticUtils;
 
 /**
  * Default usage formatter used when no other formatter was specified

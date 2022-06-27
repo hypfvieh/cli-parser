@@ -1,11 +1,11 @@
 package com.github.hypfvieh.cli.parser.converter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base converter using a list of patterns to find a suitable convert operation.

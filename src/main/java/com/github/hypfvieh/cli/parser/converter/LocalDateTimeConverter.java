@@ -1,11 +1,11 @@
 package com.github.hypfvieh.cli.parser.converter;
 
+import com.github.hypfvieh.cli.parser.CommandLineException;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
-
-import com.github.hypfvieh.cli.parser.CommandLineException;
 
 /**
  * Converts a string to a {@link LocalDateTime} object.
