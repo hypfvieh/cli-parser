@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 /**
  * Default usage formatter used when no other formatter was specified
  *
- * @author hypfvieh
+ * @author David M.
+ * @author Markus S.
  * @since 1.0.0 - 2022-05-05
  */
 public class DefaultUsageFormatter implements IUsageFormatter {

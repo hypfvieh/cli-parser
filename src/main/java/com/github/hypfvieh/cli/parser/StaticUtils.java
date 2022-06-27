@@ -5,7 +5,8 @@ import java.util.Objects;
 /**
  * Utility bundling re-used static methods.
  * 
- * @author hypfvieh
+ * @author David M.
+ * @author Markus S.
  * @since 1.0.0 - 2022-05-05
  */
 public final class StaticUtils {
