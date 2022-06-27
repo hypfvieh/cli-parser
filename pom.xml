@@ -73,9 +73,9 @@
         <proj.check.skip-pmd>false</proj.check.skip-pmd>
         <proj.check.skip-spotbugs>false</proj.check.skip-spotbugs>
 
-        <proj.check.fail-checkstyle>false</proj.check.fail-checkstyle>
-        <proj.check.fail-pmd>false</proj.check.fail-pmd>
-        <proj.check.fail-spotbugs>false</proj.check.fail-spotbugs>
+        <proj.check.fail-checkstyle>true</proj.check.fail-checkstyle>
+        <proj.check.fail-pmd>true</proj.check.fail-pmd>
+        <proj.check.fail-spotbugs>true</proj.check.fail-spotbugs>
     </properties>
 
     <dependencies>

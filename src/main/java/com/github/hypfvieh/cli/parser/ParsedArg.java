@@ -2,7 +2,7 @@ package com.github.hypfvieh.cli.parser;
 
 /**
  * Class which represents a parsed command line argument.
- * 
+ *
  * @since 1.0.0 - 2022-05-05
  */
 class ParsedArg {
@@ -16,11 +16,11 @@ class ParsedArg {
 
     private String                value;
 
-    public ParsedArg(boolean _looksLikeArg, boolean _multi, CmdArgOption<?> _cmdArg) {
+    ParsedArg(boolean _looksLikeArg, boolean _multi, CmdArgOption<?> _cmdArg) {
         this(_looksLikeArg, _multi, _cmdArg, null);
     }
 
-    public ParsedArg(boolean _looksLikeArg, boolean _multi, CmdArgOption<?> _cmdArg, String _value) {
+    ParsedArg(boolean _looksLikeArg, boolean _multi, CmdArgOption<?> _cmdArg, String _value) {
         lookingLikeOption = _looksLikeArg;
         multiArg = _multi;
         cmdArgOpt = _cmdArg;
@@ -29,7 +29,7 @@ class ParsedArg {
 
     /**
      * Indicates that the parsed token looks like a long or short option.
-     * 
+     *
      * @return true if option like
      */
     public boolean isLookingLikeOption() {
@@ -38,7 +38,7 @@ class ParsedArg {
 
     /**
      * True if the parsed token looks like a repeated argument.
-     * 
+     *
      * @return true if repeated
      */
     public boolean isMultiArg() {
@@ -47,7 +47,7 @@ class ParsedArg {
 
     /**
      * Option used in combination with the parsed token.
-     * 
+     *
      * @return option, maybe null
      */
     public CmdArgOption<?> getCmdArgOpt() {
@@ -57,7 +57,7 @@ class ParsedArg {
     /**
      * The value assigned to the parsed option.<br>
      * Can be null if option value was not given.
-     * 
+     *
      * @return String or null
      */
     public String getValue() {
@@ -66,7 +66,7 @@ class ParsedArg {
 
     /**
      * Set the current value for the parsed option.
-     * 
+     *
      * @param _value value to set
      */
     public void setValue(String _value) {
