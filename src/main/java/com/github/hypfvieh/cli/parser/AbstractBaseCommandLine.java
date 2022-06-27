@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.invoke.MethodType;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -23,7 +24,7 @@ import java.util.stream.Stream;
 
 /**
  * Base class of every command line.
- * 
+ *
  * @author David M.
  * @author Markus S.
  * @since 1.0.0 - 2022-05-05
@@ -57,7 +58,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * A reference to ourselves to allow chaining with subclasses.
-     * 
+     *
      * @return this
      */
     protected abstract B self();
@@ -81,7 +82,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Reset the internal state.
-     * 
+     *
      * @return this
      */
     B reset() {
@@ -98,11 +99,11 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Registers a converter to convert an option argument String to a specific java object type.
-     * 
+     *
      * @param <T> type
      * @param _type java class to convert to
      * @param _converter converter instance
-     * 
+     *
      * @return this
      */
     public <T> B registerConverter(Class<T> _type, IValueConverter<T> _converter) {
@@ -118,7 +119,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Set the parsed state.
-     * 
+     *
      * @param _b true to signal that commandline was parsed
      */
     protected void setParsed(boolean _b) {
@@ -127,11 +128,11 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Add an option to the supported options.
-     * 
+     *
      * @param _option option, never null
-     * 
+     *
      * @return this
-     * 
+     *
      * @throws RuntimeException when option is not unique (short/long name was used by another option)
      */
     public B addOption(CmdArgOption<?> _option) {
@@ -152,11 +153,11 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Adds multiple options to the supported options.
-     * 
+     *
      * @param _options options to add
-     * 
+     *
      * @return this
-     * 
+     *
      * @throws RuntimeException when option is not unique (short/long name was used by another option)
      */
     public B addOptions(CmdArgOption<?>... _options) {
@@ -170,7 +171,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Prints some debug statements to the configured logger.
-     * 
+     *
      * @return this
      */
     protected B logResults() {
@@ -198,7 +199,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Checks if there is any option with the given name.
-     * 
+     *
      * @param _optionName option name to check
      * @return true if present, false otherwise
      */
@@ -208,7 +209,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Checks if the given option is already present.
-     * 
+     *
      * @param _option option to check
      * @return true if present, false otherwise
      */
@@ -218,7 +219,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns a unmodifiable Map of all configured options.
-     * 
+     *
      * @return unmodifiable Map, never null
      */
     public Map<String, CmdArgOption<?>> getOptions() {
@@ -227,7 +228,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns a option using its name.
-     * 
+     *
      * @param _optionName option name
      * @return option, maybe null
      */
@@ -237,7 +238,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns a unmodifiable Map of all successfully parsed, known arguments.
-     * 
+     *
      * @return unmodifiable Map, never null
      */
     public Map<CmdArgOption<?>, String> getKnownArgs() {
@@ -247,7 +248,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     /**
      * Returns a unmodifiable Map of all parsed, but unknown arguments.<br>
      * The value of the map will represent the parsed value, or null if no value found.
-     * 
+     *
      * @return unmodifiable Map, never null
      */
     public Map<String, String> getUnknownArgs() {
@@ -256,7 +257,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns a unmodifiable list of all unknown option arguments.
-     * 
+     *
      * @return unmodifiable list, never null
      */
     public List<String> getUnknownTokens() {
@@ -267,7 +268,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * Returns a unmodifiable Map of all parsed, known but duplicated arguments. <br>
      * The value of the map will represent the parsed value, or null if no value found.<br>
      * Only arguments which are not repeatable will be added to the duplicate list.
-     * 
+     *
      * @return unmodifiable Map, never null
      */
     public Map<CmdArgOption<?>, String> getDupArgs() {
@@ -283,13 +284,13 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Prints the "usage" of the program to the given output.
-     * 
+     *
      * @param _mainClassName name of program or main class
      * @param _output output stream to write to
      */
     public void printUsage(String _mainClassName, OutputStream _output) {
         Objects.requireNonNull(_output, "Output required");
-        try (PrintWriter pw = new PrintWriter(_output)) {
+        try (PrintWriter pw = new PrintWriter(_output, false, StandardCharsets.UTF_8)) {
             pw.print(getUsage(_mainClassName));
             pw.flush();
         }
@@ -297,7 +298,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Creates the "usage" String using the configured formatter.
-     * 
+     *
      * @param _mainClassName name of program or main class
      * @return usage String
      */
@@ -310,9 +311,9 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Setup a different {@link IUsageFormatter}.
-     * 
+     *
      * @param _formatter formatter, null will be ignored
-     * 
+     *
      * @return this
      */
     public B withUsageFormatter(IUsageFormatter _formatter) {
@@ -327,9 +328,9 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * <p>
      * Default: true
      * </p>
-     * 
+     *
      * @param _failOnUnknownArg true to enable
-     * 
+     *
      * @return this
      */
     public B withFailOnUnknownArg(boolean _failOnUnknownArg) {
@@ -342,9 +343,9 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * <p>
      * Default: true
      * </p>
-     * 
+     *
      * @param _failOnUnknownToken true to enable
-     * 
+     *
      * @return this
      */
     public B withFailOnUnknownToken(boolean _failOnUnknownToken) {
@@ -357,9 +358,9 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * <p>
      * Default: true
      * </p>
-     * 
+     *
      * @param _failOnDupArg true to enable
-     * 
+     *
      * @return this
      */
     public B withFailOnDupArg(boolean _failOnDupArg) {
@@ -372,9 +373,9 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * <p>
      * Default: -
      * </p>
-     * 
+     *
      * @param _prefix prefix for short options
-     * 
+     *
      * @return this
      */
     public B withShortOptPrefix(String _prefix) {
@@ -394,9 +395,9 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * <p>
      * Default: --
      * </p>
-     * 
+     *
      * @param _prefix prefix for long options
-     * 
+     *
      * @return this
      */
     public B withLongOptPrefix(String _prefix) {
@@ -416,9 +417,9 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * <p>
      * Default: {@link CommandLineException}
      * </p>
-     * 
+     *
      * @param _exceptionType class, never null
-     * 
+     *
      * @return this
      */
     public B withExceptionType(Class<? extends RuntimeException> _exceptionType) {
@@ -434,7 +435,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns the current short option name prefix.
-     * 
+     *
      * @return String
      */
     public String getShortOptPrefix() {
@@ -443,7 +444,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns the current long option name prefix.
-     * 
+     *
      * @return String
      */
     public String getLongOptPrefix() {
@@ -452,7 +453,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns the current pattern to parse long option names.
-     * 
+     *
      * @return Pattern
      */
     protected Pattern getLongOptPattern() {
@@ -461,7 +462,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns the current pattern to parse short option names.
-     * 
+     *
      * @return Pattern
      */
     protected Pattern getShortOptPattern() {
@@ -470,7 +471,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns the class of the current configured exception.
-     * 
+     *
      * @return Class, never null
      */
     public Class<? extends RuntimeException> getExceptionType() {
@@ -479,7 +480,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns the logger instance.
-     * 
+     *
      * @return Logger
      */
     protected Logger getLogger() {
@@ -488,16 +489,16 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns the argument bundle for collecting/managing parsed arguments.
-     * 
+     *
      * @return ArgumentBundle, never null
      */
-    protected ArgumentBundle getArgBundle() {
+    ArgumentBundle getArgBundle() {
         return argBundle;
     }
 
     /**
      * Signals if the command line has been parsed.
-     * 
+     *
      * @return true if it was parsed, false otherwise
      */
     protected boolean isParsed() {
@@ -506,7 +507,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns true when command line parsing fails on duplicated arguments.
-     * 
+     *
      * @return boolean
      */
     public boolean isFailOnDupArg() {
@@ -515,7 +516,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns true when command line parsing fails on unknown arguments.
-     * 
+     *
      * @return boolean
      */
     public boolean isFailOnUnknownArg() {
@@ -524,7 +525,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns true when command line parsing fails on unknown tokens.
-     * 
+     *
      * @return boolean
      */
     public boolean isFailOnUnknownToken() {
@@ -533,10 +534,10 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Execute a function on <code>this</code> object synchroniously.
-     * 
+     *
      * @param <R> type to return
      * @param _function function to execute
-     * 
+     *
      * @return object of type R, maybe null
      */
     private <R> R accessSync(Function<B, R> _function) {

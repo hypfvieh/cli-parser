@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Bundles different argument specific information.
+ * Bundles different argument-specific information.
  *
  * @author David M.
  * @author Markus S.
@@ -24,35 +24,35 @@ public final class ArgumentBundle {
     private final Map<String, CmdArgOption<?>>       options        = new LinkedHashMap<>();
     private final Map<Class<?>, IValueConverter<?>>  converters     = new LinkedHashMap<>();
 
-    public Map<CmdArgOption<?>, String> getKnownArgs() {
+    Map<CmdArgOption<?>, String> getKnownArgs() {
         return knownArgs;
     }
 
-    public Map<CmdArgOption<?>, List<String>> getKnownMultiArgs() {
+    Map<CmdArgOption<?>, List<String>> getKnownMultiArgs() {
         return knownMultiArgs;
     }
 
-    public Map<String, String> getUnknownArgs() {
+    Map<String, String> getUnknownArgs() {
         return unknownArgs;
     }
 
-    public List<String> getUnknownTokens() {
+    List<String> getUnknownTokens() {
         return unknownTokens;
     }
 
-    public Map<CmdArgOption<?>, String> getDupArgs() {
+    Map<CmdArgOption<?>, String> getDupArgs() {
         return dupArgs;
     }
 
-    public List<CmdArgOption<?>> getMissingArgs() {
+    List<CmdArgOption<?>> getMissingArgs() {
         return missingArgs;
     }
 
-    public Map<String, CmdArgOption<?>> getOptions() {
+    Map<String, CmdArgOption<?>> getOptions() {
         return options;
     }
 
-    public Map<Class<?>, IValueConverter<?>> getConverters() {
+    Map<Class<?>, IValueConverter<?>> getConverters() {
         return converters;
     }
 

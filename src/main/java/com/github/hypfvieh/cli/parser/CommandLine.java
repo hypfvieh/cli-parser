@@ -117,7 +117,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                         }
                     } else if (!parsedArg.isLookingLikeOption()) { // we on last token and this does not look like an option
                         getArgBundle().getUnknownTokens().add(token);
-                    } else if (cmdOpt == null && parsedArg.isLookingLikeOption()) { // we did not find an option but this argument looks like one
+                    } else if (parsedArg.isLookingLikeOption()) { // we did not find an option but this argument looks like one
                         getArgBundle().getUnknownArgs().put(token, null);
                     }
                 }

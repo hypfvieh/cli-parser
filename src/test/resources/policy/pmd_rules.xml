@@ -23,7 +23,7 @@
     <rule ref="category/java/bestpractices.xml/UseTryWithResources" />
 
     <rule ref="category/java/codestyle.xml/AvoidDollarSigns" />
-    
+
     <rule ref="category/java/codestyle.xml/ControlStatementBraces" />
     <rule ref="category/java/codestyle.xml/EmptyControlStatement" />
     <rule ref="category/java/codestyle.xml/ExtendsObject" />
@@ -62,7 +62,7 @@
     <rule ref="category/java/codestyle.xml/UnnecessaryReturn" />
     <rule ref="category/java/codestyle.xml/UseDiamondOperator" />
     <rule ref="category/java/codestyle.xml/UselessParentheses" />
-    <rule ref="category/java/codestyle.xml/UselessQualifiedThis" />    
+    <rule ref="category/java/codestyle.xml/UselessQualifiedThis" />
 
     <rule ref="category/java/design.xml/AvoidThrowingNewInstanceOfSameException" />
     <rule ref="category/java/design.xml/CollapsibleIfStatements" />

@@ -4,7 +4,7 @@ import java.util.Objects;
 
 /**
  * Utility bundling re-used static methods.
- * 
+ *
  * @author David M.
  * @author Markus S.
  * @since 1.0.0 - 2022-05-05
@@ -16,7 +16,7 @@ public final class StaticUtils {
 
     /**
      * Checks given option is valid (has valid name/shortname).
-     * 
+     *
      * @param _option option
      * @return option
      * @throws IllegalArgumentException when option is invalid
@@ -31,11 +31,11 @@ public final class StaticUtils {
 
     /**
      * Checks if the given option was not registered with same long/short name before.
-     * 
+     *
      * @param <B> command line
      * @param _option option to check
      * @param _cmdLine command line instance
-     * 
+     *
      * @throws IllegalArgumentException when option with same name already registered
      */
     static <B extends AbstractBaseCommandLine<?>> void requireUniqueOption(CmdArgOption<?> _option, B _cmdLine) {
@@ -53,10 +53,10 @@ public final class StaticUtils {
 
     /**
      * Creates a new exception instance of the given type.
-     * 
+     *
      * @param _message message for exception
      * @param _exceptionType exception class to instantiate
-     * 
+     *
      * @return instance of RuntimeException compatible class, maybe {@link CommandLineException} in case given exception
      *         does not support String constructor
      */
@@ -76,10 +76,10 @@ public final class StaticUtils {
 
     /**
      * Verifies that the parse was called on the given commandline instance.
-     * 
+     *
      * @param <B> command line type
      * @param _cmdLine command line instance
-     * 
+     *
      * @return command line
      * @throws RuntimeException (or subclass) when command line was not parsed
      */
@@ -93,7 +93,7 @@ public final class StaticUtils {
 
     /**
      * Executes an unchecked cast on the given type.
-     * 
+     *
      * @param <T> type
      * @param _type type
      * @return class
@@ -105,7 +105,7 @@ public final class StaticUtils {
 
     /**
      * Creates a "Option not defined" exception.
-     * 
+     *
      * @param _option option which was not defined
      * @return CommandLineException
      */
@@ -115,7 +115,7 @@ public final class StaticUtils {
 
     /**
      * Checks if given string was null or blank.
-     * 
+     *
      * @param _val input to check
      * @return input string or null
      */
@@ -128,11 +128,11 @@ public final class StaticUtils {
 
     /**
      * Formats the given option for logging/exceptions.
-     * 
+     *
      * @param _arg argument to convert
      * @param _longOptPrefix prefix for long options
      * @param _shortOptPrefix prefix for short options
-     * 
+     *
      * @return String or null if option was null
      */
     public static String formatOption(CmdArgOption<?> _arg, String _longOptPrefix, String _shortOptPrefix) {
