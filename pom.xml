@@ -252,6 +252,13 @@
                     <logViolationsToConsole>true</logViolationsToConsole>
                     <violationSeverity>warning</violationSeverity>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>10.3</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>proj.default</id>
