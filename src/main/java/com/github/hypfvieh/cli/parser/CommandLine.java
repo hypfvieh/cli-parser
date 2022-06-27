@@ -87,8 +87,8 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                 ParsedArg parsedArg = parseArg(token, true);
                 CmdArgOption<?> cmdOpt = parsedArg.getCmdArgOpt();
 
-                if (argsLen -1 >= i+1) {
-                    String val = _args[i+1];
+                if (argsLen - 1 >= i + 1) {
+                    String val = _args[i + 1];
                     ParsedArg nextArg = parseArg(val, false);
 
                     if (nextArg.getCmdArgOpt() == null) { // looks like proper value
@@ -491,7 +491,6 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         return 0;
     }
 
-
     /**
      * Adds the given command option to the appropriate internal map or list.
      *
@@ -575,8 +574,6 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         return new ParsedArg(false, false, null);
     }
 
-
-
     /**
      * Validates the parsed command line.
      *
@@ -631,7 +628,5 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         }
         return this;
     }
-
-
 
 }

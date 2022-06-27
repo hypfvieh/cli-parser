@@ -12,7 +12,7 @@ class LocalTimeConverterTest extends AbstractBaseTest {
     @Test
     void testReadValid() {
         LocalTimeConverter converter = new LocalTimeConverter();
-        
+
         assertEquals(LocalTime.of(13, 14, 15), converter.convert("13:14:15"));
         assertEquals(LocalTime.of(19, 20, 21), converter.convert("192021"));
     }
@@ -20,7 +20,7 @@ class LocalTimeConverterTest extends AbstractBaseTest {
     @Test
     void testReadInValid() {
         LocalTimeConverter converter = new LocalTimeConverter();
-        
+
         assertThrows(CommandLineException.class, () -> converter.convert("hi"));
     }
 

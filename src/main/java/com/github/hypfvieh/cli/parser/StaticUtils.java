@@ -10,8 +10,9 @@ import java.util.Objects;
  */
 public final class StaticUtils {
 
-    private StaticUtils() {}
-    
+    private StaticUtils() {
+    }
+
     /**
      * Checks given option is valid (has valid name/shortname).
      * 
@@ -39,11 +40,11 @@ public final class StaticUtils {
     static <B extends AbstractBaseCommandLine<?>> void requireUniqueOption(CmdArgOption<?> _option, B _cmdLine) {
         Objects.requireNonNull(_option, "Option required");
         Objects.requireNonNull(_cmdLine, "Commandline required");
-        
+
         if (_option.getName() != null && _cmdLine.getOptions().containsKey(_option.getName())) {
             throw new IllegalArgumentException("Command-line option '" + _cmdLine.getLongOptPrefix() + _option.getName() + "' already defined");
         }
-        
+
         if (_option.getShortName() != null && _cmdLine.getOptions().containsKey(_option.getShortName())) {
             throw new IllegalArgumentException("Command-line option '" + _cmdLine.getShortOptPrefix() + _option.getShortName() + "' already defined");
         }
@@ -55,13 +56,13 @@ public final class StaticUtils {
      * @param _message message for exception
      * @param _exceptionType exception class to instantiate
      * 
-     * @return instance of RuntimeException compatible class, 
-     *        maybe {@link CommandLineException} when given exception does not support String constructor
+     * @return instance of RuntimeException compatible class, maybe {@link CommandLineException} in case given exception
+     *         does not support String constructor
      */
     static RuntimeException createException(String _message, Class<? extends RuntimeException> _exceptionType) {
         if (_exceptionType == null) {
             return new RuntimeException(_message);
-        } 
+        }
         if (CommandLineException.class == _exceptionType) {
             return new CommandLineException(_message);
         }
@@ -71,11 +72,11 @@ public final class StaticUtils {
             return new CommandLineException(_message);
         }
     }
-    
+
     /**
      * Verifies that the parse was called on the given commandline instance.
-     *   
-     * @param <B> command line type 
+     * 
+     * @param <B> command line type
      * @param _cmdLine command line instance
      * 
      * @return command line
@@ -88,7 +89,7 @@ public final class StaticUtils {
         }
         return _cmdLine;
     }
- 
+
     /**
      * Executes an unchecked cast on the given type.
      * 
@@ -100,17 +101,17 @@ public final class StaticUtils {
     static <T> Class<T> uncheckedCast(Class<?> _type) {
         return (Class<T>) _type;
     }
-    
+
     /**
      * Creates a "Option not defined" exception.
      * 
      * @param _option option which was not defined
-     * @return CommandLineException 
+     * @return CommandLineException
      */
     static <T extends RuntimeException> RuntimeException optionNotDefined(Object _option, Class<T> _targetClass) {
         return createException("Option not defined: " + _option, _targetClass);
     }
-    
+
     /**
      * Checks if given string was null or blank.
      * 
@@ -141,7 +142,7 @@ public final class StaticUtils {
         } else if (_arg.getName() != null && !_arg.getName().isBlank()) {
             return _longOptPrefix + _arg.getName();
         } else if (_arg.getShortName() != null && !_arg.getShortName().isBlank()) {
-            return _shortOptPrefix + _arg.getShortName();   
+            return _shortOptPrefix + _arg.getShortName();
         } else {
             return "?";
         }

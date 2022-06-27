@@ -73,11 +73,11 @@ class CommandLineTest extends AbstractBaseTest {
         assertFalse(cl.getOption(optName).isRequired());
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> cl.addOption(CmdArgOption.builder(String.class)
-                .name(optName)
-                .required()
-                .defaultValue("default2")
-                .build()));
+                () -> cl.addOption(CmdArgOption.builder(String.class)
+                        .name(optName)
+                        .required()
+                        .defaultValue("default2")
+                        .build()));
 
         assertEquals("Command-line option '--arg1' already defined", ex.getMessage());
     }
@@ -111,10 +111,10 @@ class CommandLineTest extends AbstractBaseTest {
                 .addOption(usedMulti);
 
         CmdArgOption<String> notUsed = CmdArgOption.builder(String.class)
-            .name("xarg")
-            .optional()
-            .defaultValue("default1")
-            .build();
+                .name("xarg")
+                .optional()
+                .defaultValue("default1")
+                .build();
 
         assertFalse(cl.hasOption(notUsed));
         assertTrue(cl.hasOption(used));
@@ -455,8 +455,7 @@ class CommandLineTest extends AbstractBaseTest {
                 .description("second flag")
                 .build();
 
-        assertThrows(CommandLineException.class, () ->
-        new CommandLine()
+        assertThrows(CommandLineException.class, () -> new CommandLine()
                 .addOption(optAll)
                 .addOption(optRepeat)
                 .withFailOnUnknownToken(false)
@@ -635,7 +634,6 @@ class CommandLineTest extends AbstractBaseTest {
                 .description("optional int")
                 .build();
 
-
         CommandLine cl = new CommandLine()
                 .addOption(optInt)
                 .withFailOnUnknownToken(false)
@@ -656,7 +654,6 @@ class CommandLineTest extends AbstractBaseTest {
                 .repeatable(true)
                 .description("optional")
                 .build();
-
 
         CommandLine cl = new CommandLine()
                 .addOption(optInt)
@@ -735,10 +732,10 @@ class CommandLineTest extends AbstractBaseTest {
                 .build();
 
         CommandLine cl = new CommandLine()
-               .addOptions(optBoolSimple, optBoolWrapper, optByte, optShort)
-               .addOptions(optIntReq, optIntOpt)
-               .addOptions(optLong, optFloat, optDouble)
-               .addOptions(optString, optLocalDate, optLocalDateTime, optLocalTime);
+                .addOptions(optBoolSimple, optBoolWrapper, optByte, optShort)
+                .addOptions(optIntReq, optIntOpt)
+                .addOptions(optLong, optFloat, optDouble)
+                .addOptions(optString, optLocalDate, optLocalDateTime, optLocalTime);
 
         cl.getOptions().values().stream().map(cl::hasOption).forEach(CommandLineTest::assertTrue);
 

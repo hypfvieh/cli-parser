@@ -34,7 +34,7 @@ class DefaultUsageFormatterTest extends AbstractBaseTest {
                 .defaultValue("def")
                 .description("descr")
                 .build();
-        
+
         CmdArgOption<?> opt4 = CmdArgOption.builder(String.class)
                 .name("optVal")
                 .shortName('p')
@@ -43,7 +43,7 @@ class DefaultUsageFormatterTest extends AbstractBaseTest {
                 .defaultValue("def")
                 .description("descr")
                 .build();
-        
+
         CmdArgOption<?> opt5 = CmdArgOption.builder(null)
                 .name("noVal")
                 .shortName('n')
@@ -51,9 +51,9 @@ class DefaultUsageFormatterTest extends AbstractBaseTest {
                 .repeatable()
                 .description("descr")
                 .build();
-        
+
         List<CmdArgOption<?>> list = List.of(opt1, opt2, opt3, opt4, opt5);
-        
+
         DefaultUsageFormatter duf = new DefaultUsageFormatter();
         assertEquals("usage: Test" + System.lineSeparator(), duf.format(null, "--", "-", "Test"));
         assertEquals("usage: Test --optWithValue <arg> -o <arg> --optVal/-p <arg> --noVal/-n [--optionWithValue/-f <arg>]" + System.lineSeparator(), duf.format(list, "--", "-", "Test"));

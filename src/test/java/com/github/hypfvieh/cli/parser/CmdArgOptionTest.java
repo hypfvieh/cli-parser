@@ -14,8 +14,7 @@ class CmdArgOptionTest extends AbstractBaseTest {
                 .name("optionWithoutValue")
                 .shortName('f')
                 .required()
-                .defaultValue("def")
-                );
+                .defaultValue("def"));
 
         // no name/shortname
         assertThrows(CommandLineException.class, () -> CmdArgOption.builder(String.class).build());
@@ -24,7 +23,7 @@ class CmdArgOptionTest extends AbstractBaseTest {
         // empty shortname
         assertThrows(CommandLineException.class, () -> CmdArgOption.builder(String.class).shortName(' ').build());
     }
-    
+
     @Test
     void buildOptionWithValue() {
         CmdArgOption<?> opt = CmdArgOption.builder(String.class)
