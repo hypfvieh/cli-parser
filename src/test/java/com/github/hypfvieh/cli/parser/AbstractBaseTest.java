@@ -74,6 +74,7 @@ public abstract class AbstractBaseTest extends Assertions {
 
     /**
      * Retrieves class name and method name at the specified stacktrace index.
+     * 
      * @param _index stacktrace index
      * @return fully qualified method name
      */
@@ -84,17 +85,19 @@ public abstract class AbstractBaseTest extends Assertions {
     }
 
     /**
-    * Gets the current method name.
-    * @return method name
-    */
+     * Gets the current method name.
+     * 
+     * @return method name
+     */
     public static String getMethodName() {
         return getStackTraceString(2);
     }
 
     /**
-    * Gets the calling method name.
-    * @return method name
-    */
+     * Gets the calling method name.
+     * 
+     * @return method name
+     */
     public static String getCallingMethodName() {
         return getStackTraceString(3);
     }
@@ -145,6 +148,7 @@ public abstract class AbstractBaseTest extends Assertions {
 
     /**
      * Fails a test with the given message and optional exception.
+     * 
      * @param _message message
      * @param _ex exception
      */
@@ -162,6 +166,7 @@ public abstract class AbstractBaseTest extends Assertions {
 
     /**
      * Asserts that the specified file exists.
+     * 
      * @param _file file object
      * @return the file object
      */
@@ -175,6 +180,7 @@ public abstract class AbstractBaseTest extends Assertions {
 
     /**
      * Asserts that the specified file exists or does not exists.
+     * 
      * @param _file file object
      * @param _exists true if should exist, false otherwise
      * @return the file object
@@ -196,6 +202,7 @@ public abstract class AbstractBaseTest extends Assertions {
 
     /**
      * Asserts that the specified environment variable is set.
+     * 
      * @param _name environment variable name
      * @return value of environment variable
      */
@@ -207,8 +214,8 @@ public abstract class AbstractBaseTest extends Assertions {
     }
 
     /**
-     * Asserts the specified map is non-null and contains all
-     * of the given keys.
+     * Asserts the specified map is non-null and contains all of the given keys.
+     * 
      * @param _map map
      * @param _keys array of keys, may be null or zero length
      * @return the map parameter
@@ -225,8 +232,8 @@ public abstract class AbstractBaseTest extends Assertions {
     }
 
     /**
-     * Asserts the specified collection is non-null and contains all
-     * of the given values.
+     * Asserts the specified collection is non-null and contains all of the given values.
+     * 
      * @param _coll collection
      * @param _values array of values, may be null or zero length
      * @return the collection parameter

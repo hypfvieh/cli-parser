@@ -14,7 +14,7 @@ class DoubleConverterTest extends AbstractBaseTest {
     void testReadValid() {
         DoubleConverter converter = new DoubleConverter();
         converter.addPattern(DecimalFormat.getInstance(Locale.GERMAN));
-        
+
         assertEquals(17.4, converter.convert("17.4"));
         assertEquals(8.12, converter.convert("8,12"));
     }
@@ -22,7 +22,7 @@ class DoubleConverterTest extends AbstractBaseTest {
     @Test
     void testReadInValid() {
         DoubleConverter converter = new DoubleConverter();
-        
+
         assertThrows(CommandLineException.class, () -> converter.convert("hi"));
     }
 

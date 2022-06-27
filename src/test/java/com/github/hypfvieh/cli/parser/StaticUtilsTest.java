@@ -7,7 +7,7 @@ class StaticUtilsTest extends AbstractBaseTest {
     @Test
     void testRequireOption() {
         assertThrows(NullPointerException.class, () -> StaticUtils.requireOption(null));
-        
+
         CmdArgOption<?> opt = CmdArgOption.builder(String.class)
                 .name("optionWithValue")
                 .shortName('f')
@@ -47,12 +47,12 @@ class StaticUtilsTest extends AbstractBaseTest {
         assertEquals(opt, StaticUtils.requireOption(opt));
         assertEquals(optLong, StaticUtils.requireOption(optLong));
         assertEquals(optShort, StaticUtils.requireOption(optShort));
-        
+
         assertThrows(IllegalArgumentException.class, () -> StaticUtils.requireOption(optInvalid));
-        
+
         CmdArgOption<?> invalidOpt = CmdArgOption.builder(String.class)
                 .buildInvalid();
-        
+
         assertThrows(IllegalArgumentException.class, () -> StaticUtils.requireOption(invalidOpt));
     }
 
@@ -84,7 +84,7 @@ class StaticUtilsTest extends AbstractBaseTest {
                 .build();
 
         CommandLine cl = new CommandLine().addOption(opt1);
-        
+
         assertThrows(NullPointerException.class, () -> StaticUtils.requireUniqueOption(null, null));
         assertThrows(NullPointerException.class, () -> StaticUtils.requireUniqueOption(opt1, null));
         assertThrows(NullPointerException.class, () -> StaticUtils.requireUniqueOption(null, cl));
@@ -98,7 +98,7 @@ class StaticUtilsTest extends AbstractBaseTest {
         RuntimeException rte = StaticUtils.createException("Hi", null);
         assertEquals(RuntimeException.class, rte.getClass());
         assertEquals("Hi", rte.getMessage());
-        
+
         RuntimeException iae = StaticUtils.createException("Hello", IllegalArgumentException.class);
         assertEquals(IllegalArgumentException.class, iae.getClass());
         assertEquals("Hello", iae.getMessage());
@@ -106,10 +106,10 @@ class StaticUtilsTest extends AbstractBaseTest {
         RuntimeException cle = StaticUtils.createException("Hallo", CommandLineException.class);
         assertEquals(CommandLineException.class, cle.getClass());
         assertEquals("Hallo", cle.getMessage());
-        
+
         assertEquals(CommandLineException.class, StaticUtils.createException("fail", TestRte.class).getClass());
     }
-    
+
     @Test
     void testRequireParsed() {
         CmdArgOption<?> opt = CmdArgOption.builder(String.class)
@@ -120,16 +120,16 @@ class StaticUtilsTest extends AbstractBaseTest {
                 .defaultValue("def")
                 .description("descr")
                 .build();
-        
+
         CommandLine cl = new CommandLine().addOption(opt);
-        
+
         assertThrows(NullPointerException.class, () -> StaticUtils.requireParsed(null));
         assertThrows(CommandLineException.class, () -> StaticUtils.requireParsed(cl));
-        
+
         cl.parse("");
         assertEquals(cl, StaticUtils.requireParsed(cl));
     }
-   
+
     @Test
     void testOptionNotDefined() {
         CmdArgOption<?> opt2 = CmdArgOption.builder(String.class)
@@ -139,11 +139,11 @@ class StaticUtilsTest extends AbstractBaseTest {
                 .defaultValue("def")
                 .description("descr")
                 .build();
-       assertEquals("Option not defined: null", StaticUtils.optionNotDefined(null, RuntimeException.class).getMessage());
-       assertEquals("Option not defined: CmdArgOption[optionWithValue/null, dataType=java.lang.String, "
-               + "required=true, repeatable=true, hasValue=true, default=def, descr=descr]", StaticUtils.optionNotDefined(opt2, RuntimeException.class).getMessage());
+        assertEquals("Option not defined: null", StaticUtils.optionNotDefined(null, RuntimeException.class).getMessage());
+        assertEquals("Option not defined: CmdArgOption[optionWithValue/null, dataType=java.lang.String, "
+                + "required=true, repeatable=true, hasValue=true, default=def, descr=descr]", StaticUtils.optionNotDefined(opt2, RuntimeException.class).getMessage());
     }
-    
+
     @Test
     void testTrimToNull() {
         assertEquals("hi", StaticUtils.trimToNull("hi"));
@@ -151,7 +151,7 @@ class StaticUtilsTest extends AbstractBaseTest {
         assertNull(StaticUtils.trimToNull(""));
         assertNull(StaticUtils.trimToNull(null));
     }
-    
+
     @Test
     void testFormatOption() {
         CmdArgOption<?> opt1 = CmdArgOption.builder(String.class)
@@ -197,9 +197,8 @@ class StaticUtilsTest extends AbstractBaseTest {
                 .shortName('x')
                 .buildInvalid();
 
-        
         assertNull(StaticUtils.formatOption(null, null, null));
-        
+
         assertEquals("--optionWithValue/-f", StaticUtils.formatOption(opt1, "--", "-"));
         assertEquals("--optWithValue", StaticUtils.formatOption(opt2, "--", "-"));
         assertEquals("-o", StaticUtils.formatOption(opt3, "--", "-"));
@@ -208,16 +207,16 @@ class StaticUtilsTest extends AbstractBaseTest {
         assertEquals("--foo", StaticUtils.formatOption(optEmptyShortInvalid, "--", "-"));
         assertEquals("-x", StaticUtils.formatOption(optEmptyLongInvalid, "--", "-"));
     }
-    
+
     /**
      * Sample RuntimeException which does not have a String argument constructor.
      */
     public static class TestRte extends RuntimeException {
         private static final long serialVersionUID = 1L;
-        
+
         public TestRte() {
-            
+
         }
-        
+
     }
 }

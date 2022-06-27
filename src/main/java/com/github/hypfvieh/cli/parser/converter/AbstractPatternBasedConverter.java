@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @since 1.0.0 - 2022-05-05
  */
 public abstract class AbstractPatternBasedConverter<T, P> implements IValueConverter<T> {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger  logger   = LoggerFactory.getLogger(getClass());
 
     private final List<P> patterns = new ArrayList<>();
 

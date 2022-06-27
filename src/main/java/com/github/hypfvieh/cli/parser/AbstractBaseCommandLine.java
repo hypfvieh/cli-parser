@@ -45,7 +45,7 @@ import com.github.hypfvieh.cli.parser.formatter.IUsageFormatter;
  * @param <B> concrete command line implementation
  */
 public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<?>> {
-    
+
     private final Logger                      logger             = LoggerFactory.getLogger(getClass());
 
     private final ArgumentBundle              argBundle          = new ArgumentBundle();
@@ -60,15 +60,15 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     private Pattern                           longOptPattern     = null;
     private Pattern                           shortOptPattern    = null;
     private Class<? extends RuntimeException> exceptionType      = CommandLineException.class;
-    
+
     private IUsageFormatter                   usageFormatter     = new DefaultUsageFormatter();
-    
+
     public AbstractBaseCommandLine() {
         registerDefaultConverters();
         withLongOptPrefix("--");
         withShortOptPrefix("-");
     }
-    
+
     /**
      * A reference to ourselves to allow chaining with subclasses.
      * 
@@ -92,20 +92,20 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         registerConverter(LocalDateTime.class, new LocalDateTimeConverter());
         registerConverter(LocalTime.class, new LocalTimeConverter());
     }
-    
-    
+
     /**
      * Reset the internal state.
+     * 
      * @return this
      */
     B reset() {
         return accessSync(t -> {
             getArgBundle().getUnknownTokens().clear();
-            Stream.of(getArgBundle().getKnownArgs(), 
-                    getArgBundle().getUnknownArgs(), 
+            Stream.of(getArgBundle().getKnownArgs(),
+                    getArgBundle().getUnknownArgs(),
                     getArgBundle().getDupArgs(),
-                    getArgBundle().getKnownMultiArgs()
-                    ).forEach(Map::clear);
+                    getArgBundle().getKnownMultiArgs())
+                .forEach(Map::clear);
             return t;
         });
     }
@@ -129,9 +129,10 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         }
         return self();
     }
-    
+
     /**
      * Set the parsed state.
+     * 
      * @param _b true to signal that commandline was parsed
      */
     protected void setParsed(boolean _b) {
@@ -150,14 +151,14 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     public B addOption(CmdArgOption<?> _option) {
         requireOption(_option);
         requireUniqueOption(_option, this);
-        
+
         if (_option.getName() != null) {
-            getArgBundle().getOptions().put(_option.getName(), _option);    
+            getArgBundle().getOptions().put(_option.getName(), _option);
         }
         if (_option.getShortName() != null) {
             getArgBundle().getOptions().put(_option.getShortName(), _option);
         }
-        
+
         getLogger().debug("Added {} command-line option '{}': {}",
                 _option.isRequired() ? "required" : "optional", _option.getName(), _option.getDescription());
         return self();
@@ -165,7 +166,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Adds multiple options to the supported options.
-     *  
+     * 
      * @param _options options to add
      * 
      * @return this
@@ -180,7 +181,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         }
         return self();
     }
-    
+
     /**
      * Prints some debug statements to the configured logger.
      * 
@@ -190,7 +191,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         if (getLogger().isDebugEnabled()) {
             Map<String, String> kargs = new LinkedHashMap<>();
             Map<String, String> margs = new LinkedHashMap<>();
-            
+
             for (Entry<CmdArgOption<?>, String> e : getArgBundle().getKnownArgs().entrySet()) {
                 kargs.put(formatOption(e.getKey(), getLongOptPrefix(), getShortOptPrefix()), e.getValue());
             }
@@ -208,7 +209,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         }
         return self();
     }
-    
+
     /**
      * Checks if there is any option with the given name.
      * 
@@ -286,15 +287,14 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     public Map<CmdArgOption<?>, String> getDupArgs() {
         return accessSync(t -> requireParsed(t).getArgBundle().getDupArgs());
     }
-    
+
     /**
-     * Prints the "usage" of the program to stdout.
-     * Will try to find the main class using the current stack.
+     * Prints the "usage" of the program to stdout. Will try to find the main class using the current stack.
      */
     public void printUsage() {
         printUsage(null, System.out);
     }
-    
+
     /**
      * Prints the "usage" of the program to the given output.
      * 
@@ -316,12 +316,12 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * @return usage String
      */
     public String getUsage(String _mainClassName) {
-        
-        return usageFormatter.format(new ArrayList<>(getOptions().values()), 
-                getLongOptPrefix(), getShortOptPrefix(), 
+
+        return usageFormatter.format(new ArrayList<>(getOptions().values()),
+                getLongOptPrefix(), getShortOptPrefix(),
                 Optional.ofNullable(_mainClassName).orElseGet(IUsageFormatter::getMainClassName));
     }
-    
+
     /**
      * Setup a different {@link IUsageFormatter}.
      * 
@@ -335,7 +335,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         }
         return self();
     }
-    
+
     /**
      * Specifies if command line parsing should fail when an unknown argument was found.
      * <p>
@@ -343,7 +343,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * </p>
      * 
      * @param _failOnUnknownArg true to enable
-     *    
+     * 
      * @return this
      */
     public B withFailOnUnknownArg(boolean _failOnUnknownArg) {
@@ -358,7 +358,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * </p>
      * 
      * @param _failOnUnknownToken true to enable
-     *    
+     * 
      * @return this
      */
     public B withFailOnUnknownToken(boolean _failOnUnknownToken) {
@@ -373,7 +373,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * </p>
      * 
      * @param _failOnDupArg true to enable
-     *    
+     * 
      * @return this
      */
     public B withFailOnDupArg(boolean _failOnDupArg) {
@@ -388,7 +388,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * </p>
      * 
      * @param _prefix prefix for short options
-     *    
+     * 
      * @return this
      */
     public B withShortOptPrefix(String _prefix) {
@@ -398,7 +398,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         shortOptPrefix = _prefix;
         String qPrx = Pattern.quote(_prefix);
         // "^" + qPrx + "(?:(?!" + qPrx + "))(.+)"
-        
+
         shortOptPattern = Pattern.compile("^" + qPrx + "(?:(?!" + qPrx + "))(?:([^=]*)=(.+)|(.+))");
         return self();
     }
@@ -410,7 +410,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * </p>
      * 
      * @param _prefix prefix for long options
-     *    
+     * 
      * @return this
      */
     public B withLongOptPrefix(String _prefix) {
@@ -419,8 +419,8 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         }
         longOptPrefix = _prefix;
         String qPrx = Pattern.quote(_prefix);
-        //^--(?:(?!-))(?:([^=]*)=(.+)|(.+))
-        //"^" + qPrx + "(?:(?!" + Pattern.quote(_prefix.charAt(0) + "") + "))(.+)"
+        // ^--(?:(?!-))(?:([^=]*)=(.+)|(.+))
+        // "^" + qPrx + "(?:(?!" + Pattern.quote(_prefix.charAt(0) + "") + "))(.+)"
         longOptPattern = Pattern.compile("^" + qPrx + "(?:(?!" + Pattern.quote(_prefix.charAt(0) + "") + "))(?:([^=]*)=(.+)|(.+))");
         return self();
     }
@@ -428,7 +428,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     /**
      * Set a RuntimeException based exception class thrown when command line parsing fails.
      * <p>
-     * Default: {@link CommandLineException} 
+     * Default: {@link CommandLineException}
      * </p>
      * 
      * @param _exceptionType class, never null
@@ -445,9 +445,10 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         exceptionType = _exceptionType;
         return self();
     }
-    
+
     /**
      * Returns the current short option name prefix.
+     * 
      * @return String
      */
     public String getShortOptPrefix() {
@@ -456,6 +457,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns the current long option name prefix.
+     * 
      * @return String
      */
     public String getLongOptPrefix() {
@@ -464,6 +466,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns the current pattern to parse long option names.
+     * 
      * @return Pattern
      */
     protected Pattern getLongOptPattern() {
@@ -472,6 +475,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns the current pattern to parse short option names.
+     * 
      * @return Pattern
      */
     protected Pattern getShortOptPattern() {
@@ -480,6 +484,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns the class of the current configured exception.
+     * 
      * @return Class, never null
      */
     public Class<? extends RuntimeException> getExceptionType() {
@@ -488,6 +493,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns the logger instance.
+     * 
      * @return Logger
      */
     protected Logger getLogger() {
@@ -511,9 +517,10 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     protected boolean isParsed() {
         return parsed.get();
     }
-    
+
     /**
      * Returns true when command line parsing fails on duplicated arguments.
+     * 
      * @return boolean
      */
     public boolean isFailOnDupArg() {
@@ -522,6 +529,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns true when command line parsing fails on unknown arguments.
+     * 
      * @return boolean
      */
     public boolean isFailOnUnknownArg() {
@@ -530,6 +538,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Returns true when command line parsing fails on unknown tokens.
+     * 
      * @return boolean
      */
     public boolean isFailOnUnknownToken() {
@@ -538,7 +547,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     /**
      * Execute a function on <code>this</code> object synchroniously.
-     *  
+     * 
      * @param <R> type to return
      * @param _function function to execute
      * 

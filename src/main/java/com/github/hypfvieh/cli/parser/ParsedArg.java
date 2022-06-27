@@ -7,14 +7,14 @@ package com.github.hypfvieh.cli.parser;
  */
 class ParsedArg {
 
-    /** True if argument looks like a short or long option. */ 
-    private final boolean lookingLikeOption;
+    /** True if argument looks like a short or long option. */
+    private final boolean         lookingLikeOption;
     /** True if this is a short-option repeated multiple times (e.g. -vvv). */
-    private final boolean multiArg;
+    private final boolean         multiArg;
     /** The command option, if any. */
     private final CmdArgOption<?> cmdArgOpt;
-    
-    private String value;
+
+    private String                value;
 
     public ParsedArg(boolean _looksLikeArg, boolean _multi, CmdArgOption<?> _cmdArg) {
         this(_looksLikeArg, _multi, _cmdArg, null);
@@ -29,6 +29,7 @@ class ParsedArg {
 
     /**
      * Indicates that the parsed token looks like a long or short option.
+     * 
      * @return true if option like
      */
     public boolean isLookingLikeOption() {
@@ -37,6 +38,7 @@ class ParsedArg {
 
     /**
      * True if the parsed token looks like a repeated argument.
+     * 
      * @return true if repeated
      */
     public boolean isMultiArg() {
@@ -45,6 +47,7 @@ class ParsedArg {
 
     /**
      * Option used in combination with the parsed token.
+     * 
      * @return option, maybe null
      */
     public CmdArgOption<?> getCmdArgOpt() {
@@ -52,7 +55,7 @@ class ParsedArg {
     }
 
     /**
-     * The value assigned to the parsed option.
+     * The value assigned to the parsed option.<br>
      * Can be null if option value was not given.
      * 
      * @return String or null
@@ -63,6 +66,7 @@ class ParsedArg {
 
     /**
      * Set the current value for the parsed option.
+     * 
      * @param _value value to set
      */
     public void setValue(String _value) {

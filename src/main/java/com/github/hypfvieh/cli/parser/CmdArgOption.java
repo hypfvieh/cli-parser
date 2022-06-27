@@ -49,6 +49,7 @@ public final class CmdArgOption<T> {
 
     /**
      * Returns the long name of this option
+     * 
      * @return String, maybe null or empty
      */
     public String getName() {
@@ -57,6 +58,7 @@ public final class CmdArgOption<T> {
 
     /**
      * Returns the short name of this option.
+     * 
      * @return String, maybe empty or null
      */
     public String getShortName() {
@@ -65,6 +67,7 @@ public final class CmdArgOption<T> {
 
     /**
      * Returns the description text for this option.
+     * 
      * @return String, maybe empty or null
      */
     public String getDescription() {
@@ -73,6 +76,7 @@ public final class CmdArgOption<T> {
 
     /**
      * Flag to signal if this option is required.
+     * 
      * @return true if required
      */
     public boolean isRequired() {
@@ -81,6 +85,7 @@ public final class CmdArgOption<T> {
 
     /**
      * Flag to allow the option to be repeated multiple times.
+     * 
      * @return true if repeatable
      */
     public boolean isRepeatable() {
@@ -89,6 +94,7 @@ public final class CmdArgOption<T> {
 
     /**
      * Flag to signal that this option is optional.
+     * 
      * @return true if optional
      */
     public boolean isOptional() {
@@ -97,6 +103,7 @@ public final class CmdArgOption<T> {
 
     /**
      * Flag to signal if the option requires a value.
+     * 
      * @return true if value required
      */
     public boolean hasValue() {
@@ -105,6 +112,7 @@ public final class CmdArgOption<T> {
 
     /**
      * Returns the default value for this option (when option was not set).
+     * 
      * @return default value, maybe null
      */
     public Object getDefaultValue() {
@@ -113,6 +121,7 @@ public final class CmdArgOption<T> {
 
     /**
      * Returns the type of data to create from argument.
+     * 
      * @return class, maybe null
      */
     public Class<?> getDataType() {
@@ -193,7 +202,7 @@ public final class CmdArgOption<T> {
 
         private String         name;
         private Character      shortName;
-        private final Class<T> dataType; // final, set only during construction
+        private final Class<T> dataType;    // final, set only during construction
         private boolean        required;
         private boolean        repeatable;
         private T              defaultValue;
@@ -216,6 +225,7 @@ public final class CmdArgOption<T> {
 
         /**
          * Sets option long name.
+         * 
          * @param _name name
          *
          * @return this
@@ -226,6 +236,7 @@ public final class CmdArgOption<T> {
 
         /**
          * Sets option short name.
+         * 
          * @param _name name
          *
          * @return this
@@ -236,6 +247,7 @@ public final class CmdArgOption<T> {
 
         /**
          * Sets option to be required or optional.
+         * 
          * @param _required true to be required
          *
          * @return this
@@ -264,6 +276,7 @@ public final class CmdArgOption<T> {
 
         /**
          * Sets option to be repeatable ({@code true}) or not ({@code false}).
+         * 
          * @param _repeatable true to be repeatable
          *
          * @return this
@@ -283,6 +296,7 @@ public final class CmdArgOption<T> {
 
         /**
          * Sets the option's default value.
+         * 
          * @param _defaultValue value to use, never null
          *
          * @return this
@@ -294,6 +308,7 @@ public final class CmdArgOption<T> {
 
         /**
          * Sets the option's description text.
+         * 
          * @param _description text to use
          *
          * @return this
@@ -308,6 +323,7 @@ public final class CmdArgOption<T> {
 
         /**
          * Create the option object based on configuration.
+         * 
          * @return CmdArgOption
          */
         public CmdArgOption<T> build() {
@@ -316,8 +332,7 @@ public final class CmdArgOption<T> {
         }
 
         /**
-         * Allows creating invalid options.
-         * Intended to be used for testing only.
+         * Allows creating invalid options. Intended to be used for testing only.
          *
          * @return CmdArgOption
          */
