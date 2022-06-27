@@ -265,7 +265,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * @param _optionName option name
      * @return value or null if option has no value
      *
-     * @throws RuntimeException when option is unknown or command line was not parsed before
+     * @throws RuntimeException if option is unknown or command line was not parsed before
      */
     public Object getArg(CharSequence _optionName) {
         return Optional.ofNullable(requireParsed(this).getOption(_optionName))
@@ -279,7 +279,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * @param _optionName option short name
      * @return value or null if option has no value
      *
-     * @throws RuntimeException when option is unknown or command line was not parsed before
+     * @throws RuntimeException if option is unknown or command line was not parsed before
      */
     public Object getArg(char _optionName) {
         return Optional.ofNullable(requireParsed(this).getOption(_optionName + ""))
@@ -294,13 +294,14 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      *
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
+     * @param <T> data type of argument
      * @param _optionName option short name
      * @param _type expected value type
      * @param _default default to use if option not set (and not required)
      * @return value or null if option has no value
      *
-     * @throws RuntimeException when option is unknown or command line was not parsed<br>
-     * @throws RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     * @throws RuntimeException if option is unknown or command line was not parsed<br>
+     * @throws RuntimeException if type class is not the type defined in {@link CmdArgOption}
      *
      * @since 1.0.1 - 2022-05-24
      */
@@ -327,14 +328,14 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      *
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
+     * @param <T> data type of argument
      * @param _optionName option short name
-     * @param _default default to use if option not set (and not required)
      * @param _type expected value type
      *
      * @return value or null if option has no value
      *
-     * @throws RuntimeException when option is unknown or command line was not parsed<br>
-     * @throws RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     * @throws RuntimeException if option is unknown or command line was not parsed<br>
+     * @throws RuntimeException if type class is not the type defined in {@link CmdArgOption}
      *
      * @since 1.0.1 - 2022-05-24
      */
@@ -355,13 +356,14 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      *
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
+     * @param <T> type of option value
      * @param _optionName option short name
      * @param _type expected value type
      *
      * @return value or null if option has no value
      *
-     * @throws RuntimeException when option is unknown or command line was not parsed<br>
-     * @throws RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     * @throws RuntimeException if option is unknown or command line was not parsed<br>
+     * @throws RuntimeException if type class is not the type defined in {@link CmdArgOption}
      *
      * @since 1.0.1 - 2022-05-24
      */
@@ -376,14 +378,15 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      *
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
+     * @param <T> data type of argument
      * @param _optionName option short name
      * @param _type expected value type
      * @param _default default to use if option not set (and not required)
      *
      * @return value or null if option has no value
      *
-     * @throws RuntimeException when option is unknown or command line was not parsed<br>
-     * @throws RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     * @throws RuntimeException if option is unknown or command line was not parsed<br>
+     * @throws RuntimeException if type class is not the type defined in {@link CmdArgOption}
      *
      * @since 1.0.1 - 2022-05-24
      */
@@ -398,13 +401,14 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      *
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
+     * @param <T> data type of argument
      * @param _optionName option short name
      * @param _type expected value type
      *
      * @return value or null if option has no value
      *
-     * @throws RuntimeException when option is unknown or command line was not parsed<br>
-     * @throws RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     * @throws RuntimeException if option is unknown or command line was not parsed<br>
+     * @throws RuntimeException if type class is not the type defined in {@link CmdArgOption}
      *
      * @since 1.0.1 - 2022-05-24
      */
@@ -426,13 +430,14 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      *
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
+     * @param <T> data type of argument
      * @param _optionName option short name
      * @param _type expected value type
      *
      * @return value or null if option has no value
      *
-     * @throws RuntimeException when option is unknown or command line was not parsed<br>
-     * @throws RuntimeException when type class is not the type defined in {@link CmdArgOption}
+     * @throws RuntimeException if option is unknown or command line was not parsed<br>
+     * @throws RuntimeException if type class is not the type defined in {@link CmdArgOption}
      *
      * @since 1.0.1 - 2022-05-24
      */
@@ -572,7 +577,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      *
      * @return this
      *
-     * @throws CommandLineException when validation fails
+     * @throws CommandLineException if validation fails
      */
     private CommandLine validate() throws CommandLineException {
         List<String> failures = new ArrayList<>();

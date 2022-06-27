@@ -16,6 +16,9 @@ import java.time.format.FormatStyle;
  */
 public class LocalDateTimeConverter extends AbstractPatternBasedConverter<LocalDateTime, DateTimeFormatter> {
 
+    /**
+     * Default constructor.
+     */
     public LocalDateTimeConverter() {
         addPattern(DateTimeFormatter.BASIC_ISO_DATE);
         addPattern(DateTimeFormatter.ISO_DATE_TIME);
