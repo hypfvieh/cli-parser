@@ -23,15 +23,27 @@ public abstract class AbstractPatternBasedConverter<T, P> implements IValueConve
 
     private final List<P> patterns = new ArrayList<>();
 
+    /**
+     * Adds a pattern.
+     * @param _pattern pattern
+     */
     public void addPattern(P _pattern) {
         // always put custom patterns in front to try it first
         patterns.add(0, Objects.requireNonNull(_pattern, "Pattern required"));
     }
 
+    /**
+     * Access to the logger for subclass objects.
+     * @return logger
+     */
     protected Logger getLogger() {
         return logger;
     }
 
+    /**
+     * Returns the list of patterns
+     * @return patterns
+     */
     protected List<P> getPatterns() {
         return patterns;
     }

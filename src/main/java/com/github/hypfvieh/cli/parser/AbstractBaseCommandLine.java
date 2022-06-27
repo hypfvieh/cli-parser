@@ -50,6 +50,9 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
 
     private IUsageFormatter                   usageFormatter     = new DefaultUsageFormatter();
 
+    /**
+     * Default constructor with long prefix {@code --} and short prefix {@code -}.
+     */
     public AbstractBaseCommandLine() {
         registerDefaultConverters();
         withLongOptPrefix("--");

@@ -16,6 +16,9 @@ import java.util.Locale;
  */
 public class DoubleConverter extends AbstractPatternBasedConverter<Double, NumberFormat> {
 
+    /**
+     * Default constructor for a double converter.
+     */
     public DoubleConverter() {
         addPattern(DecimalFormat.getInstance());
         addPattern(DecimalFormat.getInstance(Locale.US));
