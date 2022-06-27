@@ -1,10 +1,10 @@
 package com.github.hypfvieh.cli.parser.formatter;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.github.hypfvieh.cli.parser.AbstractBaseCommandLine;
 import com.github.hypfvieh.cli.parser.CmdArgOption;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Interface which have to be implemented by any usage formatter.

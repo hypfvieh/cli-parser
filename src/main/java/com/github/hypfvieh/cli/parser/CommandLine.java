@@ -1,18 +1,9 @@
 package com.github.hypfvieh.cli.parser;
 
-import static com.github.hypfvieh.cli.parser.StaticUtils.createException;
-import static com.github.hypfvieh.cli.parser.StaticUtils.formatOption;
-import static com.github.hypfvieh.cli.parser.StaticUtils.optionNotDefined;
-import static com.github.hypfvieh.cli.parser.StaticUtils.requireOption;
-import static com.github.hypfvieh.cli.parser.StaticUtils.requireParsed;
-import static com.github.hypfvieh.cli.parser.StaticUtils.trimToNull;
+import static com.github.hypfvieh.cli.parser.StaticUtils.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 

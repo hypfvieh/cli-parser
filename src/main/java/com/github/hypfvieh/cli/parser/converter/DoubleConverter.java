@@ -1,11 +1,11 @@
 package com.github.hypfvieh.cli.parser.converter;
 
+import com.github.hypfvieh.cli.parser.CommandLineException;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
-
-import com.github.hypfvieh.cli.parser.CommandLineException;
 
 /**
  * Converts a string to a {@link Double} object.

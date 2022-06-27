@@ -1,10 +1,12 @@
 package com.github.hypfvieh.cli.parser;
 
-import static com.github.hypfvieh.cli.parser.StaticUtils.formatOption;
-import static com.github.hypfvieh.cli.parser.StaticUtils.requireOption;
-import static com.github.hypfvieh.cli.parser.StaticUtils.requireParsed;
-import static com.github.hypfvieh.cli.parser.StaticUtils.requireUniqueOption;
-import static com.github.hypfvieh.cli.parser.StaticUtils.uncheckedCast;
+import static com.github.hypfvieh.cli.parser.StaticUtils.*;
+
+import com.github.hypfvieh.cli.parser.converter.*;
+import com.github.hypfvieh.cli.parser.formatter.DefaultUsageFormatter;
+import com.github.hypfvieh.cli.parser.formatter.IUsageFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -12,29 +14,12 @@ import java.lang.invoke.MethodType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.hypfvieh.cli.parser.converter.DoubleConverter;
-import com.github.hypfvieh.cli.parser.converter.IValueConverter;
-import com.github.hypfvieh.cli.parser.converter.LocalDateConverter;
-import com.github.hypfvieh.cli.parser.converter.LocalDateTimeConverter;
-import com.github.hypfvieh.cli.parser.converter.LocalTimeConverter;
-import com.github.hypfvieh.cli.parser.formatter.DefaultUsageFormatter;
-import com.github.hypfvieh.cli.parser.formatter.IUsageFormatter;
 
 /**
  * Base class of every command line.

@@ -1,12 +1,11 @@
 package com.github.hypfvieh.cli.parser.converter;
 
-import java.text.DecimalFormat;
-import java.util.Locale;
-
-import org.junit.jupiter.api.Test;
-
 import com.github.hypfvieh.cli.parser.AbstractBaseTest;
 import com.github.hypfvieh.cli.parser.CommandLineException;
+import org.junit.jupiter.api.Test;
+
+import java.text.DecimalFormat;
+import java.util.Locale;
 
 class DoubleConverterTest extends AbstractBaseTest {
 
