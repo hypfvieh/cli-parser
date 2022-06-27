@@ -67,6 +67,15 @@
 
         <junit.version>5.8.2</junit.version>
         <log4j2.version>2.17.2</log4j2.version>
+
+        <pmd.version>6.47.0</pmd.version>
+        <proj.check.skip-checkstyle>false</proj.check.skip-checkstyle>
+        <proj.check.skip-pmd>false</proj.check.skip-pmd>
+        <proj.check.skip-spotbugs>false</proj.check.skip-spotbugs>
+
+        <proj.check.fail-checkstyle>false</proj.check.fail-checkstyle>
+        <proj.check.fail-pmd>false</proj.check.fail-pmd>
+        <proj.check.fail-spotbugs>false</proj.check.fail-spotbugs>
     </properties>
 
     <dependencies>
@@ -156,6 +165,104 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.7.0.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs</artifactId>
+                        <version>4.7.0</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <skip>${proj.check.skip-spotbugs}</skip>
+                    <failOnError>${proj.check.fail-spotbugs}</failOnError>
+                    <effort>Max</effort>
+                    <maxHeap>1024</maxHeap>
+                    <omitVisitors>
+                        FindRefComparison,
+                        FindSelfComparison,
+                        FindSelfComparison2,
+                        ThrowingExceptions
+                    </omitVisitors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>proj.default</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.17.0</version>
+                <configuration>
+                    <skip>${proj.check.skip-pmd}</skip>
+                    <failOnViolation>${proj.check.fail-pmd}</failOnViolation>
+                    <printFailingErrors>true</printFailingErrors>
+                    <failurePriority>4</failurePriority>
+                    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+                     <!-- minimum number of tokens that need to be duplicated before it causes a violation: -->
+                    <minimumTokens>100</minimumTokens>
+                    <rulesets>
+                        <ruleset>src/test/resources/policy/pmd_rules.xml</ruleset>
+                    </rulesets>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sourceforge.pmd</groupId>
+                        <artifactId>pmd-core</artifactId>
+                        <version>${pmd.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>net.sourceforge.pmd</groupId>
+                        <artifactId>pmd-java</artifactId>
+                        <version>${pmd.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>proj.default</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <skip>${proj.check.skip-checkstyle}</skip>
+                    <failOnViolation>${proj.check.fail-checkstyle}</failOnViolation>
+                    <configLocation>src/test/resources/policy/checkstyle_rules.xml</configLocation>
+                    <excludes>**/target/**,**/generated-sources/**,*.jpg,*.jpeg,*.gif,*.png,*.db,*.csv</excludes>
+                    <consoleOutput>true</consoleOutput>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                    <violationSeverity>warning</violationSeverity>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>proj.default</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
