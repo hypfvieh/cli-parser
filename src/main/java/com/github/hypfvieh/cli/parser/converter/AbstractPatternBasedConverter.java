@@ -14,7 +14,8 @@ import java.util.Objects;
  * Will use the first pattern which successfully parsed the input string.
  * </p>
  *
- * @author hypfvieh
+ * @author David M.
+ * @author Markus S.
  * @since 1.0.0 - 2022-05-05
  */
 public abstract class AbstractPatternBasedConverter<T, P> implements IValueConverter<T> {

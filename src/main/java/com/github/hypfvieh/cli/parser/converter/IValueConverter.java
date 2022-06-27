@@ -3,7 +3,8 @@ package com.github.hypfvieh.cli.parser.converter;
 /**
  * Interface implemented by all value converters to convert a given String to the proper object type.
  * 
- * @author hypfvieh
+ * @author David M.
+ * @author Markus S.
  * @since 1.0.0 - 2022-05-05
  * 
  * @param <T> type of result object

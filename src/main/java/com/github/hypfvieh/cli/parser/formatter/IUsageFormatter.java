@@ -9,7 +9,8 @@ import java.util.List;
 /**
  * Interface which have to be implemented by any usage formatter.
  *
- * @author hypfvieh
+ * @author David M.
+ * @author Markus S.
  * @since 1.0.0 - 2022-05-05
  */
 @FunctionalInterface

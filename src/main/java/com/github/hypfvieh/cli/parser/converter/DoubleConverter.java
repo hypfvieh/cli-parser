@@ -10,7 +10,8 @@ import java.util.Locale;
 /**
  * Converts a string to a {@link Double} object.
  *
- * @author hypfvieh
+ * @author David M.
+ * @author Markus S.
  * @since 1.0.0 - 2022-05-05
  */
 public class DoubleConverter extends AbstractPatternBasedConverter<Double, NumberFormat> {

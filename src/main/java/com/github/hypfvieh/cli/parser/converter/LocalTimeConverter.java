@@ -10,7 +10,8 @@ import java.time.format.FormatStyle;
 /**
  * Converts a string to a {@link LocalTime} object.
  *
- * @author hypfvieh
+ * @author David M.
+ * @author Markus S.
  * @since 1.0.0 - 2022-05-05
  */
 public class LocalTimeConverter extends AbstractPatternBasedConverter<LocalTime, DateTimeFormatter> {

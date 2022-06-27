@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
  *         .parse();
  * </pre>
  *
+ * @author David M.
+ * @author Markus S.
  * @since 1.0.0 - 2022-04-29
  */
 public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
