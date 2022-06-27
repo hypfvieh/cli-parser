@@ -41,7 +41,7 @@ public final class CmdArgOption<T> {
         shortName = _builder.shortName;
         dataType = _builder.dataType;
         required = _builder.required;
-        hasValue = _builder.hasValue;
+        hasValue = _builder.hasValue();
         defaultValue = _builder.defaultValue;
         description = _builder.description;
         repeatable = _builder.repeatable;
@@ -150,7 +150,7 @@ public final class CmdArgOption<T> {
     }
 
     /**
-     * Returns a builder for a new Option with the specified data type.<br>
+     * Returns a builder for a new option with the specified data type.<br>
      * As the data type is specified, the option must have a value (and may have a default value).
      *
      * @param <T> data type of the option
@@ -162,7 +162,7 @@ public final class CmdArgOption<T> {
     }
 
     /**
-     * Returns a builder for a new Option without value (therefore default value not permitted).
+     * Returns a builder for a new option without value (therefore default value not permitted).
      *
      * @return builder
      */
@@ -193,16 +193,25 @@ public final class CmdArgOption<T> {
 
         private String         name;
         private Character      shortName;
-        private final Class<T> dataType;
+        private final Class<T> dataType; // final, set only during construction
         private boolean        required;
-        private final boolean  hasValue;
         private boolean        repeatable;
         private T              defaultValue;
         private String         description;
 
+        /**
+         * Builder for an option using the specified datatype.<br>
+         * If datatype is {@code null} or {@code void} the option is considered to not have a value.
+         */
         private Builder(Class<T> _dataType) {
-            dataType = _dataType;
-            hasValue = _dataType != null;
+            dataType = Optional.ofNullable(_dataType).filter(c -> c != Void.class).orElse(null);
+        }
+
+        /**
+         * Builder for an option without datatype and therefore without value.
+         */
+        private Builder() {
+            dataType = null;
         }
 
         /**
@@ -279,7 +288,7 @@ public final class CmdArgOption<T> {
          * @return this
          */
         public CmdArgOption.Builder<T> defaultValue(T _defaultValue) {
-            throwIf(!hasValue && _defaultValue != null, "Option cannot have a default value");
+            throwIf(!hasValue() && _defaultValue != null, "Option cannot have a default value");
             return apply(() -> defaultValue = _defaultValue);
         }
 
@@ -291,6 +300,10 @@ public final class CmdArgOption<T> {
          */
         public CmdArgOption.Builder<T> description(String _description) {
             return apply(() -> description = _description);
+        }
+
+        boolean hasValue() {
+            return dataType != null;
         }
 
         /**
