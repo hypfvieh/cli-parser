@@ -4,6 +4,7 @@ import static com.github.hypfvieh.cli.parser.StaticUtils.*;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -487,6 +488,14 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         }
 
         return 0;
+    }
+
+    public <A> void consumeArg(CmdArgOption<A> _option, Consumer<A> _consumer) {
+        @SuppressWarnings("unchecked")
+        CmdArgOption<A> opt = (CmdArgOption<A>) getOption(requireOption(_option).getName());
+        if (opt != null) {
+            _consumer.accept(getArg(_option));
+        }
     }
 
     /**
