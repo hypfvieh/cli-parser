@@ -5,7 +5,26 @@ import java.util.Optional;
 
 /**
  * Describes a command-line option.<br>
- * Options are created using the associated {@link Builder}.
+ * Options are created using the associated {@link Builder}.<p>
+ *
+ * Sample Usage:<br>
+ * <pre>
+ * {@code
+    CmdArgOption<ITransformer> optImpl = CmdArgOption.builder(ITransformer.class)
+            .name("transformerClass")
+            .description("FQCN of transformer implementation")
+            .required(true)
+            .build();
+
+    CommandLine cli = new CommandLine().addOptions(optImpl);
+    // ...
+    cli.parse(args);
+
+    if (cli.hasOption(optImpl)) {
+        ITransformer transformer = cli.getArg(optImpl);
+        // ...
+    }
+ *  </pre>
  *
  * @param <T> data type of the option
  *
