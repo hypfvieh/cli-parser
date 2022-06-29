@@ -81,6 +81,8 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         registerConverter(LocalDate.class, new LocalDateConverter());
         registerConverter(LocalDateTime.class, new LocalDateTimeConverter());
         registerConverter(LocalTime.class, new LocalTimeConverter());
+        registerConverter(Pattern.class, Pattern::compile);
+        registerConverter(Class.class, new ClassNameToInstanceConverter<>());
     }
 
     /**
