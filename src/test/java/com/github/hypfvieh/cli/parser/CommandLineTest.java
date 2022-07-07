@@ -694,6 +694,37 @@ class CommandLineTest extends AbstractBaseTest {
     }
 
     @Test
+    public void testHasArg() {
+        CmdArgOption<?> optInt = CmdArgOption.builder()
+                .shortName('o')
+                .optional()
+                .repeatable()
+                .description("optional")
+                .build();
+
+        CmdArgOption<?> optInt2 = CmdArgOption.builder()
+                .name("long")
+                .optional()
+                .description("optional")
+                .build();
+
+        CommandLine cl = new CommandLine()
+                .addOption(optInt)
+                .addOption(optInt2)
+                .withFailOnUnknownToken(false);
+
+
+        assertTrue(cl.parse("--long").hasArg(optInt2), "Cmd Long Option set");
+        assertTrue(cl.parse("-o").hasArg(optInt), "Cmd Short Option set");
+
+        assertFalse(cl.parse("").hasArg("long"), "Long Option not set");
+        assertTrue(cl.parse("--long").hasArg("long"), "Long Option set");
+
+        assertFalse(cl.parse("").hasArg('o'), "Short Option not set");
+        assertTrue(cl.parse("-o").hasArg('o'), "Short Option set");
+    }
+
+    @Test
     public void parseDataTypes() {
         CmdArgOption<Boolean> optBoolSimple = CmdArgOption.builder(boolean.class)
                 .name("optBoolSimple")

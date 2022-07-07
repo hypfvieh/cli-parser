@@ -466,6 +466,46 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     }
 
     /**
+     * Checks if the given option was at least used once in the command line.
+     * <p>
+     * Will only check if the string argument was found as option name, will not check with short name.
+     *
+     * @param _option option to check
+     * @return true if it was used at least once, false otherwise
+     */
+    public boolean hasArg(String _arg) {
+        if (_arg == null || _arg.isBlank()) {
+            throw createException("Argument must be non null and non blank", getExceptionType());
+        }
+
+        return hasArg(parsedCmd -> {
+            return parsedCmd.getArgBundle().getOptions().values().stream()
+                    .filter(o -> _arg.equals(o.getName()))
+                    .findFirst()
+                    .orElse(null);
+        });
+    }
+
+    /**
+     * Checks if the given option was at least used once in the command line.
+     * <p>
+     * Will only check if the char argument was found as short option.
+     *
+     * @param _option option to check
+     * @return true if it was used at least once, false otherwise
+     */
+    public boolean hasArg(char _arg) {
+        return hasArg(parsedCmd -> {
+            String argStr = new StringBuilder().append(_arg).toString();
+
+            return parsedCmd.getArgBundle().getOptions().values().stream()
+                .filter(o -> argStr.equals(o.getShortName()))
+                .findFirst()
+                .orElse(null);
+        });
+    }
+
+    /**
      * Returns the number of occurrences of the given option.
      * <p>
      * If the option was never set, 0 is returned.
