@@ -8,9 +8,8 @@ import java.util.Optional;
  * Options are created using the associated {@link Builder}.<p>
  *
  * Sample Usage:<br>
- * <pre>
- * {@code
-    CmdArgOption<ITransformer> optImpl = CmdArgOption.builder(ITransformer.class)
+ * <code>
+    CmdArgOption&lt;ITransformer&gt; optImpl = CmdArgOption.builder(ITransformer.class)
             .name("transformerClass")
             .description("FQCN of transformer implementation")
             .required(true)
@@ -24,7 +23,7 @@ import java.util.Optional;
         ITransformer transformer = cli.getArg(optImpl);
         // ...
     }
- *  </pre>
+ *  </code>
  *
  * @param <T> data type of the option
  *

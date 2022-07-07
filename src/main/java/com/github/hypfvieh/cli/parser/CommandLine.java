@@ -470,7 +470,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * <p>
      * Will only check if the string argument was found as option name, will not check with short name.
      *
-     * @param _option option to check
+     * @param _arg option to check
      * @return true if it was used at least once, false otherwise
      */
     public boolean hasArg(String _arg) {
@@ -491,7 +491,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * <p>
      * Will only check if the char argument was found as short option.
      *
-     * @param _option option to check
+     * @param _arg option to check
      * @return true if it was used at least once, false otherwise
      */
     public boolean hasArg(char _arg) {
