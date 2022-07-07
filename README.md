@@ -95,6 +95,31 @@ public class MyMainApp {
 }
 
 ```
+
+Checking if a option was used by long or shortname (since 1.0.2):
+
+```java
+
+public class MyMainApp {
+  public void main(String[] _args) {
+     CommandLine cl = new CommandLine()
+                .addOption(CmdArgOption.builder(String.class)
+                        .name("optionWithValue")
+                        .shortName('f')
+                        .required(true)
+                        .description("descr")
+                        .build())
+                .parse(_args);
+
+        // it doesn't matter which variant (-f or --optionWithValue) was found in _args, both booleans will be true if any was found
+        boolean optUsedByShortName = cl.hasArg('f'); // lookup by short name
+        boolean optUsedByLongName = cl.getArg("optionWithValue"); // lookup by long name
+
+        System.out.println("Option was set: " + optUsedByShortName); // this will print true if the option was set
+  }
+}
+
+```
 ## Options
 Options define a supported parameter with an optional value and return type.
 The CmdArgOption uses the builder pattern to create options. 
