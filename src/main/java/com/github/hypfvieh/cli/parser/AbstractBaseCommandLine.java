@@ -551,4 +551,18 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
             return _function.apply(self());
         }
     }
+
+    /**
+     * Tries to find a {@link CmdArgOption} using the given function and checks
+     * if the option was used in the parsed command line.
+     *
+     * @param _argFunction argument supplier (never null)
+     *
+     * @return true if command was found and it was found in parsed command line, false otherwise
+     */
+    protected boolean hasArg(Function<B, CmdArgOption<?>> _argFunction) {
+        Objects.requireNonNull(_argFunction, "Function required");
+        CmdArgOption<?> cmdOption = _argFunction.apply(requireParsed(self()));
+        return cmdOption != null && (getArgBundle().getKnownArgs().containsKey(cmdOption) || getArgBundle().getKnownMultiArgs().containsKey(cmdOption));
+    }
 }
