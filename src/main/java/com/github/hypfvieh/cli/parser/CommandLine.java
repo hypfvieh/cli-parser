@@ -637,6 +637,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         List<String> missingOptions = getOptions().values().stream().filter(CmdArgOption::isRequired)
                 .filter(s -> !getArgBundle().getKnownArgs().containsKey(s))
                 .map(CmdArgOption::getName)
+                .distinct()
                 .collect(Collectors.toList());
         if (!missingOptions.isEmpty()) {
             failures.add("required options missing: " + String.join(", ", missingOptions));
