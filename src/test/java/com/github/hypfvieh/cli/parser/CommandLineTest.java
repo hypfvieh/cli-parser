@@ -771,20 +771,19 @@ class CommandLineTest extends AbstractBaseTest {
 
         cl.getOptions().values().stream().map(CmdArgOption::getName).map(cl::hasOption).forEach(CommandLineTest::assertTrue);
 
-        cl.parse(String.join(" " ,
-                 "--optBoolSimple true"
-               , "--optBoolWrapper FALSE"
-               , "--optByte 127"
-               , "--optShort 32767"
-               , "--optIntReq 99"
-               , "--optLong 123456789"
-               , "--optFloat 654.321"
-               , "--optDouble 987654.321"
-               , "--optString a_string"
-               , "--optLocalDate 2025-04-07"
-               , "--optLocalDateTime 2028-09-22T19:42:58"
-               , "--optLocalTime 21:30:15.789"
-               ));
+        cl.parse(String.join(" ",
+                "--optBoolSimple true",
+                "--optBoolWrapper FALSE",
+                "--optByte 127",
+                "--optShort 32767",
+                "--optIntReq 99",
+                "--optLong 123456789",
+                "--optFloat 654.321",
+                "--optDouble 987654.321",
+                "--optString a_string",
+                "--optLocalDate 2025-04-07",
+                "--optLocalDateTime 2028-09-22T19:42:58",
+                "--optLocalTime 21:30:15.789"));
 
         cl.getOptions().values().stream().filter(CmdArgOption::isRequired).map(cl::hasArg).forEach(CommandLineTest::assertTrue);
 

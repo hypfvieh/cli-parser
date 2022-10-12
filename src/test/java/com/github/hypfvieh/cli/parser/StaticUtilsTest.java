@@ -214,9 +214,8 @@ class StaticUtilsTest extends AbstractBaseTest {
     public static class TestRte extends RuntimeException {
         private static final long serialVersionUID = 1L;
 
-        public TestRte() {
-
+        TestRte() {
         }
-
     }
+
 }
