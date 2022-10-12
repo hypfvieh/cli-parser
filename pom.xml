@@ -38,8 +38,7 @@
         <connection>scm:git:ssh//git@github.com/hypfvieh/${project.artifactId}.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/hypfvieh/${project.artifactId}.git</developerConnection>
         <url>ssh://git@github.com/hypfvieh/${project.artifactId}.git</url>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <distributionManagement>
         <repository>
@@ -64,10 +63,23 @@
         <!-- the -target argument for the Java compiler -->
         <maven.compiler.target>${javaVersion}</maven.compiler.target>
 
-        <junit.version>5.8.2</junit.version>
-        <log4j2.version>2.17.2</log4j2.version>
+        <dep.plugin.compiler.version>3.10.1</dep.plugin.compiler.version>
+        <dep.plugin.jar.version>3.3.0</dep.plugin.jar.version>
+        <dep.plugin.source.version>3.2.1</dep.plugin.source.version>
+        <dep.plugin.javadoc.version>3.4.1</dep.plugin.javadoc.version>
+        <dep.plugin.surefire.version>3.0.0-M7</dep.plugin.surefire.version>
+        <dep.plugin.enforcer.version>3.1.0</dep.plugin.enforcer.version>
+        <dep.plugin.release.version>3.0.0-M6</dep.plugin.release.version>
+        <dep.plugin.gpg.version>3.0.1</dep.plugin.gpg.version>
+        <dep.plugin.checkstyle.version>3.2.0</dep.plugin.checkstyle.version>
+        <dep.plugin.spotbugs.version>4.7.2.1</dep.plugin.spotbugs.version>
+        <dep.plugin.pmd.version>3.19.0</dep.plugin.pmd.version>
 
-        <pmd.version>6.47.0</pmd.version>
+        <dep.junit-jupiter.version>5.9.1</dep.junit-jupiter.version>
+        <dep.slf4j-api.version>1.7.36</dep.slf4j-api.version>
+        <dep.log4j2.version>2.19.0</dep.log4j2.version>
+
+        <pmd.version>6.50.0</pmd.version>
         <proj.check.skip-checkstyle>false</proj.check.skip-checkstyle>
         <proj.check.skip-pmd>false</proj.check.skip-pmd>
         <proj.check.skip-spotbugs>false</proj.check.skip-spotbugs>
@@ -81,49 +93,49 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>${log4j2.version}</version>
+            <version>${dep.log4j2.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j2.version}</version>
+            <version>${dep.log4j2.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
+            <version>${dep.slf4j-api.version}</version>
         </dependency>
 
         <!-- JUnit testing framework. -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
+            <version>${dep.junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit.version}</version>
+            <version>${dep.junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
+            <version>${dep.junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
-            <version>1.8.2</version>
+            <version>1.9.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -134,7 +146,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M7</version>
+                <version>${dep.plugin.surefire.version}</version>
                 <configuration>
                     <forkCount>1</forkCount>
                     <reuseForks>false</reuseForks>
@@ -146,7 +158,7 @@
 
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>${dep.plugin.enforcer.version}</version>
 
                 <configuration>
                     <rules>
@@ -168,12 +180,12 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.7.0.0</version>
+                <version>${dep.plugin.spotbugs.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>com.github.spotbugs</groupId>
                         <artifactId>spotbugs</artifactId>
-                        <version>4.7.0</version>
+                        <version>4.7.2</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -202,7 +214,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.17.0</version>
+                <version>${dep.plugin.pmd.version}</version>
                 <configuration>
                     <skip>${proj.check.skip-pmd}</skip>
                     <failOnViolation>${proj.check.fail-pmd}</failOnViolation>
@@ -241,7 +253,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>${dep.plugin.checkstyle.version}</version>
                 <configuration>
                     <skip>${proj.check.skip-checkstyle}</skip>
                     <failOnViolation>${proj.check.fail-checkstyle}</failOnViolation>
@@ -255,7 +267,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>10.3</version>
+                        <version>10.3.4</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -272,7 +284,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>${dep.plugin.compiler.version}</version>
                 <configuration>
                     <debug>true</debug>
                     <debuglevel>lines,vars,source</debuglevel>
@@ -286,7 +298,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>${dep.plugin.jar.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -322,7 +334,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-release-plugin</artifactId>
-                        <version>3.0.0-M6</version>
+                        <version>${dep.plugin.release.version}</version>
                         <configuration>
                             <autoVersionSubmodules>true</autoVersionSubmodules>
                             <useReleaseProfile>false</useReleaseProfile>
@@ -334,7 +346,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.1</version>
+                        <version>${dep.plugin.source.version}</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -347,7 +359,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.4.0</version>
+                        <version>${dep.plugin.javadoc.version}</version>
                         <configuration>
                             <doclint>none</doclint>
                         </configuration>
@@ -363,7 +375,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
+                        <version>${dep.plugin.gpg.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
