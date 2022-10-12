@@ -76,7 +76,7 @@
         <dep.plugin.pmd.version>3.19.0</dep.plugin.pmd.version>
 
         <dep.junit-jupiter.version>5.9.1</dep.junit-jupiter.version>
-        <dep.slf4j-api.version>1.7.36</dep.slf4j-api.version>
+        <dep.slf4j-api.version>2.0.3</dep.slf4j-api.version>
         <dep.log4j2.version>2.19.0</dep.log4j2.version>
 
         <pmd.version>6.50.0</pmd.version>
@@ -91,23 +91,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${dep.log4j2.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${dep.log4j2.version}</version>
-            <scope>test</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${dep.slf4j-api.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <artifactId>slf4j-simple</artifactId>
             <version>${dep.slf4j-api.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- JUnit testing framework. -->
