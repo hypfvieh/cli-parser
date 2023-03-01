@@ -80,12 +80,12 @@
         <dep.plugin.spotbugs.version>4.7.2.1</dep.plugin.spotbugs.version>
         <dep.plugin.site.version>4.0.0-M3</dep.plugin.site.version>
 
-        <dep.checkstyle.version>10.4</dep.checkstyle.version>
-        <dep.pmd.version>6.51.0</dep.pmd.version>
+        <dep.checkstyle.version>10.8.0</dep.checkstyle.version>
+        <dep.pmd.version>6.55.0</dep.pmd.version>
         <dep.spotbugs.version>4.7.3</dep.spotbugs.version>
 
-        <dep.junit-jupiter.version>5.9.1</dep.junit-jupiter.version>
-        <dep.slf4j-api.version>2.0.3</dep.slf4j-api.version>
+        <dep.junit-jupiter.version>5.9.2</dep.junit-jupiter.version>
+        <dep.slf4j-api.version>2.0.6</dep.slf4j-api.version>
 
         <proj.check.skip-checkstyle>false</proj.check.skip-checkstyle>
         <proj.check.skip-pmd>false</proj.check.skip-pmd>
@@ -135,7 +135,7 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
-            <version>1.9.1</version>
+            <version>1.9.2</version>
             <scope>test</scope>
         </dependency>
 
