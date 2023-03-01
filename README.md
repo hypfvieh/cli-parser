@@ -25,7 +25,7 @@ Requires Java 11 or higher - no additional dependencies (yeah!)
 <dependency>
     <groupId>com.github.hypfvieh.cli</groupId>
     <artifactId>cli-parser</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 ## Code Usage
