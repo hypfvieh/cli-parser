@@ -914,6 +914,39 @@ class CommandLineTest extends AbstractBaseTest {
     }
 
     @Test
+    public void parseOptions() {
+        CommandLine commandLine = new CommandLine();
+        commandLine
+        .addOption(CmdArgOption
+            .builder(String.class)
+            .name("mapping-dir")
+            .shortName('m')
+            .description("mapping")
+            .required()
+            .build())
+        .addOption(CmdArgOption
+            .builder(String.class)
+            .name("destination")
+            .shortName('d')
+            .description("Destination")
+            .required()
+            .build())
+        .addOption(CmdArgOption
+            .builder(String.class)
+            .name("source")
+            .shortName('s')
+            .repeatable()
+            .description("Source")
+            .required()
+            .build());
+
+        commandLine.parse(new String[] {"-m", "/tmp", "-d", "foo", "-s", "bar"});
+        assertEquals("/tmp", commandLine.getArg('m', String.class));
+        assertEquals("foo", commandLine.getArg('d', String.class));
+        assertEquals("bar", commandLine.getArg('s', String.class));
+    }
+
+    @Test
     public void parseRequiredOptionMissingFail() {
         CommandLine cl = new CommandLine().addOption(CmdArgOption.builder(String.class)
                 .name("requiredString")
