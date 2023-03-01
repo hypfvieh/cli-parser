@@ -635,7 +635,8 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
 
         // check all required options are given
         List<String> missingOptions = getOptions().values().stream().filter(CmdArgOption::isRequired)
-                .filter(s -> !getArgBundle().getKnownArgs().containsKey(s))
+                .filter(s -> !getArgBundle().getKnownArgs().containsKey(s) // not a known single argument
+                        && !getArgBundle().getKnownMultiArgs().containsKey(s)) // not a known repeatable argument
                 .map(CmdArgOption::getName)
                 .distinct()
                 .collect(Collectors.toList());
