@@ -38,8 +38,7 @@
         <connection>scm:git:ssh//git@github.com/hypfvieh/${project.artifactId}.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/hypfvieh/${project.artifactId}.git</developerConnection>
         <url>ssh://git@github.com/hypfvieh/${project.artifactId}.git</url>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <distributionManagement>
         <repository>
@@ -64,54 +63,56 @@
         <!-- the -target argument for the Java compiler -->
         <maven.compiler.target>${javaVersion}</maven.compiler.target>
 
+        <project.maven.version>3.6.0</project.maven.version>
+
         <dep.plugin.clean.version>3.2.0</dep.plugin.clean.version>
         <dep.plugin.source.version>3.2.1</dep.plugin.source.version>
-        <dep.plugin.compiler.version>3.10.1</dep.plugin.compiler.version>
-        <dep.plugin.resources.version>3.3.0</dep.plugin.resources.version>
+        <dep.plugin.compiler.version>3.11.0</dep.plugin.compiler.version>
+        <dep.plugin.resources.version>3.3.1</dep.plugin.resources.version>
         <dep.plugin.jar.version>3.3.0</dep.plugin.jar.version>
-        <dep.plugin.deploy.version>3.0.0</dep.plugin.deploy.version>
-        <dep.plugin.install.version>3.0.1</dep.plugin.install.version>
-        <dep.plugin.release.version>3.0.0-M7</dep.plugin.release.version>
-        <dep.plugin.javadoc.version>3.4.1</dep.plugin.javadoc.version>
-        <dep.plugin.surefire.version>3.0.0-M7</dep.plugin.surefire.version>
-        <dep.plugin.enforcer.version>3.1.0</dep.plugin.enforcer.version>
+        <dep.plugin.deploy.version>3.1.1</dep.plugin.deploy.version>
+        <dep.plugin.install.version>3.1.1</dep.plugin.install.version>
+        <dep.plugin.release.version>3.0.0</dep.plugin.release.version>
+        <dep.plugin.javadoc.version>3.5.0</dep.plugin.javadoc.version>
+        <dep.plugin.surefire.version>3.0.0</dep.plugin.surefire.version>
+        <dep.plugin.enforcer.version>3.3.0</dep.plugin.enforcer.version>
         <dep.plugin.gpg.version>3.0.1</dep.plugin.gpg.version>
-        <dep.plugin.checkstyle.version>3.2.0</dep.plugin.checkstyle.version>
-        <dep.plugin.pmd.version>3.19.0</dep.plugin.pmd.version>
-        <dep.plugin.spotbugs.version>4.7.2.1</dep.plugin.spotbugs.version>
-        <dep.plugin.site.version>4.0.0-M3</dep.plugin.site.version>
+        <dep.plugin.checkstyle.version>3.2.1</dep.plugin.checkstyle.version>
+        <dep.plugin.pmd.version>3.20.0</dep.plugin.pmd.version>
+        <dep.plugin.sortpom.version>3.2.1</dep.plugin.sortpom.version>
+        <dep.plugin.site.version>4.0.0-M7</dep.plugin.site.version>
 
-        <dep.checkstyle.version>10.8.0</dep.checkstyle.version>
+        <dep.checkstyle.version>10.9.3</dep.checkstyle.version>
         <dep.pmd.version>6.55.0</dep.pmd.version>
-        <dep.spotbugs.version>4.7.3</dep.spotbugs.version>
+
+        <dep.slf4j.version>2.0.7</dep.slf4j.version>
 
         <dep.junit-jupiter.version>5.9.2</dep.junit-jupiter.version>
-        <dep.slf4j-api.version>2.0.6</dep.slf4j-api.version>
+        <dep.junit-platform.version>1.9.2</dep.junit-platform.version>
+        <dep.mockito.version>5.3.0</dep.mockito.version>
 
         <proj.check.skip-checkstyle>false</proj.check.skip-checkstyle>
         <proj.check.skip-pmd>false</proj.check.skip-pmd>
-        <proj.check.skip-spotbugs>false</proj.check.skip-spotbugs>
 
         <proj.check.fail-checkstyle>true</proj.check.fail-checkstyle>
         <proj.check.fail-pmd>true</proj.check.fail-pmd>
-        <proj.check.fail-spotbugs>true</proj.check.fail-spotbugs>
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${dep.slf4j-api.version}</version>
+            <version>${dep.slf4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>${dep.slf4j-api.version}</version>
+            <version>${dep.slf4j.version}</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- JUnit testing framework. -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -136,7 +137,14 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
-            <version>1.9.2</version>
+            <version>${dep.junit-platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${dep.mockito.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -220,6 +228,22 @@
                 </plugin>
 
                 <plugin>
+                    <groupId>com.github.ekryd.sortpom</groupId>
+                    <artifactId>sortpom-maven-plugin</artifactId>
+                    <version>${dep.plugin.sortpom.version}</version>
+                    <configuration>
+                        <createBackupFile>false</createBackupFile>
+                        <expandEmptyElements>false</expandEmptyElements>
+                        <keepBlankLines>true</keepBlankLines>
+                        <lineSeparator>\n</lineSeparator>
+                        <nrOfIndentSpace>4</nrOfIndentSpace>
+                        <sortModules>false</sortModules>
+                        <sortDependencies>none</sortDependencies>
+                        <sortProperties>false</sortProperties>
+                    </configuration>
+                </plugin>
+
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>${dep.plugin.site.version}</version>
@@ -234,20 +258,22 @@
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>${dep.plugin.enforcer.version}</version>
-
-                <configuration>
-                    <rules>
-                        <requireMavenVersion>
-                            <version>3.5.3</version>
-                        </requireMavenVersion>
-                    </rules>
-                </configuration>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
                         <goals>
                             <goal>enforce</goal>
                         </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>${project.maven.version}</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>${maven.compiler.source}</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -275,10 +301,10 @@
                 <executions>
                     <execution>
                         <id>proj.default</id>
-                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
+                        <phase>verify</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -293,7 +319,7 @@
                     <printFailingErrors>true</printFailingErrors>
                     <failurePriority>4</failurePriority>
                     <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
-                     <!-- minimum number of tokens that need to be duplicated before it causes a violation: -->
+                    <!-- minimum number of tokens that need to be duplicated before it causes a violation: -->
                     <minimumTokens>100</minimumTokens>
                     <rulesets>
                         <ruleset>src/test/resources/policy/pmd_rules.xml</ruleset>
@@ -314,44 +340,10 @@
                 <executions>
                     <execution>
                         <id>proj.default</id>
-                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>${dep.plugin.spotbugs.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.github.spotbugs</groupId>
-                        <artifactId>spotbugs</artifactId>
-                        <version>${dep.spotbugs.version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <skip>${proj.check.skip-spotbugs}</skip>
-                    <failOnError>${proj.check.fail-spotbugs}</failOnError>
-                    <effort>Max</effort>
-                    <maxHeap>1024</maxHeap>
-                    <omitVisitors>
-                        FindRefComparison,
-                        FindSelfComparison,
-                        FindSelfComparison2,
-                        ThrowingExceptions
-                    </omitVisitors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>proj.default</id>
                         <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -360,6 +352,23 @@
     </build>
 
     <profiles>
+
+        <profile>
+            <id>fast</id>
+            <!-- Profile to skip time-consuming steps. -->
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <!-- skip _compiling_ the tests -->
+                <maven.test.skip>true</maven.test.skip>
+                <!-- skip execution of tests -->
+                <skipTests>true</skipTests>
+                <!-- skip Javadoc generation -->
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+            </properties>
+        </profile>
+
         <profile>
             <id>release</id>
             <activation>
