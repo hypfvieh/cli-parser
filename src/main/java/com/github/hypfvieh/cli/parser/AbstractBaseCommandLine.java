@@ -94,9 +94,9 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         return accessSync(t -> {
             getArgBundle().getUnknownTokens().clear();
             Stream.of(getArgBundle().getKnownArgs(),
-                    getArgBundle().getUnknownArgs(),
-                    getArgBundle().getDupArgs(),
-                    getArgBundle().getKnownMultiArgs())
+                getArgBundle().getUnknownArgs(),
+                getArgBundle().getDupArgs(),
+                getArgBundle().getKnownMultiArgs())
                 .forEach(Map::clear);
             return t;
         });
@@ -117,7 +117,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         argBundle.getConverters().put(_type, _converter);
         if (_type.isPrimitive()) {
             return registerConverter(uncheckedCast((Class<?>) MethodType.methodType(_type).wrap().returnType()),
-                    _converter);
+                _converter);
         }
         return self();
     }
@@ -152,7 +152,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         }
 
         getLogger().debug("Added {} command-line option '{}': {}",
-                _option.isRequired() ? "required" : "optional", _option.getName(), _option.getDescription());
+            _option.isRequired() ? "required" : "optional", _option.getName(), _option.getDescription());
         return self();
     }
 
@@ -310,8 +310,8 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     public String getUsage(String _mainClassName) {
 
         return usageFormatter.format(new ArrayList<>(getOptions().values()),
-                getLongOptPrefix(), getShortOptPrefix(),
-                Optional.ofNullable(_mainClassName).orElseGet(IUsageFormatter::getMainClassName));
+            getLongOptPrefix(), getShortOptPrefix(),
+            Optional.ofNullable(_mainClassName).orElseGet(IUsageFormatter::getMainClassName));
     }
 
     /**
@@ -553,8 +553,8 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     }
 
     /**
-     * Tries to find a {@link CmdArgOption} using the given function and checks
-     * if the option was used in the parsed command line.
+     * Tries to find a {@link CmdArgOption} using the given function and checks if the option was used in the parsed
+     * command line.
      *
      * @param _argFunction argument supplier (never null)
      *

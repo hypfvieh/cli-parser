@@ -113,9 +113,37 @@ public class MyMainApp {
 
         // it doesn't matter which variant (-f or --optionWithValue) was found in _args, both booleans will be true if any was found
         boolean optUsedByShortName = cl.hasArg('f'); // lookup by short name
-        boolean optUsedByLongName = cl.getArg("optionWithValue"); // lookup by long name
+        String optUsedByLongName = cl.getArg("optionWithValue"); // lookup by long name
 
         System.out.println("Option was set: " + optUsedByShortName); // this will print true if the option was set
+  }
+}
+
+```
+
+Using a map of predefined values for an option (since 1.0.4):
+If the provided value is not any of the defined values, an exception is thrown.
+
+*Note:*
+Key type of the map is the type used for the CmdArgOption.
+Sort and compare behavior is based on the provided map.
+If you use Strings and want to compare case-insensitive use a TreeMap with proper comparator.
+
+```java
+
+public class MyMainApp {
+  public void main(String[] _args) {
+     CommandLine cl = new CommandLine()
+                .addOption(CmdArgOption.builder(String.class)
+                        .name("optionWithPredefinedValue")
+                        .shortName('f')
+                        .required(true)
+                        .description("descr")
+                        .possibleValues(Map.of("foo", "The Foo Value", "bar", "The bar value"))
+                        .build())
+                .parse(_args);
+
+        String optUsedByLongName = cl.getArg("optionWithPredefinedValue"); // lookup by long name
   }
 }
 

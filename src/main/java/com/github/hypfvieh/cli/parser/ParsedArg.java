@@ -76,7 +76,7 @@ class ParsedArg {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " [lookingLikeOption=" + lookingLikeOption + ", multiArg=" + multiArg + ", cmdArgOpt="
-                + cmdArgOpt + ", value=" + value + "]";
+            + cmdArgOpt + ", value=" + value + "]";
     }
 
 }

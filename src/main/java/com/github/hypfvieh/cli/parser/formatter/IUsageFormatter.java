@@ -40,10 +40,10 @@ public interface IUsageFormatter {
         StackTraceElement[] stackTrace = new Throwable().fillInStackTrace().getStackTrace();
 
         String mainClassName = Arrays.stream(stackTrace)
-                .map(StackTraceElement::getClassName)
-                .filter(st -> !st.startsWith("java.") && !st.startsWith("javax.") && !st.startsWith(AbstractBaseCommandLine.class.getPackageName()))
-                .findFirst()
-                .orElse("Unknown");
+            .map(StackTraceElement::getClassName)
+            .filter(st -> !st.startsWith("java.") && !st.startsWith("javax.") && !st.startsWith(AbstractBaseCommandLine.class.getPackageName()))
+            .findFirst()
+            .orElse("Unknown");
 
         int idx = mainClassName.lastIndexOf('.');
         if (idx > -1) {

@@ -25,6 +25,7 @@ public abstract class AbstractPatternBasedConverter<T, P> implements IValueConve
 
     /**
      * Adds a pattern.
+     *
      * @param _pattern pattern
      */
     public void addPattern(P _pattern) {
@@ -34,6 +35,7 @@ public abstract class AbstractPatternBasedConverter<T, P> implements IValueConve
 
     /**
      * Access to the logger for subclass objects.
+     *
      * @return logger
      */
     protected Logger getLogger() {
@@ -42,6 +44,7 @@ public abstract class AbstractPatternBasedConverter<T, P> implements IValueConve
 
     /**
      * Returns the list of patterns
+     *
      * @return patterns
      */
     protected List<P> getPatterns() {

@@ -9,40 +9,40 @@ class StaticUtilsTest extends AbstractBaseTest {
         assertThrows(NullPointerException.class, () -> StaticUtils.requireOption(null));
 
         CmdArgOption<?> opt = CmdArgOption.builder(String.class)
-                .name("optionWithValue")
-                .shortName('f')
-                .required(true)
-                .repeatable()
-                .defaultValue("def")
-                .description("descr")
-                .build();
+            .name("optionWithValue")
+            .shortName('f')
+            .required(true)
+            .repeatable()
+            .defaultValue("def")
+            .description("descr")
+            .build();
 
         CmdArgOption<?> optShort = CmdArgOption.builder(String.class)
-                .shortName('s')
-                .name("")
-                .required(true)
-                .repeatable()
-                .defaultValue("def")
-                .description("descr")
-                .build();
+            .shortName('s')
+            .name("")
+            .required(true)
+            .repeatable()
+            .defaultValue("def")
+            .description("descr")
+            .build();
 
         CmdArgOption<?> optLong = CmdArgOption.builder(String.class)
-                .name("long")
-                .shortName(' ')
-                .required(true)
-                .repeatable()
-                .defaultValue("def")
-                .description("descr")
-                .build();
+            .name("long")
+            .shortName(' ')
+            .required(true)
+            .repeatable()
+            .defaultValue("def")
+            .description("descr")
+            .build();
 
         CmdArgOption<?> optInvalid = CmdArgOption.builder(String.class)
-                .name("")
-                .shortName(' ')
-                .required(true)
-                .repeatable()
-                .defaultValue("def")
-                .description("descr")
-                .buildInvalid();
+            .name("")
+            .shortName(' ')
+            .required(true)
+            .repeatable()
+            .defaultValue("def")
+            .description("descr")
+            .buildInvalid();
 
         assertEquals(opt, StaticUtils.requireOption(opt));
         assertEquals(optLong, StaticUtils.requireOption(optLong));
@@ -51,7 +51,7 @@ class StaticUtilsTest extends AbstractBaseTest {
         assertThrows(IllegalArgumentException.class, () -> StaticUtils.requireOption(optInvalid));
 
         CmdArgOption<?> invalidOpt = CmdArgOption.builder(String.class)
-                .buildInvalid();
+            .buildInvalid();
 
         assertThrows(IllegalArgumentException.class, () -> StaticUtils.requireOption(invalidOpt));
     }
@@ -59,29 +59,29 @@ class StaticUtilsTest extends AbstractBaseTest {
     @Test
     void testRequireUniqueOption() {
         CmdArgOption<?> opt1 = CmdArgOption.builder(String.class)
-                .name("optionWithValue")
-                .shortName('f')
-                .required(true)
-                .repeatable()
-                .defaultValue("def")
-                .description("descr")
-                .build();
+            .name("optionWithValue")
+            .shortName('f')
+            .required(true)
+            .repeatable()
+            .defaultValue("def")
+            .description("descr")
+            .build();
 
         CmdArgOption<?> opt2 = CmdArgOption.builder(String.class)
-                .name("optionWithValue")
-                .required(true)
-                .repeatable()
-                .defaultValue("def")
-                .description("descr")
-                .build();
+            .name("optionWithValue")
+            .required(true)
+            .repeatable()
+            .defaultValue("def")
+            .description("descr")
+            .build();
 
         CmdArgOption<?> opt3 = CmdArgOption.builder(String.class)
-                .shortName('f')
-                .required(true)
-                .repeatable()
-                .defaultValue("def")
-                .description("descr")
-                .build();
+            .shortName('f')
+            .required(true)
+            .repeatable()
+            .defaultValue("def")
+            .description("descr")
+            .build();
 
         CommandLine cl = new CommandLine().addOption(opt1);
 
@@ -113,13 +113,13 @@ class StaticUtilsTest extends AbstractBaseTest {
     @Test
     void testRequireParsed() {
         CmdArgOption<?> opt = CmdArgOption.builder(String.class)
-                .name("optionWithValue")
-                .shortName('f')
-                .optional()
-                .repeatable()
-                .defaultValue("def")
-                .description("descr")
-                .build();
+            .name("optionWithValue")
+            .shortName('f')
+            .optional()
+            .repeatable()
+            .defaultValue("def")
+            .description("descr")
+            .build();
 
         CommandLine cl = new CommandLine().addOption(opt);
 
@@ -133,15 +133,15 @@ class StaticUtilsTest extends AbstractBaseTest {
     @Test
     void testOptionNotDefined() {
         CmdArgOption<?> opt2 = CmdArgOption.builder(String.class)
-                .name("optionWithValue")
-                .required(true)
-                .repeatable()
-                .defaultValue("def")
-                .description("descr")
-                .build();
+            .name("optionWithValue")
+            .required(true)
+            .repeatable()
+            .defaultValue("def")
+            .description("descr")
+            .build();
         assertEquals("Option not defined: null", StaticUtils.optionNotDefined(null, RuntimeException.class).getMessage());
         assertEquals("Option not defined: CmdArgOption[optionWithValue/null, dataType=java.lang.String, "
-                + "required=true, repeatable=true, hasValue=true, default=def, descr=descr]", StaticUtils.optionNotDefined(opt2, RuntimeException.class).getMessage());
+            + "required=true, repeatable=true, hasValue=true, default=def, descr=descr, possVals={}]", StaticUtils.optionNotDefined(opt2, RuntimeException.class).getMessage());
     }
 
     @Test
@@ -155,47 +155,47 @@ class StaticUtilsTest extends AbstractBaseTest {
     @Test
     void testFormatOption() {
         CmdArgOption<?> opt1 = CmdArgOption.builder(String.class)
-                .name("optionWithValue")
-                .shortName('f')
-                .required(true)
-                .repeatable()
-                .defaultValue("def")
-                .description("descr")
-                .build();
+            .name("optionWithValue")
+            .shortName('f')
+            .required(true)
+            .repeatable()
+            .defaultValue("def")
+            .description("descr")
+            .build();
 
         CmdArgOption<?> opt2 = CmdArgOption.builder(String.class)
-                .name("optWithValue")
-                .required(true)
-                .repeatable()
-                .defaultValue("def")
-                .description("descr")
-                .build();
+            .name("optWithValue")
+            .required(true)
+            .repeatable()
+            .defaultValue("def")
+            .description("descr")
+            .build();
 
         CmdArgOption<?> opt3 = CmdArgOption.builder(String.class)
-                .shortName('o')
-                .required(true)
-                .repeatable()
-                .defaultValue("def")
-                .description("descr")
-                .build();
+            .shortName('o')
+            .required(true)
+            .repeatable()
+            .defaultValue("def")
+            .description("descr")
+            .build();
 
         CmdArgOption<?> optNullInvalid = CmdArgOption.builder(String.class)
-                .buildInvalid();
+            .buildInvalid();
 
         CmdArgOption<?> optEmptyInvalid = CmdArgOption.builder(String.class)
-                .name("")
-                .shortName(' ')
-                .buildInvalid();
+            .name("")
+            .shortName(' ')
+            .buildInvalid();
 
         CmdArgOption<?> optEmptyShortInvalid = CmdArgOption.builder(String.class)
-                .name("foo")
-                .shortName(' ')
-                .buildInvalid();
+            .name("foo")
+            .shortName(' ')
+            .buildInvalid();
 
         CmdArgOption<?> optEmptyLongInvalid = CmdArgOption.builder(String.class)
-                .name("")
-                .shortName('x')
-                .buildInvalid();
+            .name("")
+            .shortName('x')
+            .buildInvalid();
 
         assertNull(StaticUtils.formatOption(null, null, null));
 

@@ -1,11 +1,11 @@
 package com.github.hypfvieh.cli.parser;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Describes a command-line option.<br>
- * Options are created using the associated {@link Builder}.<p>
+ * Options are created using the associated {@link Builder}.
+ * <p>
  *
  * Sample Usage:<br>
  * <code>
@@ -34,28 +34,31 @@ import java.util.Optional;
 public final class CmdArgOption<T> {
 
     /** Name of the option. */
-    private final String    name;
+    private final String         name;
 
     /** Short name of the option. */
-    private final Character shortName;
+    private final Character      shortName;
 
     /** The data type of this option. */
-    private final Class<T>  dataType;
+    private final Class<T>       dataType;
 
     /** Whether this option is required. */
-    private final boolean   required;
+    private final boolean        required;
 
     /** Whether this option's value is optional. */
-    private final boolean   hasValue;
+    private final boolean        hasValue;
 
     /** Whether this option can be repeated multiple times. */
-    private final boolean   repeatable;
+    private final boolean        repeatable;
 
     /** Default value. */
-    private final T         defaultValue;
+    private final T              defaultValue;
 
     /** Optional description of this option. */
-    private final String    description;
+    private final String         description;
+
+    /** Map with values allowed for this option. */
+    private final Map<T, String> possibleValues;
 
     private CmdArgOption(CmdArgOption.Builder<T> _builder) {
         name = _builder.name;
@@ -66,6 +69,7 @@ public final class CmdArgOption<T> {
         defaultValue = _builder.defaultValue;
         description = _builder.description;
         repeatable = _builder.repeatable;
+        possibleValues = _builder.possibleValues == null ? Map.of() : _builder.possibleValues;
     }
 
     /**
@@ -141,6 +145,15 @@ public final class CmdArgOption<T> {
     }
 
     /**
+     * A map containing all values (and description) allowed for this option.
+     *
+     * @return Map, maybe empty never null
+     */
+    public Map<T, String> getPossibleValues() {
+        return Collections.unmodifiableMap(possibleValues);
+    }
+
+    /**
      * Returns the type of data to create from argument.
      *
      * @return class, maybe null
@@ -151,7 +164,7 @@ public final class CmdArgOption<T> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, shortName, dataType, required, hasValue, repeatable, defaultValue);
+        return Objects.hash(name, shortName, dataType, required, hasValue, repeatable, defaultValue, possibleValues);
     }
 
     @Override
@@ -163,20 +176,21 @@ public final class CmdArgOption<T> {
         }
         CmdArgOption<?> other = (CmdArgOption<?>) _obj;
         return Objects.equals(name, other.name)
-                && Objects.equals(shortName, other.shortName)
-                && dataType == other.dataType
-                && required == other.required
-                && hasValue == other.hasValue
-                && repeatable == other.repeatable
-                && Objects.equals(defaultValue, other.defaultValue);
+            && Objects.equals(shortName, other.shortName)
+            && dataType == other.dataType
+            && required == other.required
+            && hasValue == other.hasValue
+            && repeatable == other.repeatable
+            && Objects.equals(possibleValues, other.possibleValues)
+            && Objects.equals(defaultValue, other.defaultValue);
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName()
-                + String.format("[%s/%s, dataType=%s, required=%s, repeatable=%s, hasValue=%s, default=%s, descr=%s]",
-                        name, shortName, Optional.ofNullable(dataType).map(Class::getName).orElse(null),
-                        required, repeatable, hasValue, defaultValue, description);
+            + String.format("[%s/%s, dataType=%s, required=%s, repeatable=%s, hasValue=%s, default=%s, descr=%s, possVals=%s]",
+                name, shortName, Optional.ofNullable(dataType).map(Class::getName).orElse(null),
+                required, repeatable, hasValue, defaultValue, description, possibleValues);
     }
 
     /**
@@ -221,13 +235,15 @@ public final class CmdArgOption<T> {
      */
     public static final class Builder<T> {
 
+        private final Class<T> dataType;      // final, set only during construction
+
         private String         name;
         private Character      shortName;
-        private final Class<T> dataType;    // final, set only during construction
         private boolean        required;
         private boolean        repeatable;
         private T              defaultValue;
         private String         description;
+        private Map<T, String> possibleValues;
 
         /**
          * Builder for an option using the specified datatype.<br>
@@ -338,8 +354,31 @@ public final class CmdArgOption<T> {
             return apply(() -> description = _description);
         }
 
+        /**
+         * Whether this option takes any value.
+         *
+         * @return boolean
+         */
         boolean hasValue() {
             return dataType != null;
+        }
+
+        /**
+         * Add predefined value and description allowed for this command option.<br>
+         * <p>
+         * The used map implementation provided will define the value order and comparison.<br>
+         * If you use String as type and you want to allow case-insensitive value comparison<br>
+         * then use a {@link TreeMap} with {@link String#CASE_INSENSITIVE_ORDER} comparator.
+         * </p>
+         *
+         * @param _possibleValues map with possible values and a description.
+         *
+         * @return this
+         *
+         * @since 1.0.4 - 2023-05-12
+         */
+        public CmdArgOption.Builder<T> possibleValue(Map<T, String> _possibleValues) {
+            return apply(() -> possibleValues = _possibleValues);
         }
 
         /**
@@ -349,6 +388,8 @@ public final class CmdArgOption<T> {
          */
         public CmdArgOption<T> build() {
             throwIf((name == null || name.isBlank()) && (shortName == null || shortName == ' '), "Option requires a name or shortname");
+            throwIf(possibleValues != null && !possibleValues.isEmpty() && defaultValue != null && !possibleValues.containsKey(defaultValue),
+                "Option default value '" + defaultValue + "' must be in possible value map");
             return new CmdArgOption<>(this);
         }
 
