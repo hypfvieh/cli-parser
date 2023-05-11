@@ -2,6 +2,8 @@ package com.github.hypfvieh.cli.parser;
 
 import static com.github.hypfvieh.cli.parser.StaticUtils.*;
 
+import com.github.hypfvieh.cli.parser.converter.IValueConverter;
+
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -252,9 +254,14 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
             return resultList;
         }
 
-        for (String str : _strVals) {
-            T convertedVal = (T) getArgBundle().getConverters().get(_option.getDataType()).convert(str);
-            resultList.add(convertedVal);
+        for (String val : _strVals) {
+            IValueConverter<?> converter = getArgBundle().getConverters().get(_option.getDataType());
+            if (converter == null) { // handle missing converter for option's data type
+                throw createException("No converter for type " + _option.getDataType().getName(), getExceptionType());
+            } else {
+                T convertedVal = (T) converter.convert(val);
+                resultList.add(convertedVal);
+            }
         }
         return resultList;
     }
@@ -657,8 +664,10 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                 try {
                     getArg(option);
                 } catch (Exception _ex) {
-                    failures.add("argument '" + formatOption(knownArg.getKey(), getLongOptPrefix(), getShortOptPrefix()) + "' has invalid value ("
-                            + getArgBundle().getKnownArgs().get(knownArg.getKey()) + ")");
+                    failures.add(String.format("argument '%s' has invalid value ('%s'): %s",
+                        formatOption(knownArg.getKey(), getLongOptPrefix(), getShortOptPrefix()),
+                        getArgBundle().getKnownArgs().get(knownArg.getKey()),
+                        _ex.getMessage()));
                 }
             }
         }
