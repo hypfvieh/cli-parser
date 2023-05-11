@@ -151,6 +151,12 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
             getArgBundle().getOptions().put(_option.getShortName(), _option);
         }
 
+        if (_option.getDataType() != null && _option.getDataType().isEnum() && !getArgBundle().getConverters().containsKey(_option.getDataType())) {
+            @SuppressWarnings("unchecked")
+            Class<Enum<?>> enumType = (Class<Enum<?>>) _option.getDataType();
+            getArgBundle().getConverters().put(_option.getDataType(), new EnumConverter(enumType));
+        }
+
         getLogger().debug("Added {} command-line option '{}': {}",
                 _option.isRequired() ? "required" : "optional", _option.getName(), _option.getDescription());
         return self();
