@@ -150,7 +150,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * @return value, maybe <code>null</code>
      */
     public <T> T getArg(CmdArgOption<T> _option) {
-        return getArg(_option, null);
+        return _option == null ? null : getArg(_option, null);
     }
 
     /**
@@ -170,9 +170,15 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      */
     @SuppressWarnings("unchecked")
     public <T> T getArg(CmdArgOption<T> _option, T _default) {
+        Objects.requireNonNull(_option, "Option required");
+
         List<T> args = getArgs(_option, _default);
         if (args == null || args.isEmpty()) {
-            return null;
+            if (_option.isOptional()) {
+                return null;
+            } else {
+                throw createException("Required option " + formatOption(_option, getLongOptPrefix(), getShortOptPrefix()) + " not set", getExceptionType());
+            }
         }
         T convertedVal = args.get(0);
         return _option.getDataType().isPrimitive() ? convertedVal : (T) _option.getDataType().cast(convertedVal);
@@ -290,9 +296,11 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * @throws RuntimeException if option is unknown or command line was not parsed before
      */
     public Object getArg(CharSequence _optionName) {
-        return Optional.ofNullable(requireParsed(this).getOption(_optionName))
-            .map(this::getArg)
-            .orElseThrow(() -> optionNotDefined(_optionName, getExceptionType()));
+        CmdArgOption<?> option = requireParsed(this).getOption(_optionName);
+        if (option == null) { // unsupported/unspecified option
+            throw optionNotDefined(_optionName, getExceptionType());
+        }
+        return getArg(option);
     }
 
     /**
@@ -304,9 +312,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * @throws RuntimeException if option is unknown or command line was not parsed before
      */
     public Object getArg(char _optionName) {
-        return Optional.ofNullable(requireParsed(this).getOption(_optionName + ""))
-            .map(this::getArg)
-            .orElseThrow(() -> optionNotDefined(_optionName, getExceptionType()));
+        return getArg(_optionName + "");
     }
 
     /**
@@ -483,9 +489,16 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
             return true;
         }
 
-        return Optional.ofNullable(requireParsed.getArgBundle().getOptions().get(requireOption(_option).getShortName()))
-            .map(k -> getArgBundle().getKnownArgs().containsKey(k) || getArgBundle().getKnownMultiArgs().containsKey(k))
-            .orElseThrow(() -> optionNotDefined(_option, getExceptionType()));
+        CmdArgOption<?> value = requireParsed.getArgBundle().getOptions().get(requireOption(_option).getShortName());
+
+        // option is required but was not set
+        if (_option.isRequired() && value == null) {
+            throw optionNotDefined(_option, getExceptionType());
+        } else if (value != null) { // option is present
+            return getArgBundle().getKnownArgs().containsKey(value) || getArgBundle().getKnownMultiArgs().containsKey(value);
+        }
+
+        return false;
     }
 
     /**
