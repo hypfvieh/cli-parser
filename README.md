@@ -121,10 +121,10 @@ public class MyMainApp {
 
 ```
 
-**Using a map of predefined values for an option (since 1.0.4):** \\
+**Using a map of predefined values for an option (since 1.0.4):** \
 If the provided value is not any of the defined values, an exception is thrown.
 
-*Note:* \\
+*Note:* \
 Key type of the map is the type used for the CmdArgOption.
 Sort and compare behavior is based on the provided map.
 If you use Strings and want to compare case-insensitive use a TreeMap with proper comparator.
