@@ -3,6 +3,7 @@ package com.github.hypfvieh.cli.parser;
 import static com.github.hypfvieh.cli.parser.StaticUtils.*;
 
 import com.github.hypfvieh.cli.parser.converter.*;
+import com.github.hypfvieh.cli.parser.formatter.DefaultHelpFormatter;
 import com.github.hypfvieh.cli.parser.formatter.DefaultUsageFormatter;
 import com.github.hypfvieh.cli.parser.formatter.IUsageFormatter;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     private Class<? extends RuntimeException> exceptionType      = CommandLineException.class;
 
     private IUsageFormatter                   usageFormatter     = new DefaultUsageFormatter();
+    private IUsageFormatter                   helpFormatter      = new DefaultHelpFormatter();
 
     /**
      * Default constructor with long prefix {@code --} and short prefix {@code -}.
@@ -149,6 +151,12 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         }
         if (_option.getShortName() != null) {
             getArgBundle().getOptions().put(_option.getShortName(), _option);
+        }
+
+        if (_option.getDataType() != null && _option.getDataType().isEnum() && !getArgBundle().getConverters().containsKey(_option.getDataType())) {
+            @SuppressWarnings("unchecked")
+            Class<Enum<?>> enumType = (Class<Enum<?>>) _option.getDataType();
+            getArgBundle().getConverters().put(_option.getDataType(), new EnumConverter(enumType));
         }
 
         getLogger().debug("Added {} command-line option '{}': {}",
@@ -308,14 +316,29 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * @return usage String
      */
     public String getUsage(String _mainClassName) {
-
         return usageFormatter.format(new ArrayList<>(getOptions().values()),
             getLongOptPrefix(), getShortOptPrefix(),
             Optional.ofNullable(_mainClassName).orElseGet(IUsageFormatter::getMainClassName));
     }
 
     /**
-     * Setup a different {@link IUsageFormatter}.
+     * Creates a multiline String containing all options and descriptions configured.<br>
+     * <p>
+     * Indented to be used in "help" like commands. <br>
+     * Uses the configured {@link #helpFormatter}.
+     * </p>
+     *
+     * @param _mainClassName name of program or main class
+     * @return usage String
+     */
+    public String getArgumentHelp(String _mainClassName) {
+        return helpFormatter.format(new ArrayList<>(getOptions().values()),
+            getLongOptPrefix(), getShortOptPrefix(),
+            Optional.ofNullable(_mainClassName).orElseGet(IUsageFormatter::getMainClassName));
+    }
+
+    /**
+     * Setup a different usage formatter.
      *
      * @param _formatter formatter, null will be ignored
      *
@@ -324,6 +347,20 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
     public B withUsageFormatter(IUsageFormatter _formatter) {
         if (_formatter != null) {
             usageFormatter = Objects.requireNonNull(_formatter, "Formatter required");
+        }
+        return self();
+    }
+
+    /**
+     * Setup a different help formatter.
+     *
+     * @param _formatter formatter, null will be ignored
+     *
+     * @return this
+     */
+    public B withHelpFormatter(IUsageFormatter _formatter) {
+        if (_formatter != null) {
+            helpFormatter = Objects.requireNonNull(_formatter, "Formatter required");
         }
         return self();
     }

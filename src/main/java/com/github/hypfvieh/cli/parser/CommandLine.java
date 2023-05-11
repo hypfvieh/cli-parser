@@ -2,6 +2,8 @@ package com.github.hypfvieh.cli.parser;
 
 import static com.github.hypfvieh.cli.parser.StaticUtils.*;
 
+import com.github.hypfvieh.cli.parser.converter.IValueConverter;
+
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -43,7 +45,8 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     }
 
     /**
-     * Parses a String as commandline by splitting it using space as delimiter. Only intended to be used for testing.
+     * Parses a String as commandline by splitting it using space as delimiter.
+     * Only intended to be used for testing.
      *
      * @param _args String
      * @return this
@@ -95,8 +98,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                         }
                     } else { // next token is an option too
                         if (cmdOpt != null) {
-                            if (cmdOpt.hasValue() && parsedArg.getValue() == null) { // command needs option, but got
-                                                                                     // another option
+                            if (cmdOpt.hasValue() && parsedArg.getValue() == null) { // command needs option, but got another option
                                 getArgBundle().getMissingArgs().add(cmdOpt);
                             } else if (!cmdOpt.isRepeatable()) { // no arguments required for option
                                 handleCmdOption(cmdOpt, parsedArg.getValue());
@@ -108,20 +110,16 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                 } else { // no arguments left
 
                     if (cmdOpt != null) {
-                        if (cmdOpt.hasValue() && parsedArg.getValue() == null) { // option needs value but we already on
-                                                                                 // the last token
+                        if (cmdOpt.hasValue() && parsedArg.getValue() == null) { // option needs value but we already on the last token
                             getArgBundle().getMissingArgs().add(cmdOpt);
-                        } else if (cmdOpt.hasValue() && parsedArg.getValue() != null) { // options value was given using
-                                                                                        // -o=val
+                        } else if (cmdOpt.hasValue() && parsedArg.getValue() != null) { // options value was given using -o=val
                             handleCmdOption(cmdOpt, parsedArg.getValue());
                         } else if (!parsedArg.isMultiArg()) { // not a repeated option)
                             handleCmdOption(cmdOpt, parsedArg.getValue());
                         }
-                    } else if (!parsedArg.isLookingLikeOption()) { // we on last token and this does not look like an
-                                                                   // option
+                    } else if (!parsedArg.isLookingLikeOption()) { // we on last token and this does not look like an option
                         getArgBundle().getUnknownTokens().add(token);
-                    } else if (parsedArg.isLookingLikeOption()) { // we did not find an option but this argument looks
-                                                                  // like one
+                    } else if (parsedArg.isLookingLikeOption()) { // we did not find an option but this argument looks like one
                         getArgBundle().getUnknownArgs().put(token, null);
                     }
                 }
@@ -157,9 +155,8 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * Returns the value associated with argument option.
      * <p>
      * If no value is present, the given default value is used.<br>
-     * If the given default is also <code>null</code>, the default of that option is returned (and might by
-     * <code>null</code>). If the option does not support values or if the option was not set, <code>null</code> is
-     * returned.<br>
+     * If the given default is also <code>null</code>, the default of that option is returned (and might by <code>null</code>).
+     * If the option does not support values or if the option was not set, <code>null</code> is returned.<br>
      * </p>
      *
      * @param <T> type of option value
@@ -187,8 +184,8 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     /**
      * Returns the value associated with argument option.
      * <p>
-     * If no value is present, the default value of that option is returned (and might by <code>null</code>). If the
-     * option does not support values or if the option was not set, <code>null</code> is returned.<br>
+     * If no value is present, the default value of that option is returned (and might by <code>null</code>).
+     * If the option does not support values or if the option was not set, <code>null</code> is returned.<br>
      * </p>
      *
      * @param <T> type of option value
@@ -204,9 +201,8 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * Returns the value associated with argument option.
      * <p>
      * If no value is present, the given default value is used.<br>
-     * If the given default is also <code>null</code>, the default of that option is returned (and might by
-     * <code>null</code>). If the option does not support values or if the option was not set, <code>null</code> is
-     * returned.<br>
+     * If the given default is also <code>null</code>, the default of that option is returned (and might by <code>null</code>).
+     * If the option does not support values or if the option was not set, <code>null</code> is returned.<br>
      * </p>
      *
      * @param <T> type of option value
@@ -264,10 +260,15 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
             return resultList;
         }
 
-        for (String str : _strVals) {
-            T convertedVal = (T) getArgBundle().getConverters().get(_option.getDataType()).convert(str);
-            validatePossibleValues(_option, convertedVal);
-            resultList.add(convertedVal);
+        for (String val : _strVals) {
+            IValueConverter<?> converter = getArgBundle().getConverters().get(_option.getDataType());
+            if (converter == null) { // handle missing converter for option's data type
+                throw createException("No converter for type " + _option.getDataType().getName(), getExceptionType());
+            } else {
+                T convertedVal = (T) converter.convert(val);
+                validatePossibleValues(_option, convertedVal);
+                resultList.add(convertedVal);
+            }
         }
         return resultList;
     }
@@ -316,9 +317,9 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     }
 
     /**
-     * Returns an option value using the options name and converting the value to the given type. <br>
-     * Will use the configured converter to convert the value.<br>
+     * Returns an option value using the options name and converting the value to the given type.
      * <br>
+     * Will use the configured converter to convert the value.<br><br>
      *
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
@@ -342,8 +343,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
         }
 
         Object arg = getArg(option);
-        if (arg == null || arg.equals(option.getDefaultValue())) { // no value or default of CmdArgOption -> override
-                                                                   // with our default
+        if (arg == null || arg.equals(option.getDefaultValue())) { // no value or default of CmdArgOption -> override with our default
             return _default;
         }
 
@@ -351,9 +351,9 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     }
 
     /**
-     * Returns an option value using the options name and converting the value to the given type. <br>
-     * Will use the configured converter to convert the value.<br>
+     * Returns an option value using the options name and converting the value to the given type.
      * <br>
+     * Will use the configured converter to convert the value.<br><br>
      *
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
@@ -379,9 +379,9 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     }
 
     /**
-     * Returns an option value using the options short name and converting the value to the given type. <br>
-     * Will use the configured converter to convert the value.<br>
+     * Returns an option value using the options short name and converting the value to the given type.
      * <br>
+     * Will use the configured converter to convert the value.<br><br>
      *
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
@@ -401,9 +401,9 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     }
 
     /**
-     * Returns an option value using the options short name and converting the value to the given type. <br>
-     * Will use the configured converter to convert the value.<br>
+     * Returns an option value using the options short name and converting the value to the given type.
      * <br>
+     * Will use the configured converter to convert the value.<br><br>
      *
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
@@ -424,9 +424,9 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     }
 
     /**
-     * Returns all option values using the options name and converting the values to the given type. <br>
-     * Will use the configured converter to convert the value.<br>
+     * Returns all option values using the options name and converting the values to the given type.
      * <br>
+     * Will use the configured converter to convert the value.<br><br>
      *
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
@@ -453,9 +453,9 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     }
 
     /**
-     * Returns all option values using the options short name and converting the values to the given type. <br>
-     * Will use the configured converter to convert the value.<br>
+     * Returns all option values using the options short name and converting the values to the given type.
      * <br>
+     * Will use the configured converter to convert the value.<br><br>
      *
      * If given type is not the same as the type specified in {@link CmdArgOption} an exception is thrown.
      *
@@ -624,15 +624,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                                 handleCmdOption(cmdArgOption, null);
                             } else if (prevOption == null && cmdArgOption.hasValue()) { // no option was value before
                                 prevOption = cmdArgOption;
-                            } else if (prevOption != null && prevOption.hasValue() && cmdArgOption.hasValue()) { // we
-                                                                                                                 // already
-                                                                                                                 // have
-                                                                                                                 // an
-                                                                                                                 // option
-                                                                                                                 // which
-                                                                                                                 // requires
-                                                                                                                 // a
-                                                                                                                 // value
+                            } else if (prevOption != null && prevOption.hasValue() && cmdArgOption.hasValue()) { // we already have an option which requires a value
                                 throw createException("Option " + formatOption(prevOption, getLongOptPrefix(), getShortOptPrefix()) + " requires a value", getExceptionType());
                             }
 
@@ -703,8 +695,10 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
                 } catch (InvalidOptionValueException _ex) {
                     failures.add(_ex.getMessage());
                 } catch (Exception _ex) {
-                    failures.add("argument '" + formatOption(knownArg.getKey(), getLongOptPrefix(), getShortOptPrefix()) + "' has invalid value ("
-                        + getArgBundle().getKnownArgs().get(knownArg.getKey()) + ")");
+                    failures.add(String.format("argument '%s' has invalid value ('%s'): %s",
+                        formatOption(knownArg.getKey(), getLongOptPrefix(), getShortOptPrefix()),
+                        getArgBundle().getKnownArgs().get(knownArg.getKey()),
+                        _ex.getMessage()));
                 }
             }
         }

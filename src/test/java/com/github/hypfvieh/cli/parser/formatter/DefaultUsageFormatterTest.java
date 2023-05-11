@@ -68,7 +68,7 @@ class DefaultUsageFormatterTest extends AbstractBaseTest {
 
         DefaultUsageFormatter duf = new DefaultUsageFormatter();
         assertEquals("usage: Test" + System.lineSeparator(), duf.format(null, "--", "-", "Test"));
-        assertEquals("usage: Test --optWithValue <arg> -o <arg> --optVal/-p <arg> --noVal/-n --possVal/-v <(one|two)> [--optionWithValue/-f <arg>]" + System.lineSeparator(),
+        assertEquals("usage: Test --optWithValue <arg> -o <arg> -p/--optVal <arg> -n/--noVal -v/--possVal <(one|two)> [-f/--optionWithValue <arg>]" + System.lineSeparator(),
             duf.format(list, "--", "-", "Test"));
     }
 

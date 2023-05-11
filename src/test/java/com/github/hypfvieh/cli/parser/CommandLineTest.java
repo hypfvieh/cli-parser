@@ -1022,7 +1022,7 @@ class CommandLineTest extends AbstractBaseTest {
             .build();
         CommandLine cl = new CommandLine().addOption(optDate);
         CommandLineException ex = assertThrows(CommandLineException.class, () -> cl.parse(new String[] {"--optDate", _dateArg}));
-        assertEquals("Parsing of command-line failed: argument '--optDate' has invalid value (" + _dateArg + ")", ex.getMessage());
+        assertEquals("Parsing of command-line failed: argument '--optDate' has invalid value ('" + _dateArg + "'): Unable to parse input '" + _dateArg + "' as date", ex.getMessage());
     }
 
     @Test
@@ -1142,6 +1142,6 @@ class CommandLineTest extends AbstractBaseTest {
                 .parse("-o 5");
         });
 
-        assertEquals("Parsing of command-line failed: Value '5' is not valid for option '--optional-int/-o', possible are: 1, 2", ex.getMessage());
+        assertEquals("Parsing of command-line failed: Value '5' is not valid for option '-o/--optional-int', possible are: 1, 2", ex.getMessage());
     }
 }

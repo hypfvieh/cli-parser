@@ -136,10 +136,26 @@ public final class StaticUtils {
      * @return String or null if option was null
      */
     public static String formatOption(CmdArgOption<?> _arg, String _longOptPrefix, String _shortOptPrefix) {
+        return formatOption(_arg, _longOptPrefix, _shortOptPrefix, "/");
+    }
+
+    /**
+     * Formats the given option for logging/exceptions.
+     *
+     * @param _arg argument to convert
+     * @param _longOptPrefix prefix for long options
+     * @param _shortOptPrefix prefix for short options
+     * @param _joiningDelimiter delimiter used when short and long option is combined
+     *
+     * @return String or null if option was null
+     *
+     * @since 1.0.4 - 2023-05-11
+     */
+    public static String formatOption(CmdArgOption<?> _arg, String _longOptPrefix, String _shortOptPrefix, String _joiningDelimiter) {
         if (_arg == null) {
             return null;
         } else if (_arg.getName() != null && !_arg.getName().isBlank() && _arg.getShortName() != null && !_arg.getShortName().isBlank()) {
-            return _longOptPrefix + _arg.getName() + "/" + _shortOptPrefix + _arg.getShortName();
+            return _shortOptPrefix + _arg.getShortName() + _joiningDelimiter + _longOptPrefix + _arg.getName();
         } else if (_arg.getName() != null && !_arg.getName().isBlank()) {
             return _longOptPrefix + _arg.getName();
         } else if (_arg.getShortName() != null && !_arg.getShortName().isBlank()) {
