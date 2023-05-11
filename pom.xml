@@ -66,30 +66,30 @@
         <project.maven.version>3.6.0</project.maven.version>
 
         <dep.plugin.clean.version>3.2.0</dep.plugin.clean.version>
-        <dep.plugin.source.version>3.2.1</dep.plugin.source.version>
+        <dep.plugin.source.version>3.2.2</dep.plugin.source.version>
         <dep.plugin.compiler.version>3.11.0</dep.plugin.compiler.version>
         <dep.plugin.resources.version>3.3.1</dep.plugin.resources.version>
         <dep.plugin.jar.version>3.3.0</dep.plugin.jar.version>
         <dep.plugin.deploy.version>3.1.1</dep.plugin.deploy.version>
         <dep.plugin.install.version>3.1.1</dep.plugin.install.version>
-        <dep.plugin.release.version>3.0.0</dep.plugin.release.version>
+        <dep.plugin.release.version>3.1.0</dep.plugin.release.version>
         <dep.plugin.javadoc.version>3.5.0</dep.plugin.javadoc.version>
-        <dep.plugin.surefire.version>3.0.0</dep.plugin.surefire.version>
+        <dep.plugin.surefire.version>3.1.0</dep.plugin.surefire.version>
         <dep.plugin.enforcer.version>3.3.0</dep.plugin.enforcer.version>
-        <dep.plugin.gpg.version>3.0.1</dep.plugin.gpg.version>
-        <dep.plugin.checkstyle.version>3.2.1</dep.plugin.checkstyle.version>
+        <dep.plugin.gpg.version>3.1.0</dep.plugin.gpg.version>
+        <dep.plugin.checkstyle.version>3.2.2</dep.plugin.checkstyle.version>
         <dep.plugin.pmd.version>3.20.0</dep.plugin.pmd.version>
         <dep.plugin.sortpom.version>3.2.1</dep.plugin.sortpom.version>
-        <dep.plugin.site.version>4.0.0-M7</dep.plugin.site.version>
+        <dep.plugin.site.version>4.0.0-M8</dep.plugin.site.version>
 
-        <dep.checkstyle.version>10.9.3</dep.checkstyle.version>
+        <dep.checkstyle.version>10.11.0</dep.checkstyle.version>
         <dep.pmd.version>6.55.0</dep.pmd.version>
 
         <dep.slf4j.version>2.0.7</dep.slf4j.version>
 
-        <dep.junit-jupiter.version>5.9.2</dep.junit-jupiter.version>
-        <dep.junit-platform.version>1.9.2</dep.junit-platform.version>
-        <dep.mockito.version>5.3.0</dep.mockito.version>
+        <dep.junit-jupiter.version>5.9.3</dep.junit-jupiter.version>
+        <dep.junit-platform.version>1.9.3</dep.junit-platform.version>
+        <dep.mockito.version>5.3.1</dep.mockito.version>
 
         <proj.check.skip-checkstyle>false</proj.check.skip-checkstyle>
         <proj.check.skip-pmd>false</proj.check.skip-pmd>
