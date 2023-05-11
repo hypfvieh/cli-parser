@@ -168,6 +168,62 @@ The Usage formatter will be used to print the supported options (required or opt
 If the default usage formatter does not fit your needs, you can implement your own.
 Create a class implementing `IUsageFormatter` and set a new instance of this formatter in your CommandLine object using `withUsageFormatter(IUsageFormatter)`.
 
+## Help Formatter (since 1.0.4)
+CommandLine supports custom help formatters.
+The HelpFormatter will be used when `getArgumentHelp(String)` is called on the CommandLine instance.
+
+The default implementation will print the output in unix command line manor.
+It tries to handle linebreaks in descriptions and value descriptions and will care about indentation.
+
+Here is an example output:
+```
+-f, --optionWithValue   Optional Option which takes a value
+--optWithValue          Required long option which takes a value
+-o                      Required option with only short option name and a value
+-p, --optVal            Required repeatable option with value
+-n, --noVal             Required Option without a value
+                        This also has a long
+                        description with multiple
+                        linebreaks
+-v, --possVal           Value with option list
+                           'one': The First Value
+                           'two': The Second Value
+                                  This may have
+                                  some sort of special
+                                  meaning
+```
+
+Sample usage:
+```java
+
+public class MyMainApp {
+  public void main(String[] _args) {
+     CommandLine cl = new CommandLine()
+                .addOption(CmdArgOption.builder(String.class)
+                        .name("anOption")
+                        .shortName('o')
+                        .required(true)
+                        .description("My option description")
+                        .build())
+                .addOption(CmdArgOption.builder(String.class)
+                        .name("help")
+                        .shortName('h')
+                        .description("Shows some help")
+                        .build())
+                .parse(_args);
+        if (cl.hasArg('h')) {
+                System.out.println("Here is some help for " + MyMainApp.class.getSimpleName());
+                System.out.println(cl.getArgumentHelp(null));
+                System.exit(1);
+        }
+  }
+}
+
+```
+
+If the default help formatter does not fit your needs, you can implement your own.
+Create a class implementing `IUsageFormatter` and set a new instance of this formatter in your CommandLine object using `withHelpFormatter(IUsageFormatter)`.
+
 ## Creating Converters
 To create a converter you have to create a class which implements `IValueConverter`.
 When conversion fails, the converter should throw a `CommandLineException` (or a subclass of it).
@@ -175,6 +231,7 @@ The new convert has to be registered using `registerConverter(Class<T>, IValueCo
 
 ### Sample converter:
 ```java
+
 public class FloatConverter implements IValueConverter<Float> {
 
     @Override
@@ -187,4 +244,5 @@ public class FloatConverter implements IValueConverter<Float> {
     }
 
 }
+
 ```

@@ -199,7 +199,7 @@ class StaticUtilsTest extends AbstractBaseTest {
 
         assertNull(StaticUtils.formatOption(null, null, null));
 
-        assertEquals("--optionWithValue/-f", StaticUtils.formatOption(opt1, "--", "-"));
+        assertEquals("-f/--optionWithValue", StaticUtils.formatOption(opt1, "--", "-"));
         assertEquals("--optWithValue", StaticUtils.formatOption(opt2, "--", "-"));
         assertEquals("-o", StaticUtils.formatOption(opt3, "--", "-"));
         assertEquals("?", StaticUtils.formatOption(optNullInvalid, "--", "-"));

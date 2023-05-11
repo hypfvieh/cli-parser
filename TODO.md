@@ -8,3 +8,6 @@
     - [OK] Apply Anyedit or similar to prevent trailing whitespaces at end of line and on empty lines
     - [  ] Introduce static code analysis, fail build on serious violations
     - [  ] Inherit from parent POM org.basepom:basepom-minimal
+    - [  ] Consider scenario: Required option, value is present but converter returns null
+    - [  ] Use specific run-time exceptions e.g. CommandLineException rather than IllegalArgumentException etc.
+    - [  ] Prevent CmdArgOption.getDataType() from being null by introducing a default data type e.g. String
