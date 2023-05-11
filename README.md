@@ -16,7 +16,8 @@ The cli-parser provides some default converters for LocalDate/LocalDateTime/Loca
 
 # Requirements
 
-Requires Java 11 or higher - no additional dependencies (yeah!)
+Requires Java 11 or higher.
+The only dependency is slf4j, which should be used in 2.x (1.x should work as well).
 
 # Usage
 
