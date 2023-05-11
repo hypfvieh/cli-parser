@@ -73,7 +73,7 @@ class CommandLineTest extends AbstractBaseTest {
 
         assertFalse(cl.getOption(optName).isRequired());
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        CommandLineException ex = assertThrows(CommandLineException.class,
             () -> cl.addOption(CmdArgOption.builder(String.class)
                 .name(optName)
                 .required()

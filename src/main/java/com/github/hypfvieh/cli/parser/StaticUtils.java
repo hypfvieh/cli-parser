@@ -19,12 +19,12 @@ public final class StaticUtils {
      *
      * @param _option option
      * @return option
-     * @throws IllegalArgumentException when option is invalid
+     * @throws CommandLineException when option is invalid
      */
     static CmdArgOption<?> requireOption(CmdArgOption<?> _option) {
         CmdArgOption<?> o = Objects.requireNonNull(_option, "Option required");
         if ((o.getName() == null || o.getName().isBlank()) && (o.getShortName() == null || o.getShortName().isBlank())) {
-            throw new IllegalArgumentException("Command-line option requires a name or shortname: " + _option);
+            throw new CommandLineException("Command-line option requires a name or shortname: " + _option);
         }
         return o;
     }
@@ -36,18 +36,18 @@ public final class StaticUtils {
      * @param _option option to check
      * @param _cmdLine command line instance
      *
-     * @throws IllegalArgumentException when option with same name already registered
+     * @throws CommandLineException when option with same name already registered
      */
     static <B extends AbstractBaseCommandLine<?>> void requireUniqueOption(CmdArgOption<?> _option, B _cmdLine) {
         Objects.requireNonNull(_option, "Option required");
         Objects.requireNonNull(_cmdLine, "Commandline required");
 
         if (_option.getName() != null && _cmdLine.getOptions().containsKey(_option.getName())) {
-            throw new IllegalArgumentException("Command-line option '" + _cmdLine.getLongOptPrefix() + _option.getName() + "' already defined");
+            throw new CommandLineException("Command-line option '" + _cmdLine.getLongOptPrefix() + _option.getName() + "' already defined");
         }
 
         if (_option.getShortName() != null && _cmdLine.getOptions().containsKey(_option.getShortName())) {
-            throw new IllegalArgumentException("Command-line option '" + _cmdLine.getShortOptPrefix() + _option.getShortName() + "' already defined");
+            throw new CommandLineException("Command-line option '" + _cmdLine.getShortOptPrefix() + _option.getShortName() + "' already defined");
         }
     }
 

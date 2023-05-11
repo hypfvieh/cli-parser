@@ -48,12 +48,12 @@ class StaticUtilsTest extends AbstractBaseTest {
         assertEquals(optLong, StaticUtils.requireOption(optLong));
         assertEquals(optShort, StaticUtils.requireOption(optShort));
 
-        assertThrows(IllegalArgumentException.class, () -> StaticUtils.requireOption(optInvalid));
+        assertThrows(CommandLineException.class, () -> StaticUtils.requireOption(optInvalid));
 
         CmdArgOption<?> invalidOpt = CmdArgOption.builder(String.class)
             .buildInvalid();
 
-        assertThrows(IllegalArgumentException.class, () -> StaticUtils.requireOption(invalidOpt));
+        assertThrows(CommandLineException.class, () -> StaticUtils.requireOption(invalidOpt));
     }
 
     @Test
@@ -89,8 +89,8 @@ class StaticUtilsTest extends AbstractBaseTest {
         assertThrows(NullPointerException.class, () -> StaticUtils.requireUniqueOption(opt1, null));
         assertThrows(NullPointerException.class, () -> StaticUtils.requireUniqueOption(null, cl));
 
-        assertThrows(IllegalArgumentException.class, () -> StaticUtils.requireUniqueOption(opt2, cl));
-        assertThrows(IllegalArgumentException.class, () -> StaticUtils.requireUniqueOption(opt3, cl));
+        assertThrows(CommandLineException.class, () -> StaticUtils.requireUniqueOption(opt2, cl));
+        assertThrows(CommandLineException.class, () -> StaticUtils.requireUniqueOption(opt3, cl));
     }
 
     @Test
@@ -99,8 +99,8 @@ class StaticUtilsTest extends AbstractBaseTest {
         assertEquals(RuntimeException.class, rte.getClass());
         assertEquals("Hi", rte.getMessage());
 
-        RuntimeException iae = StaticUtils.createException("Hello", IllegalArgumentException.class);
-        assertEquals(IllegalArgumentException.class, iae.getClass());
+        RuntimeException iae = StaticUtils.createException("Hello", CommandLineException.class);
+        assertEquals(CommandLineException.class, iae.getClass());
         assertEquals("Hello", iae.getMessage());
 
         RuntimeException cle = StaticUtils.createException("Hallo", CommandLineException.class);
