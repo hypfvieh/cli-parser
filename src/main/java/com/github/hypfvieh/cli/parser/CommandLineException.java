@@ -19,8 +19,7 @@ public class CommandLineException extends RuntimeException {
     /**
      * Constructs a new exception with the specified detail message and cause.
      *
-     * @param _message the detail message (which is saved for later retrieval
-     *        by the {@link #getMessage()} method).
+     * @param _message the detail message (which is saved for later retrieval by the {@link #getMessage()} method).
      * @param _cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
      */
     public CommandLineException(String _message, Throwable _cause) {

@@ -12,7 +12,9 @@ import java.io.PrintStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 class CommandLineTest extends AbstractBaseTest {
 
@@ -21,11 +23,11 @@ class CommandLineTest extends AbstractBaseTest {
     @ValueSource(strings = {"   "})
     public void addOptionWithoutOrInvalidNameFail(String _argName) {
         assertEquals("Option requires a name or shortname",
-                assertThrows(CommandLineException.class,
-                        () -> new CommandLine().addOption(CmdArgOption.builder(String.class)
-                                .name(_argName)
-                                .optional()
-                                .build())).getMessage());
+            assertThrows(CommandLineException.class,
+                () -> new CommandLine().addOption(CmdArgOption.builder(String.class)
+                    .name(_argName)
+                    .optional()
+                    .build())).getMessage());
     }
 
     @Test
@@ -34,12 +36,12 @@ class CommandLineTest extends AbstractBaseTest {
 
         assertEquals(CommandLineException.class, cl.getExceptionType());
         assertEquals("Command-line not parsed",
-                assertThrows(Exception.class, cl::getKnownArgs).getMessage());
+            assertThrows(Exception.class, cl::getKnownArgs).getMessage());
 
         cl.withExceptionType(IllegalArgumentException.class);
         assertEquals(IllegalArgumentException.class, cl.getExceptionType());
         assertEquals("Command-line not parsed",
-                assertThrows(IllegalArgumentException.class, cl::getKnownArgs).getMessage());
+            assertThrows(IllegalArgumentException.class, cl::getKnownArgs).getMessage());
     }
 
     @Test
@@ -48,7 +50,7 @@ class CommandLineTest extends AbstractBaseTest {
 
         assertEquals(CommandLineException.class, cl.getExceptionType());
         assertEquals("Exception type requires a single-argument constructor of type String",
-                assertThrows(Exception.class, () -> cl.withExceptionType(NoArgException.class)).getMessage());
+            assertThrows(Exception.class, () -> cl.withExceptionType(NoArgException.class)).getMessage());
         assertEquals(CommandLineException.class, cl.getExceptionType());
     }
 
@@ -63,20 +65,20 @@ class CommandLineTest extends AbstractBaseTest {
     public void addSameOptionMoreThanOnce() {
         String optName = "arg1";
         CommandLine cl = new CommandLine()
-                .addOption(CmdArgOption.builder(String.class)
-                        .name(optName)
-                        .optional()
-                        .defaultValue("default1")
-                        .build());
+            .addOption(CmdArgOption.builder(String.class)
+                .name(optName)
+                .optional()
+                .defaultValue("default1")
+                .build());
 
         assertFalse(cl.getOption(optName).isRequired());
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> cl.addOption(CmdArgOption.builder(String.class)
-                        .name(optName)
-                        .required()
-                        .defaultValue("default2")
-                        .build()));
+            () -> cl.addOption(CmdArgOption.builder(String.class)
+                .name(optName)
+                .required()
+                .defaultValue("default2")
+                .build()));
 
         assertEquals("Command-line option '--arg1' already defined", ex.getMessage());
     }
@@ -85,35 +87,35 @@ class CommandLineTest extends AbstractBaseTest {
     public void testGetUndefinedOptionFromCommandlineFail() {
         CommandLine cl = new CommandLine().parse((String) null);
         assertEquals("Option not defined: arg1",
-                assertThrows(Exception.class, () -> cl.getArg("arg1")).getMessage());
+            assertThrows(Exception.class, () -> cl.getArg("arg1")).getMessage());
         assertFalse(cl.hasOption("arg2"));
     }
 
     @Test
     public void testHasOption() {
         CmdArgOption<String> used = CmdArgOption.builder(String.class)
-                .name("arg")
-                .optional()
-                .defaultValue("default1")
-                .build();
+            .name("arg")
+            .optional()
+            .defaultValue("default1")
+            .build();
 
         CmdArgOption<String> usedMulti = CmdArgOption.builder(String.class)
-                .name("marg")
-                .optional()
-                .repeatable()
-                .defaultValue("default1")
-                .build();
+            .name("marg")
+            .optional()
+            .repeatable()
+            .defaultValue("default1")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(used)
-                .addOptions((CmdArgOption<?>[]) null) // should be accepted and ignored
-                .addOption(usedMulti);
+            .addOption(used)
+            .addOptions((CmdArgOption<?>[]) null) // should be accepted and ignored
+            .addOption(usedMulti);
 
         CmdArgOption<String> notUsed = CmdArgOption.builder(String.class)
-                .name("xarg")
-                .optional()
-                .defaultValue("default1")
-                .build();
+            .name("xarg")
+            .optional()
+            .defaultValue("default1")
+            .build();
 
         assertFalse(cl.hasOption(notUsed));
         assertTrue(cl.hasOption(used));
@@ -123,23 +125,23 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void testGetOptionFromUnparsedCommandlineFail() {
         CmdArgOption<Long> optAlong = CmdArgOption.builder(Long.class)
-                .name("along")
-                .required()
-                .build();
+            .name("along")
+            .required()
+            .build();
         CommandLine cl = new CommandLine().addOption(optAlong);
         assertTrue(cl.hasOption(optAlong));
         assertTrue(cl.hasOption("along"));
         assertEquals("Command-line not parsed",
-                assertThrows(Exception.class, () -> cl.getArg("along")).getMessage());
+            assertThrows(Exception.class, () -> cl.getArg("along")).getMessage());
     }
 
     @Test
     public void testGetOptionNoValue() {
         CmdArgOption<Void> optNoVal = CmdArgOption.builder()
-                .name("optNoVal")
-                .required()
-                .description("required no value option")
-                .build();
+            .name("optNoVal")
+            .required()
+            .description("required no value option")
+            .build();
 
         CommandLine cl = new CommandLine().addOption(optNoVal);
         assertTrue(cl.hasOption(optNoVal));
@@ -151,17 +153,17 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void testGetOptionNoValueWithValue() {
         CmdArgOption<Void> optNoVal = CmdArgOption.builder()
-                .name("optNoVal")
-                .required()
-                .description("required no value option")
-                .build();
+            .name("optNoVal")
+            .required()
+            .description("required no value option")
+            .build();
 
         CommandLine cl = new CommandLine().addOption(optNoVal);
         assertTrue(cl.hasOption(optNoVal));
         assertTrue(cl.hasOption("optNoVal"));
 
         assertEquals("Parsing of command-line failed: argument '--" + optNoVal.getName() + "' cannot have a value",
-                assertThrows(Exception.class, () -> cl.parse("--optNoVal doesHaveValue")).getMessage());
+            assertThrows(Exception.class, () -> cl.parse("--optNoVal doesHaveValue")).getMessage());
     }
 
     @Test
@@ -179,16 +181,16 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseShortAndLongOptions() {
         CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
-                .shortName('o')
-                .name("optional-int")
-                .optional()
-                .description("optional int")
-                .build();
+            .shortName('o')
+            .name("optional-int")
+            .optional()
+            .description("optional int")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optInt)
-                .withFailOnUnknownToken(false)
-                .parse("-o 1");
+            .addOption(optInt)
+            .withFailOnUnknownToken(false)
+            .parse("-o 1");
 
         assertFalse(cl.isFailOnUnknownToken());
         Integer shortArgVal = cl.getArg(optInt);
@@ -202,15 +204,15 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseShortAndLongOptionsByName() {
         CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
-                .shortName('o')
-                .name("opt-int")
-                .optional()
-                .description("optional int")
-                .build();
+            .shortName('o')
+            .name("opt-int")
+            .optional()
+            .description("optional int")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optInt)
-                .withFailOnUnknownToken(false);
+            .addOption(optInt)
+            .withFailOnUnknownToken(false);
 
         assertFalse(cl.isFailOnUnknownToken());
 
@@ -221,15 +223,15 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseSingleLongOptionsEqualSign() {
         CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
-                .shortName('o')
-                .name("opt-int")
-                .optional()
-                .description("optional int")
-                .build();
+            .shortName('o')
+            .name("opt-int")
+            .optional()
+            .description("optional int")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optInt)
-                .withFailOnUnknownToken(false);
+            .addOption(optInt)
+            .withFailOnUnknownToken(false);
 
         assertFalse(cl.isFailOnUnknownToken());
 
@@ -239,15 +241,15 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseSingleShortOptionsEqualSign() {
         CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
-                .shortName('o')
-                .name("opt-int")
-                .optional()
-                .description("optional int")
-                .build();
+            .shortName('o')
+            .name("opt-int")
+            .optional()
+            .description("optional int")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optInt)
-                .withFailOnUnknownToken(false);
+            .addOption(optInt)
+            .withFailOnUnknownToken(false);
 
         assertFalse(cl.isFailOnUnknownToken());
 
@@ -257,22 +259,22 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseMultiLongOptionsEqualSign() {
         CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
-                .shortName('o')
-                .name("opt-int")
-                .optional()
-                .description("optional int")
-                .build();
+            .shortName('o')
+            .name("opt-int")
+            .optional()
+            .description("optional int")
+            .build();
 
         CmdArgOption<String> optVal = CmdArgOption.builder(String.class)
-                .shortName('s')
-                .name("opt-string")
-                .optional()
-                .description("optional string")
-                .build();
+            .shortName('s')
+            .name("opt-string")
+            .optional()
+            .description("optional string")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOptions(optInt, optVal)
-                .withFailOnUnknownToken(false);
+            .addOptions(optInt, optVal)
+            .withFailOnUnknownToken(false);
 
         assertFalse(cl.isFailOnUnknownToken());
 
@@ -284,22 +286,22 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseMultiShortOptionsEqualSign() {
         CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
-                .shortName('o')
-                .name("opt-int")
-                .optional()
-                .description("optional int")
-                .build();
+            .shortName('o')
+            .name("opt-int")
+            .optional()
+            .description("optional int")
+            .build();
 
         CmdArgOption<String> optVal = CmdArgOption.builder(String.class)
-                .shortName('s')
-                .name("opt-string")
-                .optional()
-                .description("optional string")
-                .build();
+            .shortName('s')
+            .name("opt-string")
+            .optional()
+            .description("optional string")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOptions(optInt, optVal)
-                .withFailOnUnknownToken(false);
+            .addOptions(optInt, optVal)
+            .withFailOnUnknownToken(false);
 
         assertFalse(cl.isFailOnUnknownToken());
 
@@ -311,21 +313,21 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseCombinedShortOptionsWithEqualSign() {
         CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
-                .shortName('o')
-                .optional()
-                .description("optional int")
-                .build();
+            .shortName('o')
+            .optional()
+            .description("optional int")
+            .build();
         CmdArgOption<?> optAll = CmdArgOption.builder()
-                .shortName('a')
-                .optional()
-                .description("all flag")
-                .build();
+            .shortName('a')
+            .optional()
+            .description("all flag")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optInt)
-                .addOption(optAll)
-                .withFailOnUnknownToken(false)
-                .parse("-ao=10");
+            .addOption(optInt)
+            .addOption(optAll)
+            .withFailOnUnknownToken(false)
+            .parse("-ao=10");
 
         assertFalse(cl.isFailOnUnknownToken());
 
@@ -336,49 +338,49 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseShortOptions() {
         CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
-                .shortName('o')
-                .optional()
-                .description("optional int")
-                .build();
+            .shortName('o')
+            .optional()
+            .description("optional int")
+            .build();
         CommandLine cl = new CommandLine()
-                .addOption(optInt)
-                .withFailOnUnknownToken(false)
-                .parse("-o 1 2 3");
+            .addOption(optInt)
+            .withFailOnUnknownToken(false)
+            .parse("-o 1 2 3");
 
         assertFalse(cl.isFailOnUnknownToken());
         assertCollection(cl.getUnknownTokens(), "2", "3");
 
         assertEquals("Parsing of command-line failed: unknown tokens: 2, 3",
-                assertThrows(Exception.class, () -> cl.withFailOnUnknownToken(true)
-                        .parse("-o 1 2 3")).getMessage());
+            assertThrows(Exception.class, () -> cl.withFailOnUnknownToken(true)
+                .parse("-o 1 2 3")).getMessage());
     }
 
     @Test
     public void parseCombinedShortOptions() {
         CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
-                .shortName('o')
-                .optional()
-                .description("optional int")
-                .build();
+            .shortName('o')
+            .optional()
+            .description("optional int")
+            .build();
         CmdArgOption<?> optAll = CmdArgOption.builder()
-                .shortName('a')
-                .optional()
-                .description("all flag")
-                .build();
+            .shortName('a')
+            .optional()
+            .description("all flag")
+            .build();
 
         CmdArgOption<?> optRepeat = CmdArgOption.builder()
-                .shortName('r')
-                .optional()
-                .repeatable()
-                .description("repeatable flag")
-                .build();
+            .shortName('r')
+            .optional()
+            .repeatable()
+            .description("repeatable flag")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optInt)
-                .addOption(optAll)
-                .addOption(optRepeat)
-                .withFailOnUnknownToken(false)
-                .parse("-rrr -ao 1 2 3");
+            .addOption(optInt)
+            .addOption(optAll)
+            .addOption(optRepeat)
+            .withFailOnUnknownToken(false)
+            .parse("-rrr -ao 1 2 3");
 
         assertFalse(cl.isFailOnUnknownToken());
         assertCollection(cl.getUnknownTokens(), "2", "3");
@@ -390,23 +392,23 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseRepeatableOptions() {
         CmdArgOption<?> optAll = CmdArgOption.builder()
-                .shortName('a')
-                .optional()
-                .description("all flag")
-                .build();
+            .shortName('a')
+            .optional()
+            .description("all flag")
+            .build();
 
         CmdArgOption<?> optRepeat = CmdArgOption.builder()
-                .shortName('r')
-                .optional()
-                .repeatable()
-                .description("repeatable flag")
-                .build();
+            .shortName('r')
+            .optional()
+            .repeatable()
+            .description("repeatable flag")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optAll)
-                .addOption(optRepeat)
-                .withFailOnUnknownToken(false)
-                .parse("-rrr -a");
+            .addOption(optAll)
+            .addOption(optRepeat)
+            .withFailOnUnknownToken(false)
+            .parse("-rrr -a");
 
         assertEquals(3, cl.getArgCount(optRepeat));
         assertTrue(cl.hasArg(optAll));
@@ -415,24 +417,24 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseMultiRepeatableOptions() {
         CmdArgOption<?> optAll = CmdArgOption.builder()
-                .shortName('a')
-                .optional()
-                .repeatable()
-                .description("first flag")
-                .build();
+            .shortName('a')
+            .optional()
+            .repeatable()
+            .description("first flag")
+            .build();
 
         CmdArgOption<?> optRepeat = CmdArgOption.builder()
-                .shortName('s')
-                .optional()
-                .repeatable()
-                .description("second flag")
-                .build();
+            .shortName('s')
+            .optional()
+            .repeatable()
+            .description("second flag")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optAll)
-                .addOption(optRepeat)
-                .withFailOnUnknownToken(false)
-                .parse("-aaa -sss -assa");
+            .addOption(optAll)
+            .addOption(optRepeat)
+            .withFailOnUnknownToken(false)
+            .parse("-aaa -sss -assa");
 
         assertEquals(5, cl.getArgCount(optRepeat));
         assertEquals(5, cl.getArgCount(optAll));
@@ -441,48 +443,48 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseMultiRepeatableOptionsWithValueCombinedShort() {
         CmdArgOption<?> optAll = CmdArgOption.builder(String.class)
-                .shortName('a')
-                .optional()
-                .repeatable()
-                .description("first flag")
-                .build();
+            .shortName('a')
+            .optional()
+            .repeatable()
+            .description("first flag")
+            .build();
 
         CmdArgOption<?> optRepeat = CmdArgOption.builder(String.class)
-                .shortName('s')
-                .optional()
-                .repeatable()
-                .description("second flag")
-                .build();
+            .shortName('s')
+            .optional()
+            .repeatable()
+            .description("second flag")
+            .build();
 
         assertThrows(CommandLineException.class, () -> new CommandLine()
-                .addOption(optAll)
-                .addOption(optRepeat)
-                .withFailOnUnknownToken(false)
-                .parse("-as test -sa case"));
+            .addOption(optAll)
+            .addOption(optRepeat)
+            .withFailOnUnknownToken(false)
+            .parse("-as test -sa case"));
 
     }
 
     @Test
     public void parseMultiRepeatableLongOptionsWithValue() {
         CmdArgOption<?> optAll = CmdArgOption.builder(String.class)
-                .name("first")
-                .optional()
-                .repeatable()
-                .description("first flag")
-                .build();
+            .name("first")
+            .optional()
+            .repeatable()
+            .description("first flag")
+            .build();
 
         CmdArgOption<?> optRepeat = CmdArgOption.builder(String.class)
-                .name("second")
-                .optional()
-                .repeatable()
-                .description("second flag")
-                .build();
+            .name("second")
+            .optional()
+            .repeatable()
+            .description("second flag")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optAll)
-                .addOption(optRepeat)
-                .withFailOnUnknownToken(false)
-                .parse("--first hans --first wurst --second harry --second hirsch");
+            .addOption(optAll)
+            .addOption(optRepeat)
+            .withFailOnUnknownToken(false)
+            .parse("--first hans --first wurst --second harry --second hirsch");
 
         assertEquals(2, cl.getArgCount(optRepeat));
         assertEquals(2, cl.getArgCount(optAll));
@@ -497,8 +499,8 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseOneUnknownArg() {
         CommandLine cl = new CommandLine()
-                .withFailOnUnknownArg(false)
-                .parse("--first");
+            .withFailOnUnknownArg(false)
+            .parse("--first");
 
         assertEquals("--first", cl.getUnknownArgs().keySet().iterator().next());
     }
@@ -506,17 +508,17 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseUnknownFirstToken() {
         CmdArgOption<?> optAll = CmdArgOption.builder()
-                .name("second")
-                .optional()
-                .repeatable()
-                .description("first flag")
-                .build();
+            .name("second")
+            .optional()
+            .repeatable()
+            .description("first flag")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optAll)
-                .withFailOnUnknownArg(false)
-                .withFailOnUnknownToken(false)
-                .parse("first --second");
+            .addOption(optAll)
+            .withFailOnUnknownArg(false)
+            .withFailOnUnknownToken(false)
+            .parse("first --second");
 
         assertEquals("first", cl.getUnknownTokens().get(0));
         assertTrue(cl.hasArg(optAll));
@@ -525,17 +527,17 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseUnknownShort() {
         CmdArgOption<?> optAll = CmdArgOption.builder()
-                .shortName('f')
-                .optional()
-                .repeatable()
-                .description("first flag")
-                .build();
+            .shortName('f')
+            .optional()
+            .repeatable()
+            .description("first flag")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optAll)
-                .withFailOnUnknownArg(false)
-                .withFailOnUnknownToken(false)
-                .parse("-af");
+            .addOption(optAll)
+            .withFailOnUnknownArg(false)
+            .withFailOnUnknownToken(false)
+            .parse("-af");
 
         assertEquals("a", cl.getUnknownArgs().keySet().iterator().next());
         assertTrue(cl.hasArg(optAll));
@@ -544,9 +546,9 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseUnknownShortOpt() {
         CommandLine cl = new CommandLine()
-                .withFailOnUnknownArg(false)
-                .withFailOnUnknownToken(false)
-                .parse("-a");
+            .withFailOnUnknownArg(false)
+            .withFailOnUnknownToken(false)
+            .parse("-a");
 
         assertEquals("-a", cl.getArgBundle().getUnknownArgs().keySet().iterator().next());
 
@@ -555,9 +557,9 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseUnknownToken2() {
         CommandLine cl = new CommandLine()
-                .withFailOnUnknownArg(false)
-                .withFailOnUnknownToken(false)
-                .parse("a");
+            .withFailOnUnknownArg(false)
+            .withFailOnUnknownToken(false)
+            .parse("a");
 
         assertEquals("a", cl.getArgBundle().getUnknownTokens().get(0));
     }
@@ -565,19 +567,19 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseUnknownArgDelim() {
         CmdArgOption<?> optAll = CmdArgOption.builder()
-                .shortName('f')
-                .optional()
-                .repeatable()
-                .description("first flag")
-                .build();
+            .shortName('f')
+            .optional()
+            .repeatable()
+            .description("first flag")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optAll)
-                .withLongOptPrefix(null) // should change nothing
-                .withShortOptPrefix(null) // should change nothing
-                .withFailOnUnknownArg(false)
-                .withFailOnUnknownToken(false)
-                .parse("---f");
+            .addOption(optAll)
+            .withLongOptPrefix(null) // should change nothing
+            .withShortOptPrefix(null) // should change nothing
+            .withFailOnUnknownArg(false)
+            .withFailOnUnknownToken(false)
+            .parse("---f");
 
         assertEquals("---f", cl.getUnknownTokens().get(0));
     }
@@ -585,9 +587,9 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseUnknownShortArg() {
         CommandLine cl = new CommandLine()
-                .withFailOnUnknownArg(false)
-                .withFailOnUnknownToken(false)
-                .parse("-f");
+            .withFailOnUnknownArg(false)
+            .withFailOnUnknownToken(false)
+            .parse("-f");
 
         assertEquals("-f", cl.getUnknownArgs().keySet().iterator().next());
     }
@@ -595,24 +597,24 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseMultiRepeatableShortOptionsWithValue() {
         CmdArgOption<?> optAll = CmdArgOption.builder(String.class)
-                .shortName('a')
-                .optional()
-                .repeatable()
-                .description("first flag")
-                .build();
+            .shortName('a')
+            .optional()
+            .repeatable()
+            .description("first flag")
+            .build();
 
         CmdArgOption<?> optRepeat = CmdArgOption.builder(String.class)
-                .shortName('s')
-                .optional()
-                .repeatable()
-                .description("second flag")
-                .build();
+            .shortName('s')
+            .optional()
+            .repeatable()
+            .description("second flag")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optAll)
-                .addOption(optRepeat)
-                .withFailOnUnknownToken(false)
-                .parse("-a hans -a wurst -s harry -s hirsch");
+            .addOption(optAll)
+            .addOption(optRepeat)
+            .withFailOnUnknownToken(false)
+            .parse("-a hans -a wurst -s harry -s hirsch");
 
         assertEquals(2, cl.getArgCount(optRepeat));
         assertEquals(2, cl.getArgCount(optAll));
@@ -627,16 +629,16 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseMultiOptions() {
         CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
-                .shortName('o')
-                .optional()
-                .repeatable(true)
-                .description("optional int")
-                .build();
+            .shortName('o')
+            .optional()
+            .repeatable(true)
+            .description("optional int")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optInt)
-                .withFailOnUnknownToken(false)
-                .parse("-o 1 -o 2 -o 3");
+            .addOption(optInt)
+            .withFailOnUnknownToken(false)
+            .parse("-o 1 -o 2 -o 3");
 
         assertTrue(cl.hasArg(optInt));
 
@@ -648,16 +650,16 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseMultiVoidOptions() {
         CmdArgOption<?> optInt = CmdArgOption.builder()
-                .shortName('o')
-                .optional()
-                .repeatable(true)
-                .description("optional")
-                .build();
+            .shortName('o')
+            .optional()
+            .repeatable(true)
+            .description("optional")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optInt)
-                .withFailOnUnknownToken(false)
-                .parse("-ooo");
+            .addOption(optInt)
+            .withFailOnUnknownToken(false)
+            .parse("-ooo");
 
         assertTrue(cl.hasArg(optInt));
 
@@ -669,22 +671,22 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void testArgCount() {
         CmdArgOption<?> optInt = CmdArgOption.builder()
-                .shortName('o')
-                .optional()
-                .repeatable()
-                .description("optional")
-                .build();
+            .shortName('o')
+            .optional()
+            .repeatable()
+            .description("optional")
+            .build();
 
         CmdArgOption<?> optInt2 = CmdArgOption.builder()
-                .shortName('i')
-                .optional()
-                .description("optional")
-                .build();
+            .shortName('i')
+            .optional()
+            .description("optional")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optInt)
-                .addOption(optInt2)
-                .withFailOnUnknownToken(false);
+            .addOption(optInt)
+            .addOption(optInt2)
+            .withFailOnUnknownToken(false);
 
         assertEquals(0, cl.parse("").getArgCount(optInt));
         assertEquals(1, cl.parse("-o").getArgCount(optInt));
@@ -696,23 +698,22 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void testHasArg() {
         CmdArgOption<?> optInt = CmdArgOption.builder()
-                .shortName('o')
-                .optional()
-                .repeatable()
-                .description("optional")
-                .build();
+            .shortName('o')
+            .optional()
+            .repeatable()
+            .description("optional")
+            .build();
 
         CmdArgOption<?> optInt2 = CmdArgOption.builder()
-                .name("long")
-                .optional()
-                .description("optional")
-                .build();
+            .name("long")
+            .optional()
+            .description("optional")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optInt)
-                .addOption(optInt2)
-                .withFailOnUnknownToken(false);
-
+            .addOption(optInt)
+            .addOption(optInt2)
+            .withFailOnUnknownToken(false);
 
         assertTrue(cl.parse("--long").hasArg(optInt2), "Cmd Long Option set");
         assertTrue(cl.parse("-o").hasArg(optInt), "Cmd Short Option set");
@@ -727,13 +728,13 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseDataTypes() {
         CmdArgOption<Boolean> optBoolSimple = CmdArgOption.builder(boolean.class)
-                .name("optBoolSimple")
-                .required()
-                .build();
+            .name("optBoolSimple")
+            .required()
+            .build();
         CmdArgOption<Boolean> optBoolWrapper = CmdArgOption.builder(Boolean.class)
-                .name("optBoolWrapper")
-                .required()
-                .build();
+            .name("optBoolWrapper")
+            .required()
+            .build();
 
         CmdArgOption<Byte> optByte = CmdArgOption.builder(Byte.class).name("optByte").required().build();
         CmdArgOption<Short> optShort = CmdArgOption.builder(Short.class).name("optShort").required().build();
@@ -747,43 +748,43 @@ class CommandLineTest extends AbstractBaseTest {
         CmdArgOption<String> optString = CmdArgOption.builder(String.class).name("optString").required().build();
 
         CmdArgOption<LocalDate> optLocalDate = CmdArgOption.builder(LocalDate.class)
-                .name("optLocalDate")
-                .required()
-                .build();
+            .name("optLocalDate")
+            .required()
+            .build();
 
         CmdArgOption<LocalDateTime> optLocalDateTime = CmdArgOption.builder(LocalDateTime.class)
-                .name("optLocalDateTime")
-                .required()
-                .build();
+            .name("optLocalDateTime")
+            .required()
+            .build();
 
         CmdArgOption<LocalTime> optLocalTime = CmdArgOption.builder(LocalTime.class)
-                .name("optLocalTime")
-                .required()
-                .build();
+            .name("optLocalTime")
+            .required()
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOptions(optBoolSimple, optBoolWrapper, optByte, optShort)
-                .addOptions(optIntReq, optIntOpt)
-                .addOptions(optLong, optFloat, optDouble)
-                .addOptions(optString, optLocalDate, optLocalDateTime, optLocalTime);
+            .addOptions(optBoolSimple, optBoolWrapper, optByte, optShort)
+            .addOptions(optIntReq, optIntOpt)
+            .addOptions(optLong, optFloat, optDouble)
+            .addOptions(optString, optLocalDate, optLocalDateTime, optLocalTime);
 
         cl.getOptions().values().stream().map(cl::hasOption).forEach(CommandLineTest::assertTrue);
 
         cl.getOptions().values().stream().map(CmdArgOption::getName).map(cl::hasOption).forEach(CommandLineTest::assertTrue);
 
         cl.parse(String.join(" ",
-                "--optBoolSimple true",
-                "--optBoolWrapper FALSE",
-                "--optByte 127",
-                "--optShort 32767",
-                "--optIntReq 99",
-                "--optLong 123456789",
-                "--optFloat 654.321",
-                "--optDouble 987654.321",
-                "--optString a_string",
-                "--optLocalDate 2025-04-07",
-                "--optLocalDateTime 2028-09-22T19:42:58",
-                "--optLocalTime 21:30:15.789"));
+            "--optBoolSimple true",
+            "--optBoolWrapper FALSE",
+            "--optByte 127",
+            "--optShort 32767",
+            "--optIntReq 99",
+            "--optLong 123456789",
+            "--optFloat 654.321",
+            "--optDouble 987654.321",
+            "--optString a_string",
+            "--optLocalDate 2025-04-07",
+            "--optLocalDateTime 2028-09-22T19:42:58",
+            "--optLocalTime 21:30:15.789"));
 
         cl.getOptions().values().stream().filter(CmdArgOption::isRequired).map(cl::hasArg).forEach(CommandLineTest::assertTrue);
 
@@ -797,69 +798,69 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseUnknownArg() {
         CommandLine cl = new CommandLine()
-                .withFailOnUnknownArg(false)
-                .parse("--dunno this");
+            .withFailOnUnknownArg(false)
+            .parse("--dunno this");
 
         assertFalse(cl.isFailOnUnknownArg());
         assertMap(cl.getUnknownArgs(), "--dunno");
         assertEquals("this", cl.getUnknownArgs().get("--dunno"));
 
         assertEquals("Parsing of command-line failed: unknown arguments: --dunno=this",
-                assertThrows(Exception.class, () -> cl.withFailOnUnknownArg(true)
-                        .parse("--dunno this")).getMessage());
+            assertThrows(Exception.class, () -> cl.withFailOnUnknownArg(true)
+                .parse("--dunno this")).getMessage());
     }
 
     @Test
     public void parseUnknownToken() {
         CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
-                .name("optInt")
-                .optional()
-                .description("optional int")
-                .build();
+            .name("optInt")
+            .optional()
+            .description("optional int")
+            .build();
         CommandLine cl = new CommandLine()
-                .addOption(optInt)
-                .withFailOnUnknownToken(false)
-                .parse("--optInt 1 2 3");
+            .addOption(optInt)
+            .withFailOnUnknownToken(false)
+            .parse("--optInt 1 2 3");
         assertFalse(cl.isFailOnUnknownToken());
         assertCollection(cl.getUnknownTokens(), "2", "3");
 
         assertEquals("Parsing of command-line failed: unknown tokens: 2, 3",
-                assertThrows(Exception.class, () -> cl.withFailOnUnknownToken(true)
-                        .parse("--optInt 1 2 3")).getMessage());
+            assertThrows(Exception.class, () -> cl.withFailOnUnknownToken(true)
+                .parse("--optInt 1 2 3")).getMessage());
     }
 
     @Test
     public void parseDupArg() {
         CmdArgOption<Void> optDup = CmdArgOption.builder()
-                .name("optdup")
-                .optional()
-                .description("optional int")
-                .build();
+            .name("optdup")
+            .optional()
+            .description("optional int")
+            .build();
         CommandLine cl = new CommandLine()
-                .addOption(optDup)
-                .withFailOnDupArg(false)
-                .parse("--optdup --optdup");
+            .addOption(optDup)
+            .withFailOnDupArg(false)
+            .parse("--optdup --optdup");
 
         assertFalse(cl.isFailOnDupArg());
 
         assertTrue(cl.getDupArgs().containsKey(optDup));
 
         assertEquals("Parsing of command-line failed: duplicate arguments: --optdup",
-                assertThrows(Exception.class, () -> cl.withFailOnDupArg(true)
-                        .parse("--optdup --optdup")).getMessage());
+            assertThrows(Exception.class, () -> cl.withFailOnDupArg(true)
+                .parse("--optdup --optdup")).getMessage());
     }
 
     @Test
     public void parseArgTyped() {
         CmdArgOption<Integer> optDup = CmdArgOption.builder(Integer.class)
-                .name("optdup")
-                .optional()
-                .description("optional int")
-                .build();
+            .name("optdup")
+            .optional()
+            .description("optional int")
+            .build();
         CommandLine cl = new CommandLine()
-                .addOption(optDup)
-                .withFailOnDupArg(false)
-                .parse("--optdup 1");
+            .addOption(optDup)
+            .withFailOnDupArg(false)
+            .parse("--optdup 1");
 
         assertEquals(1, cl.getArg("optdup", Integer.class));
 
@@ -873,16 +874,16 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseArgListTyped() {
         CmdArgOption<Integer> optDup = CmdArgOption.builder(Integer.class)
-                .name("optdup")
-                .optional()
-                .repeatable()
-                .description("optional int")
-                .build();
+            .name("optdup")
+            .optional()
+            .repeatable()
+            .description("optional int")
+            .build();
 
         CommandLine cl = new CommandLine()
-                .addOption(optDup)
-                .withFailOnDupArg(false)
-                .parse("--optdup 1 --optdup 2 --optdup 3");
+            .addOption(optDup)
+            .withFailOnDupArg(false)
+            .parse("--optdup 1 --optdup 2 --optdup 3");
 
         List<Integer> args = cl.getArgs("optdup", Integer.class);
         assertEquals(1, args.get(0));
@@ -899,16 +900,16 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseArgTypedDefault() {
         CmdArgOption<Integer> optDup = CmdArgOption.builder(Integer.class)
-                .name("optdup")
-                .optional()
-                .defaultValue(10)
-                .description("optional int")
-                .build();
+            .name("optdup")
+            .optional()
+            .defaultValue(10)
+            .description("optional int")
+            .build();
         CommandLine cl = new CommandLine()
-                .addOption(optDup)
-                .withFailOnDupArg(false)
-                .withFailOnUnknownArg(false)
-                .parse("--bla");
+            .addOption(optDup)
+            .withFailOnDupArg(false)
+            .withFailOnUnknownArg(false)
+            .parse("--bla");
 
         assertEquals(5, cl.getArg("optdup", Integer.class, 5));
     }
@@ -917,28 +918,28 @@ class CommandLineTest extends AbstractBaseTest {
     public void parseOptions() {
         CommandLine commandLine = new CommandLine();
         commandLine
-        .addOption(CmdArgOption
-            .builder(String.class)
-            .name("mapping-dir")
-            .shortName('m')
-            .description("mapping")
-            .required()
-            .build())
-        .addOption(CmdArgOption
-            .builder(String.class)
-            .name("destination")
-            .shortName('d')
-            .description("Destination")
-            .required()
-            .build())
-        .addOption(CmdArgOption
-            .builder(String.class)
-            .name("source")
-            .shortName('s')
-            .repeatable()
-            .description("Source")
-            .required()
-            .build());
+            .addOption(CmdArgOption
+                .builder(String.class)
+                .name("mapping-dir")
+                .shortName('m')
+                .description("mapping")
+                .required()
+                .build())
+            .addOption(CmdArgOption
+                .builder(String.class)
+                .name("destination")
+                .shortName('d')
+                .description("Destination")
+                .required()
+                .build())
+            .addOption(CmdArgOption
+                .builder(String.class)
+                .name("source")
+                .shortName('s')
+                .repeatable()
+                .description("Source")
+                .required()
+                .build());
 
         commandLine.parse(new String[] {"-m", "/tmp", "-d", "foo", "-s", "bar"});
         assertEquals("/tmp", commandLine.getArg('m', String.class));
@@ -949,19 +950,19 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void parseRequiredOptionMissingFail() {
         CommandLine cl = new CommandLine().addOption(CmdArgOption.builder(String.class)
-                .name("requiredString")
-                .required()
-                .build());
+            .name("requiredString")
+            .required()
+            .build());
         assertEquals("Parsing of command-line failed: required options missing: requiredString",
-                assertThrows(Exception.class, () -> cl.parse("")).getMessage());
+            assertThrows(Exception.class, () -> cl.parse("")).getMessage());
     }
 
     @ParameterizedTest(name = "[{index}] \"{0}\"")
     @ValueSource(strings = {"true", " true ", "TRUE", "1", "yes"})
     public void parseBooleanArgTrue(String _boolArg) {
         CmdArgOption<Boolean> optBool = CmdArgOption.builder(boolean.class)
-                .name("optBool")
-                .build();
+            .name("optBool")
+            .build();
         CommandLine cl = new CommandLine().addOption(optBool);
         assertTrue(cl.parse(new String[] {"--" + optBool.getName(), _boolArg}).getArg(optBool));
     }
@@ -971,9 +972,9 @@ class CommandLineTest extends AbstractBaseTest {
     @ValueSource(strings = {" ", "false", "FALSE", "0", "no"})
     public void parseBooleanArgFalse(String _boolArg) {
         CmdArgOption<Boolean> optBool = CmdArgOption.builder(boolean.class)
-                .name("optBool")
-                .defaultValue(false)
-                .build();
+            .name("optBool")
+            .defaultValue(false)
+            .build();
         CommandLine cl = new CommandLine().addOption(optBool);
         assertFalse(cl.parse(new String[] {"--" + optBool.getName(), _boolArg}).getArg(optBool));
     }
@@ -983,22 +984,22 @@ class CommandLineTest extends AbstractBaseTest {
     @ValueSource(strings = {"   "})
     public void parseDateArgNullEmptyBlank(String _dateArg) {
         CmdArgOption<LocalDate> optDate = CmdArgOption.builder(LocalDate.class)
-                .name("optDate")
-                .required()
-                .build();
+            .name("optDate")
+            .required()
+            .build();
         CommandLine cl = new CommandLine().addOption(optDate);
         assertEquals("Parsing of command-line failed: argument '--optDate' requires a value",
-                assertThrows(CommandLineException.class, () -> cl.parse(new String[] {"--" + optDate.getName(), _dateArg}).getArg(optDate)).getMessage());
+            assertThrows(CommandLineException.class, () -> cl.parse(new String[] {"--" + optDate.getName(), _dateArg}).getArg(optDate)).getMessage());
     }
 
     @ParameterizedTest(name = "[{index}] \"{0}\"")
     @ValueSource(strings = {"xy", "9999-88-77", "66665544"})
     public void parseDateArgInvalid(String _dateArg) {
         CmdArgOption<LocalDate> optDate = CmdArgOption.builder(LocalDate.class)
-                .name("optDate")
-                .required()
-                .description("descr")
-                .build();
+            .name("optDate")
+            .required()
+            .description("descr")
+            .build();
         CommandLine cl = new CommandLine().addOption(optDate);
         CommandLineException ex = assertThrows(CommandLineException.class, () -> cl.parse(new String[] {"--optDate", _dateArg}));
         assertEquals("Parsing of command-line failed: argument '--optDate' has invalid value (" + _dateArg + ")", ex.getMessage());
@@ -1008,15 +1009,15 @@ class CommandLineTest extends AbstractBaseTest {
     public void parseDateArgDefault() {
         LocalDate defLd = LocalDate.now();
         CmdArgOption<LocalDate> optLd = CmdArgOption.builder(LocalDate.class)
-                .name("optDate")
-                .defaultValue(defLd)
-                .build();
+            .name("optDate")
+            .defaultValue(defLd)
+            .build();
 
         LocalDateTime defLdt = LocalDateTime.now();
         CmdArgOption<LocalDateTime> optLdt = CmdArgOption.builder(LocalDateTime.class)
-                .name("optDateTime")
-                .defaultValue(defLdt)
-                .build();
+            .name("optDateTime")
+            .defaultValue(defLdt)
+            .build();
 
         CommandLine cl = new CommandLine().addOptions(optLd, optLdt).parse("--optDate --optDateTime");
         assertEquals(defLd, cl.getArg(optLd));
@@ -1031,15 +1032,15 @@ class CommandLineTest extends AbstractBaseTest {
     @Test
     public void testGetUsageWithArgs() {
         CommandLine cl = new CommandLine()
-                .addOption(CmdArgOption.builder(String.class)
-                        .name("req1")
-                        .required()
-                        .defaultValue("default")
-                        .build())
-                .addOption(CmdArgOption.builder()
-                        .name("opt1")
-                        .optional()
-                        .build());
+            .addOption(CmdArgOption.builder(String.class)
+                .name("req1")
+                .required()
+                .defaultValue("default")
+                .build())
+            .addOption(CmdArgOption.builder()
+                .name("opt1")
+                .optional()
+                .build());
         assertEquals("usage: myApp --req1 <arg> [--opt1]" + System.lineSeparator(), cl.getUsage("myApp"));
     }
 
@@ -1075,5 +1076,52 @@ class CommandLineTest extends AbstractBaseTest {
     public void printUsageCustomFormatter() throws IOException {
         String help = new CommandLine().withUsageFormatter((options, l, s, mainClassName) -> "Test the Usage-Formatter: -->" + mainClassName + "<--: ").getUsage("App");
         assertTrue(help.startsWith("Test the Usage-Formatter: -->App<--: "));
+    }
+
+    @Test
+    public void parseOptionsWithAllowedValuesOnly() {
+        CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
+            .shortName('o')
+            .name("optional-int")
+            .optional()
+            .description("optional int")
+            .possibleValue(Map.of(1, "One", 2, "two"))
+            .build();
+
+        CommandLine cl = new CommandLine()
+            .addOption(optInt)
+            .withFailOnUnknownToken(false)
+            .parse("-o 1");
+
+        assertFalse(cl.isFailOnUnknownToken());
+        Integer shortArgVal = cl.getArg(optInt);
+        cl.parse("--optional-int 2");
+        Integer longArgVal = cl.getArg(optInt);
+
+        assertEquals(1, shortArgVal);
+        assertEquals(2, longArgVal);
+    }
+
+    @Test
+    public void parseOptionsWithAllowedValuesInvalid() {
+        Map<Integer, String> vals = new LinkedHashMap<>();
+        vals.put(1, "One");
+        vals.put(2, "Two");
+        CmdArgOption<Integer> optInt = CmdArgOption.builder(int.class)
+            .shortName('o')
+            .name("optional-int")
+            .optional()
+            .description("optional int")
+            .possibleValue(vals)
+            .build();
+
+        CommandLineException ex = assertThrows(CommandLineException.class, () -> {
+            new CommandLine()
+                .addOption(optInt)
+                .withFailOnUnknownToken(false)
+                .parse("-o 5");
+        });
+
+        assertEquals("Parsing of command-line failed: Value '5' is not valid for option '--optional-int/-o', possible are: 1, 2", ex.getMessage());
     }
 }

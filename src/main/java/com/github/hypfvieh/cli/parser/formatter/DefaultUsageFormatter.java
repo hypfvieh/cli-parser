@@ -23,16 +23,16 @@ public class DefaultUsageFormatter implements IUsageFormatter {
 
         if (_options != null) {
             requiredOptions = _options.stream().filter(CmdArgOption::isRequired)
-                    .map(o -> StaticUtils.formatOption(o, _longOptPrefix, _shortOptPrefix) + (o.hasValue() ? " <arg>" : ""))
-                    .collect(Collectors.toList());
+                .map(o -> StaticUtils.formatOption(o, _longOptPrefix, _shortOptPrefix) + getArgNameOrDefault(o))
+                .collect(Collectors.toList());
 
             optionalOptions = _options.stream().filter(CmdArgOption::isOptional)
-                    .map(o -> StaticUtils.formatOption(o, _longOptPrefix, _shortOptPrefix) + (o.hasValue() ? " <arg>" : ""))
-                    .collect(Collectors.toList());
+                .map(o -> StaticUtils.formatOption(o, _longOptPrefix, _shortOptPrefix) + getArgNameOrDefault(o))
+                .collect(Collectors.toList());
         }
 
         StringBuilder sb = new StringBuilder("usage: ")
-                .append(Optional.ofNullable(_mainClassName).orElseGet(IUsageFormatter::getMainClassName));
+            .append(Optional.ofNullable(_mainClassName).orElseGet(IUsageFormatter::getMainClassName));
         if (!requiredOptions.isEmpty()) {
             sb.append(" ").append(String.join(" ", requiredOptions));
         }
@@ -41,6 +41,20 @@ public class DefaultUsageFormatter implements IUsageFormatter {
         }
         sb.append(System.lineSeparator());
         return sb.toString();
+    }
+
+    private String getArgNameOrDefault(CmdArgOption<?> _opt) {
+        if (_opt.hasValue()) {
+            if (_opt.getPossibleValues().isEmpty()) {
+                return " <arg>";
+            } else if (_opt.getPossibleValues().size() == 1) {
+                return " <" + _opt.getPossibleValues().keySet().iterator().next() + ">";
+            } else {
+                return " <(" + _opt.getPossibleValues().keySet().stream().map(String::valueOf).collect(Collectors.joining("|")) + ")>";
+            }
+        } else {
+            return "";
+        }
     }
 
 }
