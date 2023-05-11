@@ -726,6 +726,26 @@ class CommandLineTest extends AbstractBaseTest {
     }
 
     @Test
+    public void testHasArgGetArgOptional() {
+        CmdArgOption<String> dbUrl = CmdArgOption.builder(String.class)
+            .name("dbUrl")
+            .description("Database url")
+            .optional()
+            .build();
+
+        CommandLine cl1 = new CommandLine()
+            .withFailOnUnknownArg(true)
+            .withLongOptPrefix("--")
+            .addOption(dbUrl);
+
+        cl1.parse("");
+
+        assertDoesNotThrow(() -> cl1.hasArg(dbUrl));
+        
+        cl1.getArg("dbUrl");
+    }
+
+    @Test
     public void parseDataTypes() {
         CmdArgOption<Boolean> optBoolSimple = CmdArgOption.builder(boolean.class)
             .name("optBoolSimple")
