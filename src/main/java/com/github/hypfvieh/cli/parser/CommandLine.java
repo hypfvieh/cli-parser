@@ -167,8 +167,12 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      */
     @SuppressWarnings("unchecked")
     public <T> T getArg(CmdArgOption<T> _option, T _default) {
-        Objects.requireNonNull(_option, "Option required");
+        requireOption(_option);
 
+        CmdArgOption<?> option = getArgBundle().getOption(_option);
+        if (option == null) {
+            throw optionNotDefined(_option, getExceptionType());
+        }
         List<T> args = getArgs(_option, _default);
         if (args == null || args.isEmpty()) {
             if (_option.isOptional()) {
@@ -212,7 +216,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * @return List, maybe empty or <code>null</code>
      */
     public <T> List<T> getArgs(CmdArgOption<T> _option, T _default) {
-        Objects.requireNonNull(_option, "Option required");
+        requireOption(_option);
         List<String> strVals = new ArrayList<>();
 
         if (_option.isRepeatable()) {
@@ -481,15 +485,15 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * @return true if it was used at least once, false otherwise
      */
     public boolean hasArg(CmdArgOption<?> _option) {
-        Objects.requireNonNull(_option, "Option required");
+        requireOption(_option);
         CommandLine requireParsed = requireParsed(this);
-        if (getArgBundle().getKnownArgs().containsKey(requireParsed.getArgBundle().getOptions().get(requireOption(_option).getName()))) {
+        if (getArgBundle().getKnownArgs().containsKey(requireParsed.getArgBundle().getOption(_option))) {
             return true;
-        } else if (getArgBundle().getKnownMultiArgs().containsKey(requireParsed.getArgBundle().getOptions().get(requireOption(_option).getName()))) {
+        } else if (getArgBundle().getKnownMultiArgs().containsKey(requireParsed.getArgBundle().getOption(_option))) {
             return true;
         }
 
-        CmdArgOption<?> value = requireParsed.getArgBundle().getOptions().get(requireOption(_option).getShortName());
+        CmdArgOption<?> value = requireParsed.getArgBundle().getOption(_option);
 
         // option is required but was not set
         if (_option.isRequired() && value == null) {
@@ -552,7 +556,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * @return number of occurrences
      */
     public int getArgCount(CmdArgOption<?> _option) {
-        Objects.requireNonNull(_option, "Option required");
+        requireOption(_option);
         requireParsed(this);
 
         if (getArgBundle().getKnownArgs().containsKey(_option)) {
