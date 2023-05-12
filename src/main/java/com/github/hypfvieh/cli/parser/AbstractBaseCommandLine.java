@@ -146,12 +146,10 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
         requireOption(_option);
         requireUniqueOption(_option, this);
 
-        if (_option.getName() != null) {
-            getArgBundle().getOptions().put(_option.getName(), _option);
-        }
-        if (_option.getShortName() != null) {
-            getArgBundle().getOptions().put(_option.getShortName(), _option);
-        }
+        Optional.ofNullable(_option.getName())
+            .ifPresent(n -> getArgBundle().getOptions().put(n, _option));
+        Optional.ofNullable(_option.getShortName())
+            .ifPresent(n -> getArgBundle().getOptions().put(n, _option));
 
         if (_option.getDataType() != null && _option.getDataType().isEnum() && !getArgBundle().getConverters().containsKey(_option.getDataType())) {
             @SuppressWarnings("unchecked")

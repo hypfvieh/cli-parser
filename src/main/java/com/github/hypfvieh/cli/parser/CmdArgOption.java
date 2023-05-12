@@ -187,10 +187,10 @@ public final class CmdArgOption<T> {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()
-            + String.format("[%s/%s, dataType=%s, required=%s, repeatable=%s, hasValue=%s, default=%s, descr=%s, possVals=%s]",
-                name, shortName, Optional.ofNullable(dataType).map(Class::getName).orElse(null),
-                required, repeatable, hasValue, defaultValue, description, possibleValues);
+        return String.format("%s[%s/%s, dataType=%s, required=%s, repeatable=%s, hasValue=%s, default=%s, descr=%s, possVals=%s]",
+            getClass().getSimpleName(),
+            Optional.ofNullable(name).orElse("-"), Optional.ofNullable(shortName).orElse('-'), Optional.ofNullable(dataType).map(Class::getName).orElse(null),
+            required, repeatable, hasValue, defaultValue, description, possibleValues);
     }
 
     /**

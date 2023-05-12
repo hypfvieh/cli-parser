@@ -2,10 +2,7 @@ package com.github.hypfvieh.cli.parser;
 
 import com.github.hypfvieh.cli.parser.converter.IValueConverter;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Bundles different argument-specific information.
@@ -50,6 +47,23 @@ public final class ArgumentBundle {
 
     Map<String, CmdArgOption<?>> getOptions() {
         return options;
+    }
+
+    /**
+     * Looks up an option by name name or short name of the specified option object.
+     *
+     * @param _option option to lookup, may not be null
+     * @return option if found, null otherwise
+     */
+    CmdArgOption<?> getOption(CmdArgOption<?> _option) {
+        StaticUtils.requireOption(_option);
+
+        CmdArgOption<?> option = Optional.ofNullable(_option.getName()).map(options::get).orElse(null);
+        if (option == null) {
+            option = Optional.ofNullable(_option.getShortName()).map(options::get).orElse(null);
+        }
+
+        return option;
     }
 
     Map<Class<?>, IValueConverter<?>> getConverters() {

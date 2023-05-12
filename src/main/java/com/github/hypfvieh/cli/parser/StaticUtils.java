@@ -22,11 +22,11 @@ public final class StaticUtils {
      * @throws CommandLineException when option is invalid
      */
     static CmdArgOption<?> requireOption(CmdArgOption<?> _option) {
-        CmdArgOption<?> o = Objects.requireNonNull(_option, "Option required");
-        if ((o.getName() == null || o.getName().isBlank()) && (o.getShortName() == null || o.getShortName().isBlank())) {
+        Objects.requireNonNull(_option, "Option cannot be null");
+        if ((_option.getName() == null || _option.getName().isBlank()) && (_option.getShortName() == null || _option.getShortName().isBlank())) {
             throw new CommandLineException("Command-line option requires a name or shortname: " + _option);
         }
-        return o;
+        return _option;
     }
 
     /**
@@ -39,7 +39,7 @@ public final class StaticUtils {
      * @throws CommandLineException when option with same name already registered
      */
     static <B extends AbstractBaseCommandLine<?>> void requireUniqueOption(CmdArgOption<?> _option, B _cmdLine) {
-        Objects.requireNonNull(_option, "Option required");
+        requireOption(_option);
         Objects.requireNonNull(_cmdLine, "Commandline required");
 
         if (_option.getName() != null && _cmdLine.getOptions().containsKey(_option.getName())) {

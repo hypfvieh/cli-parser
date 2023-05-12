@@ -121,7 +121,7 @@ class CmdArgOptionTest extends AbstractBaseTest {
         assertFalse(opt.hasValue());
         assertNull(opt.getDefaultValue());
         assertNull(opt.getDescription());
-        assertEquals("CmdArgOption[optionWithoutValue/null, dataType=null, required=false, repeatable=false, hasValue=false, default=null, descr=null, possVals={}]", opt.toString());
+        assertEquals("CmdArgOption[optionWithoutValue/-, dataType=null, required=false, repeatable=false, hasValue=false, default=null, descr=null, possVals={}]", opt.toString());
     }
 
     @ParameterizedTest(name = "[{index}] \"{0}\"")
