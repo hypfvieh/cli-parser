@@ -66,7 +66,7 @@
         <project.maven.version>3.6.0</project.maven.version>
 
         <dep.plugin.clean.version>3.2.0</dep.plugin.clean.version>
-        <dep.plugin.source.version>3.2.2</dep.plugin.source.version>
+        <dep.plugin.source.version>3.2.1</dep.plugin.source.version>
         <dep.plugin.compiler.version>3.11.0</dep.plugin.compiler.version>
         <dep.plugin.resources.version>3.3.1</dep.plugin.resources.version>
         <dep.plugin.jar.version>3.3.0</dep.plugin.jar.version>
