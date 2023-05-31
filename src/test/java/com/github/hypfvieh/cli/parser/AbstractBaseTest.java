@@ -14,6 +14,14 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Pattern;
 
+/**
+ * Abstract base class for unit tests.<p>
+ *
+ * Logs entry and exit to/from all test methods.<br>
+ * This class extends JUnit assertions to avoid the need for static imports in subclasses.
+ *
+ * @author Markus Spann
+ */
 public abstract class AbstractBaseTest extends Assertions {
 
     /** Instance logger. */
@@ -21,6 +29,9 @@ public abstract class AbstractBaseTest extends Assertions {
 
     /** Holds information about the current test. */
     private TestInfo lastTestInfo;
+
+    /** Start time of test in milliseconds. */
+    private long     startTime;
 
     protected final Logger getLogger() {
         if (null == logger) {
@@ -52,19 +63,23 @@ public abstract class AbstractBaseTest extends Assertions {
 
     @BeforeEach
     public final void logTestBegin(TestInfo _testInfo) {
-        logTestBeginEnd("BGN", _testInfo);
+        startTime = System.currentTimeMillis();
+        String name = _testInfo.getTestMethod().map(Method::getName).orElse(null);
+        if (name == null || _testInfo.getDisplayName().startsWith(name)) {
+            getLogger().info(">>>>>>>>>> BGN Test: {} <<<<<<<<<<", _testInfo.getDisplayName());
+        } else {
+            getLogger().info(">>>>>>>>>> BGN Test: {} ({}) <<<<<<<<<<", name, _testInfo.getDisplayName());
+        }
     }
 
     @AfterEach
     public final void logTestEnd(TestInfo _testInfo) {
-        logTestBeginEnd("END", _testInfo);
-    }
-
-    protected void logTestBeginEnd(String _prefix, TestInfo _testInfo) {
-        if (_testInfo.getTestMethod().isEmpty() || _testInfo.getDisplayName().startsWith(_testInfo.getTestMethod().get().getName())) {
-            getLogger().info(">>>>>>>>>> {} Test: {} <<<<<<<<<<", _prefix, _testInfo.getDisplayName());
+        String name = _testInfo.getTestMethod().map(Method::getName).orElse(null);
+        String seconds = String.format("%.2f sec", (System.currentTimeMillis() - startTime) / 1000d);
+        if (name == null || _testInfo.getDisplayName().startsWith(name)) {
+            getLogger().info(">>>>>>>>>> END Test: {} ({}) <<<<<<<<<<", _testInfo.getDisplayName(), seconds);
         } else {
-            getLogger().info(">>>>>>>>>> {} Test: {} ({}) <<<<<<<<<<", _prefix, _testInfo.getTestMethod().get().getName(), _testInfo.getDisplayName());
+            getLogger().info(">>>>>>>>>> END Test: {} ({}) ({}) <<<<<<<<<<", name, _testInfo.getDisplayName(), seconds);
         }
     }
 
