@@ -319,7 +319,6 @@
                     <failOnViolation>${proj.check.fail-pmd}</failOnViolation>
                     <printFailingErrors>true</printFailingErrors>
                     <failurePriority>4</failurePriority>
-                    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
                     <!-- minimum number of tokens that need to be duplicated before it causes a violation: -->
                     <minimumTokens>100</minimumTokens>
                     <rulesets>
