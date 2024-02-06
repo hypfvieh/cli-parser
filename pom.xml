@@ -87,8 +87,7 @@
 
         <dep.slf4j.version>2.0.12</dep.slf4j.version>
 
-        <dep.junit-jupiter.version>5.10.2</dep.junit-jupiter.version>
-        <dep.junit-platform.version>1.10.2</dep.junit-platform.version>
+        <dep.junit.version>5.10.2</dep.junit.version>
         <dep.mockito.version>5.10.0</dep.mockito.version>
 
         <proj.check.skip-checkstyle>false</proj.check.skip-checkstyle>
@@ -97,6 +96,18 @@
         <proj.check.fail-checkstyle>true</proj.check.fail-checkstyle>
         <proj.check.fail-pmd>true</proj.check.fail-pmd>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${dep.junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
 
@@ -116,28 +127,24 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${dep.junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>${dep.junit-jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${dep.junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
-            <version>${dep.junit-platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
 
