@@ -41,20 +41,22 @@
     </scm>
 
     <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
         <snapshotRepository>
-            <id>ossrh</id>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
         <javaVersion>11</javaVersion>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- the -release argument for the Java compiler (since Java 9) -->
         <maven.compiler.release>${javaVersion}</maven.compiler.release>
@@ -158,6 +160,8 @@
     </dependencies>
 
     <build>
+
+        <defaultGoal>clean verify</defaultGoal>
 
         <pluginManagement>
             <plugins>
