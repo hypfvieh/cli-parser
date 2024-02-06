@@ -85,7 +85,7 @@
         <dep.checkstyle.version>10.12.3</dep.checkstyle.version>
         <dep.pmd.version>6.55.0</dep.pmd.version>
 
-        <dep.slf4j.version>2.0.9</dep.slf4j.version>
+        <dep.slf4j.version>2.0.12</dep.slf4j.version>
 
         <dep.junit-jupiter.version>5.10.2</dep.junit-jupiter.version>
         <dep.junit-platform.version>1.10.2</dep.junit-platform.version>
