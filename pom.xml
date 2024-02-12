@@ -25,15 +25,15 @@
             <id>hypfvieh</id>
             <name>David M.</name>
             <email>hypfvieh@googlemail.com</email>
-            <timezone>+1</timezone>
             <organizationUrl>https://github.com/hypfvieh/</organizationUrl>
+            <timezone>+1</timezone>
         </developer>
         <developer>
             <id>spannm</id>
             <name>Markus Spann</name>
             <email>spannm@outlook.de</email>
-            <timezone>+1</timezone>
             <organizationUrl>https://github.com/spannm/</organizationUrl>
+            <timezone>+1</timezone>
         </developer>
     </developers>
 
@@ -44,16 +44,16 @@
     </scm>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
             <id>sonatype-nexus-staging</id>
             <name>Nexus Release Repository</name>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <properties>
