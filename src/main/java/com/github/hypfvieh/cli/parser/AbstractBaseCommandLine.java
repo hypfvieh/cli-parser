@@ -6,11 +6,11 @@ import com.github.hypfvieh.cli.parser.converter.*;
 import com.github.hypfvieh.cli.parser.formatter.DefaultHelpFormatter;
 import com.github.hypfvieh.cli.parser.formatter.DefaultUsageFormatter;
 import com.github.hypfvieh.cli.parser.formatter.IUsageFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.lang.invoke.MethodType;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  */
 public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<?>> {
 
-    private final Logger                      logger             = LoggerFactory.getLogger(getClass());
+    private final Logger                      logger             = System.getLogger(getClass().getName());
 
     private final ArgumentBundle              argBundle          = new ArgumentBundle();
     private final AtomicBoolean               parsed             = new AtomicBoolean(false);
@@ -157,7 +157,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
             getArgBundle().getConverters().put(_option.getDataType(), new EnumConverter(enumType));
         }
 
-        getLogger().debug("Added {} command-line option '{}': {}",
+        getLogger().log(Level.DEBUG, "Added {0} command-line option ''{1}'': {2}",
             _option.isRequired() ? "required" : "optional", _option.getName(), _option.getDescription());
         return self();
     }
@@ -186,7 +186,7 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
      * @return this
      */
     protected B logResults() {
-        if (getLogger().isDebugEnabled()) {
+        if (getLogger().isLoggable(Level.DEBUG)) {
             Map<String, String> kargs = new LinkedHashMap<>();
             Map<String, String> margs = new LinkedHashMap<>();
 
@@ -198,12 +198,12 @@ public abstract class AbstractBaseCommandLine<B extends AbstractBaseCommandLine<
                 margs.put(formatOption(e.getKey(), getLongOptPrefix(), getShortOptPrefix()), String.join(", ", e.getValue()));
             }
 
-            getLogger().debug("knownArgs:      {}", kargs);
-            getLogger().debug("knownMultiArgs: {}", margs);
+            getLogger().log(Level.DEBUG, "knownArgs:      {0}", kargs);
+            getLogger().log(Level.DEBUG, "knownMultiArgs: {0}", margs);
 
-            getLogger().debug("unknownArgs:    {}", getArgBundle().getUnknownArgs());
-            getLogger().debug("unknownTokens:  {}", getArgBundle().getUnknownTokens());
-            getLogger().debug("dupArgs:        {}", getArgBundle().getDupArgs());
+            getLogger().log(Level.DEBUG, "unknownArgs:    {0}", getArgBundle().getUnknownArgs());
+            getLogger().log(Level.DEBUG, "unknownTokens:  {0}", getArgBundle().getUnknownTokens());
+            getLogger().log(Level.DEBUG, "dupArgs:        {0}", getArgBundle().getDupArgs());
         }
         return self();
     }

@@ -17,7 +17,9 @@ The cli-parser provides some default converters for LocalDate/LocalDateTime/Loca
 # Requirements
 
 Requires Java 11 or higher.
-The only dependency is slf4j, which should be used in 2.x (1.x should work as well).
+
+Since 1.1.x no additional dependencies required.
+**For cli-parser 1.0.x**: Slf4j is required, should be used in 2.0.x (1.x should work as well).
 
 # Usage
 
@@ -247,3 +249,12 @@ public class FloatConverter implements IValueConverter<Float> {
 }
 
 ```
+
+## Logging in Versions > 1.0.x
+Since 1.1.0 cli-parser uses JPL (Java Platform Logger) a.k.a. System.Logger.
+If you want to see the logging of cli-parser in your logging framework, please add a proper bridge.
+
+For Slf4j there is `org.slf4j:slf4j-jdk-platform-logging` which will redirect all JPL logging calls to Slf4j.
+Slf4j will then use the available logging backend (e.g. Logback) to do the actual logging.
+
+For Log4j2 there is `org.apache.logging.log4j:log4j-jpl` to redirect JPL to Log4j - then Log4j will take care of logging.

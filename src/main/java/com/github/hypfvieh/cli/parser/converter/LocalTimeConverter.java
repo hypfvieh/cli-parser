@@ -2,6 +2,7 @@ package com.github.hypfvieh.cli.parser.converter;
 
 import com.github.hypfvieh.cli.parser.CommandLineException;
 
+import java.lang.System.Logger.Level;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -34,7 +35,7 @@ public class LocalTimeConverter extends AbstractPatternBasedConverter<LocalTime,
             try {
                 return LocalTime.parse(_string, dtf);
             } catch (DateTimeParseException _ex) {
-                getLogger().trace("Unable to parse time input '{}' with parser '{}'", _string, dtf);
+                getLogger().log(Level.TRACE, "Unable to parse time input ''{0}'' with parser ''{1}''", _string, dtf);
             }
         }
 

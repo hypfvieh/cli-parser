@@ -4,6 +4,7 @@ import static com.github.hypfvieh.cli.parser.StaticUtils.*;
 
 import com.github.hypfvieh.cli.parser.converter.IValueConverter;
 
+import java.lang.System.Logger.Level;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -63,7 +64,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * @return this
      */
     public synchronized CommandLine parse(String[] _args) {
-        getLogger().debug("Parsing command-line: {}", Arrays.toString(_args));
+        getLogger().log(Level.DEBUG, "Parsing command-line: {0}", Arrays.toString(_args));
 
         reset();
 
@@ -71,7 +72,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
             final int argsLen = _args.length;
 
             for (int i = 0; i < argsLen; i++) {
-                getLogger().trace("Token {}/{}: {}", i, argsLen, _args[i]);
+                getLogger().log(Level.TRACE, "Token {0}/{1}: {2}", i, argsLen, _args[i]);
 
                 String token = Optional.ofNullable(_args[i]).map(String::trim).orElse("");
 

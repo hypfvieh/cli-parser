@@ -2,6 +2,7 @@ package com.github.hypfvieh.cli.parser.converter;
 
 import com.github.hypfvieh.cli.parser.CommandLineException;
 
+import java.lang.System.Logger.Level;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -29,14 +30,14 @@ public class DoubleConverter extends AbstractPatternBasedConverter<Double, Numbe
         try {
             return Double.parseDouble(_string);
         } catch (NumberFormatException _ex) {
-            getLogger().trace("Unable to parse number input '{}' with parseDouble function", _string);
+            getLogger().log(Level.TRACE, "Unable to parse number input ''{0}'' with parseDouble function", _string);
         }
 
         for (NumberFormat nf : getPatterns()) {
             try {
                 return nf.parse(_string).doubleValue();
             } catch (ParseException _ex) {
-                getLogger().trace("Unable to parse number input '{}' with parser '{}'", _string, nf);
+                getLogger().log(Level.TRACE, "Unable to parse number input ''{0}'' with parser ''{1}''", _string, nf);
             }
         }
 

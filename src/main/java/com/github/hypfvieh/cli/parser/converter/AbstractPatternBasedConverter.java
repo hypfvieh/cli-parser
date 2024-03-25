@@ -1,8 +1,6 @@
 package com.github.hypfvieh.cli.parser.converter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,7 +17,7 @@ import java.util.Objects;
  * @since 1.0.0 - 2022-05-05
  */
 public abstract class AbstractPatternBasedConverter<T, P> implements IValueConverter<T> {
-    private final Logger  logger   = LoggerFactory.getLogger(getClass());
+    private final Logger  logger   = System.getLogger(getClass().getName());
 
     private final List<P> patterns = new ArrayList<>();
 

@@ -4,12 +4,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -35,13 +35,13 @@ public abstract class AbstractBaseTest extends Assertions {
 
     protected final Logger getLogger() {
         if (null == logger) {
-            logger = LoggerFactory.getLogger(getClass());
+            logger = System.getLogger(getClass().getName());
         }
         return logger;
     }
 
     protected final void setLogger(String _loggerName) {
-        logger = LoggerFactory.getLogger(Objects.requireNonNull(_loggerName, "Logger name required"));
+        logger = System.getLogger(Objects.requireNonNull(_loggerName, "Logger name required"));
     }
 
     @BeforeEach
@@ -66,9 +66,9 @@ public abstract class AbstractBaseTest extends Assertions {
         startTime = System.currentTimeMillis();
         String name = _testInfo.getTestMethod().map(Method::getName).orElse(null);
         if (name == null || _testInfo.getDisplayName().startsWith(name)) {
-            getLogger().info(">>>>>>>>>> BGN Test: {} <<<<<<<<<<", _testInfo.getDisplayName());
+            getLogger().log(Level.INFO, ">>>>>>>>>> BGN Test: {0} <<<<<<<<<<", _testInfo.getDisplayName());
         } else {
-            getLogger().info(">>>>>>>>>> BGN Test: {} ({}) <<<<<<<<<<", name, _testInfo.getDisplayName());
+            getLogger().log(Level.INFO, ">>>>>>>>>> BGN Test: {0} ({1}) <<<<<<<<<<", name, _testInfo.getDisplayName());
         }
     }
 
@@ -77,9 +77,9 @@ public abstract class AbstractBaseTest extends Assertions {
         String name = _testInfo.getTestMethod().map(Method::getName).orElse(null);
         String seconds = String.format("%.2f sec", (System.currentTimeMillis() - startTime) / 1000d);
         if (name == null || _testInfo.getDisplayName().startsWith(name)) {
-            getLogger().info(">>>>>>>>>> END Test: {} ({}) <<<<<<<<<<", _testInfo.getDisplayName(), seconds);
+            getLogger().log(Level.INFO, ">>>>>>>>>> END Test: {0} ({1}) <<<<<<<<<<", _testInfo.getDisplayName(), seconds);
         } else {
-            getLogger().info(">>>>>>>>>> END Test: {} ({}) ({}) <<<<<<<<<<", name, _testInfo.getDisplayName(), seconds);
+            getLogger().log(Level.INFO, ">>>>>>>>>> END Test: {0} ({1}) ({2}) <<<<<<<<<<", name, _testInfo.getDisplayName(), seconds);
         }
     }
 
