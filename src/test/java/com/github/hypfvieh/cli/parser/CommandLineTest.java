@@ -741,7 +741,7 @@ class CommandLineTest extends AbstractBaseTest {
         cl1.parse("");
 
         assertDoesNotThrow(() -> cl1.hasArg(dbUrl));
-        
+
         cl1.getArg("dbUrl");
     }
 
@@ -1143,5 +1143,19 @@ class CommandLineTest extends AbstractBaseTest {
         });
 
         assertEquals("Parsing of command-line failed: Value '5' is not valid for option '-o/--optional-int', possible are: 1, 2", ex.getMessage());
+    }
+
+    @Test
+    public void testGetArgumentNotSet() throws IOException {
+
+        CommandLine commandLine = new CommandLine()
+            .addOption(CmdArgOption.builder(String.class)
+                .name("test")
+                .optional()
+                .build())
+            .withFailOnUnknownArg(false)
+            .parse("--test fail.foo");
+
+        assertNull(commandLine.getArg("something", String.class));
     }
 }

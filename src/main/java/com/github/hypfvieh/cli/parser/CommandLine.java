@@ -366,7 +366,7 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
      * @param _optionName option short name
      * @param _type expected value type
      *
-     * @return value or null if option has no value
+     * @return value or null if option has no value or was not set
      *
      * @throws RuntimeException if option is unknown or command line was not parsed<br>
      * @throws RuntimeException if type class is not the type defined in {@link CmdArgOption}
@@ -376,6 +376,10 @@ public final class CommandLine extends AbstractBaseCommandLine<CommandLine> {
     public <T> T getArg(CharSequence _optionName, Class<T> _type) {
         requireParsed(this);
         CmdArgOption<?> option = getOption(_optionName);
+        if (option == null) {
+            return null;
+        }
+
         if (_type != option.getDataType()) {
             throw createException("Invalid type conversation, expected: " + option.getDataType().getName() + " - found: " + _type.getName(), getExceptionType());
         }
